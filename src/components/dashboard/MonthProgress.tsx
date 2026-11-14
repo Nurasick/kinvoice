@@ -4,8 +4,6 @@
  * Owner: Nurali.
  */
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import type { WorkspaceApi } from "@/lib/api/client";
 import type { Invoice } from "@/shared/domain";
 import type { SiblingStatus } from "@/components/invoice/invoice-view";
 import { publishedLabel } from "@/components/invoice/invoice-view";
@@ -20,28 +18,15 @@ const STATUS: Record<SiblingStatus, { label: string; tone: BadgeTone }> = {
 };
 
 export function MonthProgress({
-  api,
   month,
   entries,
+  invoices,
 }: {
-  api: WorkspaceApi;
   month: string;
   entries: number;
+  /** Published invoices (all months); the strip picks this month's latest. */
+  invoices: readonly Invoice[];
 }) {
-  const [invoices, setInvoices] = useState<Invoice[] | null>(null);
-
-  useEffect(() => {
-    let current = true;
-    api
-      .listInvoices()
-      .then((list) => current && setInvoices(list))
-      .catch(() => current && setInvoices([]));
-    return () => {
-      current = false;
-    };
-  }, [api]);
-
-  if (invoices === null) return null;
   const p = monthProgress(entries, invoices, month);
   const invoiceHref = `/app/invoice?month=${month}`;
 

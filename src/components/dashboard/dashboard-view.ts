@@ -28,11 +28,6 @@ export function orderedMembers(balance: MonthlyBalance): MemberBalance[] {
   return [...caregiver, ...siblings];
 }
 
-/** Sum of siblings' suggested contributions (what the caregiver would get back). */
-export function totalSuggestedCents(balance: MonthlyBalance): number {
-  return balance.members.reduce((sum, m) => sum + m.suggestedContributionCents, 0);
-}
-
 export function isEmptyMonth(balance: MonthlyBalance): boolean {
   return balance.totalOutOfPocketCents === 0 && balance.totalMinutes === 0;
 }
@@ -40,4 +35,43 @@ export function isEmptyMonth(balance: MonthlyBalance): boolean {
 /** Current local month, "YYYY-MM". */
 export function currentMonth(now: Date = new Date()): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+/** Whoever paid the most this month, and their share of the total (display only, rounded). */
+export interface LeadPayer {
+  name: string;
+  role: MemberBalance["role"];
+  /** 0..100, rounded to a whole percent */
+  sharePct: number;
+}
+
+export function leadPayer(balance: MonthlyBalance): LeadPayer | null {
+  const total = balance.totalOutOfPocketCents;
+  if (total === 0) return null;
+  const top = orderedMembers(balance).reduce((a, b) => (b.paidCents > a.paidCents ? b : a));
+  return { name: top.name, role: top.role, sharePct: Math.round((top.paidCents / total) * 100) };
+}
+
+export interface MemberMeter {
+  member: MemberBalance;
+  /** 0..1 of the month's total costs: every row on the same scale */
+  moneyFraction: number;
+  /** 0..1 of the month's total care time: every row on the same scale */
+  timeFraction: number;
+}
+
+/** One row per member, caregiver first, bars sized against the month's totals (not the row max). */
+export function memberMeters(balance: MonthlyBalance): MemberMeter[] {
+  const money = balance.totalOutOfPocketCents;
+  const time = balance.totalMinutes;
+  return orderedMembers(balance).map((member) => ({
+    member,
+    moneyFraction: money === 0 ? 0 : member.paidCents / money,
+    timeFraction: time === 0 ? 0 : member.minutes / time,
+  }));
+}
+
+/** Siblings with something suggested, in member order. */
+export function suggestedSiblings(balance: MonthlyBalance): MemberBalance[] {
+  return orderedMembers(balance).filter((m) => m.role === "sibling" && m.suggestedContributionCents > 0);
 }
