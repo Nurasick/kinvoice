@@ -299,7 +299,7 @@ A recessed enamel-well pill (3px inset) holding EN / RU / KZ items in Golos 600 
 Crisp white, 6px corners, paper lift. The header shows the month title in Unbounded and the "Kinvoice" mark in cobalt above a hairline. Ledger rows follow in Golos, then a mist well holding "your share" and the figure, then the pay button and a faint foot line.
 
 ### Read-Labels (signature)
-Small white printed labels (6px corners, label type) with a 7px mint dot and the read value in bold cobalt. They overhang the bottom edge of the object they describe.
+Small white printed labels (6px corners, label type) with a 7px mint dot and the read value in bold cobalt. They overhang the bottom edge of the object they describe. A cobalt hairline pointer (1px, 9px) rises from the label into the object’s bottom margin and ends in a 5px pin-dot with a white ring; labels at an object’s right edge point from their right end. The hero sits side by side only from 80rem; below that the door scene stacks under the headline so no scrap ever covers copy.
 
 ### Paper Objects (signature)
 Thermal receipt (thermal, mono, dashed dividers, torn edge), manila appointment card (red top rule, uppercase tracked letterhead printed on the card, hand-written time in blue Caveat), canary sticky note (Caveat, curl). Each object is pinned with a magnet. Tomato, mint, enamel-hi and marigold are the magnet colors in use.

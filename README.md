@@ -59,7 +59,7 @@ npm run dev                  # http://localhost:3000
 | `npm run db:generate` | Create a SQL migration in `drizzle/` after editing `src/server/db/schema.ts` |
 | `npm run db:migrate` | Apply migrations to `DATABASE_URL` |
 
-The repository contract tests also run against Postgres when `TEST_DATABASE_URL` points at a **disposable** Neon branch (never production): `TEST_DATABASE_URL=… npm test`.
+The repository contract tests also run against real Postgres: CI starts a throwaway database behind a Neon HTTP proxy on every PR (the `postgres-contract` job). To run them yourself, point `TEST_DATABASE_URL` at a **disposable** Neon branch (never production) and run `npm test`.
 
 ## Team
 
