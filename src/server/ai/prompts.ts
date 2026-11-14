@@ -5,6 +5,7 @@
 import type { Member, MonthlyBalance } from "@/shared/domain";
 import { ExpenseCategory, TimeCategory } from "@/shared/domain";
 import { formatCents, formatMinutes } from "@/lib/money";
+import { formatDuration } from "@/lib/i18n/format";
 import type { Locale } from "@/lib/i18n/locales";
 import { CONTRIBUTION_PHRASE, LANGUAGE_NAME } from "./locale";
 import { monthName } from "./template";
@@ -57,11 +58,18 @@ const TONES: Record<InvoiceMessageInput["tone"], string> = {
   direct: "direct and clear, polite and businesslike",
 };
 
+type Duration = (minutes: number) => string;
+
+/** Time in the message's language ("17 ч 45 мин"), so the model copies native units. */
+function durationFor(locale: Locale): Duration {
+  return locale === "en" ? formatMinutes : (minutes) => formatDuration(minutes, locale);
+}
+
 /** One member's facts. Zero amounts and zero time are left out entirely, so the model can't write "$0.00". */
-function memberLine(m: MonthlyBalance["members"][number]): string {
+function memberLine(m: MonthlyBalance["members"][number], duration: Duration): string {
   const parts = [
     m.paidCents > 0 ? `paid ${formatCents(m.paidCents)}` : null,
-    m.minutes > 0 ? `gave ${formatMinutes(m.minutes)} of care` : null,
+    m.minutes > 0 ? `gave ${duration(m.minutes)} of care` : null,
   ];
   if (m.role === "sibling") {
     parts.push(
@@ -74,22 +82,32 @@ function memberLine(m: MonthlyBalance["members"][number]): string {
   return `${m.name} (${m.role}): ${facts.length > 0 ? facts.join(", ") : "nothing logged this month"}`;
 }
 
-function factLines(balance: MonthlyBalance): string[] {
+function factLines(balance: MonthlyBalance, locale: Locale): string[] {
+  const duration = durationFor(locale);
   const lines = [`Month: ${monthName(balance.month)} ${balance.month.slice(0, 4)}`];
   if (balance.totalOutOfPocketCents > 0) {
     lines.push(`Total out-of-pocket care costs: ${formatCents(balance.totalOutOfPocketCents)}`);
   }
-  if (balance.totalMinutes > 0) lines.push(`Total care time given: ${formatMinutes(balance.totalMinutes)}`);
-  return [...lines, ...balance.members.map(memberLine)];
+  if (balance.totalMinutes > 0) lines.push(`Total care time given: ${duration(balance.totalMinutes)}`);
+  return [...lines, ...balance.members.map((m) => memberLine(m, duration))];
 }
+
+/** Everyday words a sibling would use, so the model doesn't translate English idioms literally. */
+const GLOSSARY: Record<Exclude<Locale, "en">, string> = {
+  ru: "out-of-pocket costs → 'расходы'; care time → 'время ухода'; Mom/Dad → 'мама'/'папа' (declined naturally, e.g. 'за мамой')",
+  kk: "out-of-pocket costs → 'шығындар'; care time → 'күтімге берілген уақыт'; Mom/Dad → 'анамыз'/'әкеміз'",
+};
 
 /** Language rules; English needs none beyond the defaults. */
 function languageRules(locale: Locale): string[] {
   if (locale === "en") return [];
   return [
-    `- Write the whole message in natural ${LANGUAGE_NAME[locale]}. Names stay as written.`,
+    `- Write the whole message in natural, grammatical ${LANGUAGE_NAME[locale]}, as a sibling would text family.`,
+    "- Write people's names exactly as given, in Latin letters (Mike, not Майк; Sarah, not Сара).",
+    `- Words to use: ${GLOSSARY[locale]}. Never translate idioms literally.`,
     `- Call the ask '${CONTRIBUTION_PHRASE[locale]}'. Never words meaning debt or owing (e.g. долг, должен, қарыз).`,
     "- Keep every dollar amount exactly in the form given, like $218.40, with the $ sign first. Never write 'долларов' or convert currency.",
+    "- Copy time values exactly as given in the facts (they are already in this language's units).",
   ];
 }
 
@@ -108,6 +126,6 @@ export function invoiceInstructions(input: InvoiceMessageInput, locale: Locale =
     `- Sign off as ${input.caregiverName}.`,
     ...languageRules(locale),
     "Facts:",
-    ...factLines(input.balance),
+    ...factLines(input.balance, locale),
   ].join("\n");
 }
