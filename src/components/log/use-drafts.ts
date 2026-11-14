@@ -6,11 +6,12 @@
 import { useCallback, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
 import type { DraftEntry, EntrySource, NewEntry } from "@/shared/domain";
+import { logCopy, type LogCopy } from "./copy";
 import { draftToForm, emptyForm, formToNewEntry, localToday, type DraftForm, type EntryKind, type FormErrors } from "./draft-form";
 
 export type Notice = { tone: "info" | "success" | "warn"; text: string } | null;
 
-export function useDrafts(api: WorkspaceApi, caregiverId: string, onSaved: () => Promise<void>) {
+export function useDrafts(api: WorkspaceApi, caregiverId: string, onSaved: () => Promise<void>, t: LogCopy = logCopy("en")) {
   const [forms, setForms] = useState<DraftForm[]>([]);
   const [errors, setErrors] = useState<Record<string, FormErrors>>({});
   const [saving, setSaving] = useState(false);
@@ -51,11 +52,11 @@ export function useDrafts(api: WorkspaceApi, caregiverId: string, onSaved: () =>
 
   const confirmAll = useCallback(async () => {
     if (forms.length === 0) return;
-    const results = forms.map((f) => [f.key, formToNewEntry(f)] as const);
+    const results = forms.map((f) => [f.key, formToNewEntry(f, t.errors)] as const);
     const failed = Object.fromEntries(results.flatMap(([k, r]) => (r.ok ? [] : [[k, r.errors]])));
     setErrors(failed);
     if (Object.keys(failed).length > 0) {
-      setNotice({ tone: "warn", text: "A few details are missing — check the highlighted fields." });
+      setNotice({ tone: "warn", text: t.notice.missing });
       return;
     }
     const entries = results.flatMap(([, r]) => (r.ok ? [r.entry] : [])) satisfies NewEntry[];
@@ -63,14 +64,14 @@ export function useDrafts(api: WorkspaceApi, caregiverId: string, onSaved: () =>
     try {
       await api.createEntries(entries);
       setForms([]);
-      setNotice({ tone: "success", text: entries.length === 1 ? "Saved 1 entry." : `Saved ${entries.length} entries.` });
+      setNotice({ tone: "success", text: t.notice.saved(entries.length) });
       await onSaved();
     } catch {
-      setNotice({ tone: "warn", text: "Couldn't save just now. Your cards are still here — try again in a moment." });
+      setNotice({ tone: "warn", text: t.notice.saveFailed });
     } finally {
       setSaving(false);
     }
-  }, [api, forms, onSaved]);
+  }, [api, forms, onSaved, t]);
 
   return { forms, errors, saving, notice, setNotice, addDrafts, addEmpty, update, discard, discardAll, confirmAll };
 }

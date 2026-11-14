@@ -2,10 +2,10 @@
 /** "Type one messy sentence" box. Owner: Olzhas. */
 import { useState, type FormEvent } from "react";
 import { Button, Card, Textarea } from "@/components/ui";
-
-const EXAMPLE = "Paid $86 at CVS for Mom's meds, then drove her to the cardiologist, 3 hours.";
+import { useLogCopy } from "./copy-context";
 
 export function QuickLogBox({ onSubmit }: { onSubmit: (text: string) => Promise<boolean> }) {
+  const { t } = useLogCopy();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const tooShort = text.trim().length < 3;
@@ -24,16 +24,16 @@ export function QuickLogBox({ onSubmit }: { onSubmit: (text: string) => Promise<
       <form onSubmit={submit} className="flex flex-col gap-3">
         <div>
           <label htmlFor="quick-log" className="font-display text-lg font-medium text-ink">
-            What happened?
+            {t.quick.title}
           </label>
-          <p className="mt-0.5 text-sm text-ink-muted">Write it like a text message. We&apos;ll turn it into entries for you to check.</p>
+          <p className="mt-0.5 text-sm text-ink-muted">{t.quick.hint}</p>
         </div>
         <Textarea
           id="quick-log"
           rows={3}
           maxLength={500}
           className="resize-y"
-          placeholder={EXAMPLE}
+          placeholder={t.quick.example}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -41,11 +41,11 @@ export function QuickLogBox({ onSubmit }: { onSubmit: (text: string) => Promise<
           }}
         />
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <button type="button" className="text-sm text-accent-strong underline-offset-2 hover:underline" onClick={() => setText(EXAMPLE)}>
-            Try an example
+          <button type="button" className="text-sm text-accent-strong underline-offset-2 hover:underline" onClick={() => setText(t.quick.example)}>
+            {t.quick.tryExample}
           </button>
           <Button type="submit" disabled={tooShort} isLoading={busy}>
-            {busy ? "Reading your note…" : "Turn into entries"}
+            {busy ? t.quick.busy : t.quick.submit}
           </Button>
         </div>
       </form>
