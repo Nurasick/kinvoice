@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
+import { useLocale } from "@/lib/i18n/client";
 import { monthLabel } from "@/components/log/labels";
 import type { Invoice } from "@/shared/domain";
 import { personalLink } from "./share-links";
@@ -117,6 +118,7 @@ interface SiblingPaymentProps {
 
 function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: SiblingPaymentProps) {
   const origin = useOrigin();
+  const { locale } = useLocale();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const rowRef = useRef<HTMLLIElement>(null);
@@ -161,7 +163,7 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
           {failed && <span className="text-xs text-danger">Didn’t save. Try again.</span>}
           {row.status === "waiting" && (
             <CopyButton
-              value={personalLink(origin, publicToken, row.member.memberId)}
+              value={personalLink(origin, publicToken, row.member.memberId, locale)}
               label={`Copy ${row.member.name}’s link`}
               variant="ghost"
               size="sm"

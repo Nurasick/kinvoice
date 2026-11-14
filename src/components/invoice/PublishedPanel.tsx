@@ -5,6 +5,8 @@
  */
 import type { Invoice, MemberBalance } from "@/shared/domain";
 import { useWorkspace } from "@/components/layout/WorkspaceProvider";
+import { monthYear } from "@/components/public-invoice/public-invoice-view";
+import { useLocale } from "@/lib/i18n/client";
 import { Button, Card, CopyButton, Money, buttonClass, useOrigin } from "@/components/ui";
 import { publicInvoiceUrl } from "./invoice-view";
 import { shareLinks } from "./share-links";
@@ -60,8 +62,9 @@ interface SiblingShareProps {
   origin: string;
 }
 
-function SiblingShare({ member, invoice, monthName, origin }: SiblingShareProps) {
+function SiblingShare({ member, invoice, origin }: SiblingShareProps) {
   const { view } = useWorkspace();
+  const { locale } = useLocale();
   const caregiver = view.members.find((m) => m.role === "caregiver")?.name ?? "";
   const email = view.members.find((m) => m.id === member.memberId)?.email;
   const links = shareLinks({
@@ -71,9 +74,10 @@ function SiblingShare({ member, invoice, monthName, origin }: SiblingShareProps)
     siblingName: member.name,
     caregiverName: caregiver,
     parentName: view.workspace.parentName,
-    monthName,
+    monthName: monthYear(invoice.month, locale),
     amountCents: member.suggestedContributionCents,
     email,
+    locale,
   });
   return (
     <li className="flex flex-col gap-3 rounded-[var(--radius-control)] bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">

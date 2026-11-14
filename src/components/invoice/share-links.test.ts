@@ -46,3 +46,33 @@ describe("share links", () => {
     expect(shareLinks({ ...base, email: undefined }).email.startsWith("mailto:?subject=")).toBe(true);
   });
 });
+
+describe("share links follow the caregiver's language (N3)", () => {
+  it("adds lang to the personal link only when a locale is given", () => {
+    expect(personalLink(base.origin, base.token, base.memberId, "ru")).toBe(
+      "https://kinvoice.test/i/tok_123?for=m-mike&lang=ru",
+    );
+    expect(shareLinks({ ...base, locale: "kk" }).url.endsWith("&lang=kk")).toBe(true);
+  });
+
+  it("writes the message in Russian, keeping USD and the Latin name", () => {
+    const { message, url } = shareLinks({ ...base, locale: "ru", monthName: "Ноябрь 2026" });
+    expect(message).toContain("Привет, Mike!");
+    expect(message).toContain("Твой предлагаемый вклад: $218.40.");
+    expect(message.endsWith(url)).toBe(true);
+  });
+
+  it("writes the message in Kazakh, including the covered case and the email subject", () => {
+    const covered = shareLinks({ ...base, locale: "kk", monthName: "Қараша 2026", amountCents: 0 });
+    expect(covered.message).toContain("Сәлем, Mike!");
+    expect(covered.message).toContain("толық өтелді");
+    expect(decodeURIComponent(covered.email)).toContain("subject=Mom күтімі: Қараша 2026");
+  });
+
+  it("never says owe or debt in any language", () => {
+    for (const locale of ["en", "ru", "kk"] as const) {
+      const text = shareLinks({ ...base, locale }).message.toLowerCase();
+      expect(text).not.toMatch(/owe|debt|долг|должен|қарыз/);
+    }
+  });
+});
