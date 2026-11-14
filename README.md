@@ -38,7 +38,7 @@ More: [architecture and API](docs/ARCHITECTURE.md) · [product brief](docs/kinvo
 
 ## Quality and safety
 
-- **Tests:** 195 Vitest tests, run in CI with lint, typecheck and a production build on every PR. They cover the money math, every API route end to end (auth, validation, payment-mark rules, delete, frozen invoices), AI output validation and fallbacks, the share links in three languages, and the repository contract.
+- **Tests:** 200+ Vitest tests, run in CI with lint, typecheck and a production build on every PR. They cover the money math, every API route end to end (auth, validation, payment-mark rules, delete, frozen invoices), AI output validation and fallbacks, the share links in three languages, and the repository contract.
 - **Privacy:** no accounts and no medical records, only amounts, categories and short neutral notes. The server stores only a SHA-256 hash of each edit key. Deleting a family removes everything, and its links stop working.
 - **Hardening:** every request body is validated with Zod (400 with details; unknown ids are 404). AI and sign-up endpoints are rate-limited per IP. Pages that carry secret tokens are sent with `no-store`, `noindex` and `no-referrer`. The OpenAI key exists only on the server.
 
