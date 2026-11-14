@@ -20,6 +20,12 @@ describe("prompts", () => {
     expect(text).toContain("Today is 2026-11-14");
   });
 
+  it("receipt merchant is a business name, never an address; total beats copay", () => {
+    const text = receiptInstructions("2026-11-14");
+    expect(text).toMatch(/Never an address/);
+    expect(text).toMatch(/TOTAL actually charged wins/);
+  });
+
   it("receipt and quick log steer pharmacy purchases to medication", () => {
     expect(receiptInstructions("2026-11-14")).toMatch(/Pharmacy.*→ medication/);
     expect(quickLogInstructions("2026-11-14", members)).toMatch(/home_care is ONLY paid caregivers/);
