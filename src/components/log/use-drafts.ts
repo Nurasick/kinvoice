@@ -5,24 +5,20 @@
  */
 import { useCallback, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
-import type { DraftEntry, EntrySource, NewEntry, WorkspaceView } from "@/shared/domain";
+import type { DraftEntry, EntrySource, NewEntry } from "@/shared/domain";
 import { draftToForm, emptyForm, formToNewEntry, localToday, type DraftForm, type EntryKind, type FormErrors } from "./draft-form";
 
 export type Notice = { tone: "info" | "success" | "warn"; text: string } | null;
 
-function caregiverId(view: WorkspaceView | null): string {
-  return view?.members.find((m) => m.role === "caregiver")?.id ?? "";
-}
-
-export function useDrafts(api: WorkspaceApi | null, view: WorkspaceView | null, onSaved: () => Promise<void>) {
+export function useDrafts(api: WorkspaceApi, caregiverId: string, onSaved: () => Promise<void>) {
   const [forms, setForms] = useState<DraftForm[]>([]);
   const [errors, setErrors] = useState<Record<string, FormErrors>>({});
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
 
   const defaults = useCallback(
-    (source: EntrySource) => ({ today: localToday(), caregiverId: caregiverId(view), source }),
-    [view],
+    (source: EntrySource) => ({ today: localToday(), caregiverId, source }),
+    [caregiverId],
   );
 
   const addDrafts = useCallback(
@@ -54,7 +50,7 @@ export function useDrafts(api: WorkspaceApi | null, view: WorkspaceView | null, 
   }, []);
 
   const confirmAll = useCallback(async () => {
-    if (!api || forms.length === 0) return;
+    if (forms.length === 0) return;
     const results = forms.map((f) => [f.key, formToNewEntry(f)] as const);
     const failed = Object.fromEntries(results.flatMap(([k, r]) => (r.ok ? [] : [[k, r.errors]])));
     setErrors(failed);

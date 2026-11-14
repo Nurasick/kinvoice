@@ -3,11 +3,10 @@
 import { useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
 import type { Entry, Member } from "@/shared/domain";
-import { formatCents, formatMinutes } from "@/lib/money";
+import { Button, Card, Duration, EmptyState, Money } from "@/components/ui";
 import { entryToForm, formToNewEntry, type DraftForm, type FormErrors } from "./draft-form";
 import { EntryCard } from "./EntryCard";
 import { categoryLabel, shortDate } from "./labels";
-import { Button, Card } from "./ui";
 
 interface Props {
   api: WorkspaceApi;
@@ -36,51 +35,65 @@ function EditEntry({ api, entry, members, onDone }: { api: WorkspaceApi; entry: 
 
   return (
     <EntryCard
+      flat
       form={form}
       members={members}
       errors={errors}
       onChange={setForm}
       actions={
         <>
-          <Button variant="ghost" onClick={() => onDone(false)} disabled={busy}>Cancel</Button>
-          <Button onClick={() => void save()} disabled={busy}>{busy ? "Saving…" : "Save changes"}</Button>
+          <Button variant="ghost" size="sm" onClick={() => onDone(false)} disabled={busy}>Cancel</Button>
+          <Button size="sm" isLoading={busy} onClick={() => void save()}>Save changes</Button>
         </>
       }
     />
   );
 }
 
-function EntryRow({ entry, who, onEdit, onDelete }: { entry: Entry; who: string; onEdit: () => void; onDelete: () => Promise<void> }) {
+function RowActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => Promise<void> }) {
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
-  const amount = entry.kind === "expense" ? formatCents(entry.amountCents) : formatMinutes(entry.minutes);
-  const detail = [entry.kind === "expense" ? entry.merchant : null, entry.note].filter(Boolean).join(" · ");
-
-  return (
-    <li className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3">
-      <span className="w-24 shrink-0 text-sm text-stone-500">{shortDate(entry.date)}</span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium text-stone-900">
-          {categoryLabel(entry.category)} <span className="font-normal text-stone-500">· {who}</span>
-        </span>
-        {detail ? <span className="block truncate text-xs text-stone-500">{detail}</span> : null}
-      </span>
-      <span className={`text-sm font-semibold tabular-nums ${entry.kind === "time" ? "text-teal-800" : "text-stone-900"}`}>{amount}</span>
+  if (!confirming) {
+    return (
       <span className="flex gap-1">
-        {confirming ? (
-          <>
-            <Button variant="danger" className="px-2 py-1" disabled={busy} onClick={async () => { setBusy(true); await onDelete(); setBusy(false); setConfirming(false); }}>
-              {busy ? "Deleting…" : "Delete"}
-            </Button>
-            <Button variant="ghost" className="px-2 py-1" onClick={() => setConfirming(false)}>Keep</Button>
-          </>
-        ) : (
-          <>
-            <Button variant="ghost" className="px-2 py-1" onClick={onEdit}>Edit</Button>
-            <Button variant="ghost" className="px-2 py-1" onClick={() => setConfirming(true)}>Delete</Button>
-          </>
-        )}
+        <Button variant="ghost" size="sm" onClick={onEdit}>Edit</Button>
+        <Button variant="ghost" size="sm" onClick={() => setConfirming(true)}>Delete</Button>
       </span>
+    );
+  }
+  async function remove() {
+    setBusy(true);
+    await onDelete();
+    setBusy(false);
+    setConfirming(false);
+  }
+  return (
+    <span className="flex items-center gap-1">
+      <span className="text-sm text-ink-muted">Delete?</span>
+      <Button variant="danger" size="sm" isLoading={busy} onClick={() => void remove()}>Delete</Button>
+      <Button variant="ghost" size="sm" disabled={busy} onClick={() => setConfirming(false)}>Keep</Button>
+    </span>
+  );
+}
+
+function EntryRow({ entry, who, onEdit, onDelete }: { entry: Entry; who: string; onEdit: () => void; onDelete: () => Promise<void> }) {
+  const detail = [shortDate(entry.date), entry.kind === "expense" ? entry.merchant : null, entry.note].filter(Boolean).join(" · ");
+  return (
+    <li className="py-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="min-w-0 truncate text-sm font-medium text-ink">
+          {categoryLabel(entry.category)} <span className="font-normal text-ink-muted">· {who}</span>
+        </span>
+        {entry.kind === "expense" ? (
+          <Money cents={entry.amountCents} className="shrink-0 text-sm font-semibold text-ink" />
+        ) : (
+          <Duration minutes={entry.minutes} className="shrink-0 text-sm font-semibold text-accent-strong" />
+        )}
+      </div>
+      <div className="mt-0.5 flex items-center justify-between gap-3">
+        <span className="min-w-0 truncate text-xs text-ink-muted">{detail}</span>
+        <RowActions onEdit={onEdit} onDelete={onDelete} />
+      </div>
     </li>
   );
 }
@@ -101,13 +114,13 @@ export function EntryList({ api, entries, members, onChanged }: Props) {
   }
 
   if (entries.length === 0) {
-    return <Card className="text-center text-sm text-stone-600">Nothing logged this month yet. Your first note above is all it takes.</Card>;
+    return <EmptyState title="Nothing logged this month yet" description="Your first note above is all it takes." />;
   }
 
   return (
-    <Card className="py-2">
-      {problem ? <p className="py-2 text-sm text-red-700">{problem}</p> : null}
-      <ul className="divide-y divide-stone-100">
+    <Card className="py-2 sm:py-2">
+      {problem ? <p className="py-2 text-sm text-danger">{problem}</p> : null}
+      <ul className="divide-y divide-line">
         {entries.map((entry) =>
           editing === entry.id ? (
             <li key={entry.id} className="py-3">

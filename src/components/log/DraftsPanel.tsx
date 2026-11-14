@@ -1,9 +1,9 @@
 "use client";
 /** AI drafts + manual cards awaiting confirmation. Owner: Olzhas. */
 import type { Member } from "@/shared/domain";
+import { Button } from "@/components/ui";
 import type { DraftForm } from "./draft-form";
 import { EntryCard } from "./EntryCard";
-import { Button, Spinner } from "./ui";
 import type { DraftsState } from "./use-drafts";
 
 const BADGES: Record<DraftForm["source"], string> = {
@@ -19,8 +19,8 @@ export function DraftsPanel({ drafts, members }: { drafts: DraftsState; members:
   return (
     <section aria-labelledby="drafts-title" className="flex flex-col gap-4">
       <div>
-        <h2 id="drafts-title" className="text-lg font-semibold">Check and confirm</h2>
-        <p className="text-sm opacity-70">Nothing is saved until you confirm. Edit anything that looks off.</p>
+        <h2 id="drafts-title" className="font-display text-xl font-medium text-ink">Check and confirm</h2>
+        <p className="text-sm text-ink-muted">Nothing is saved until you confirm. Edit anything that looks off.</p>
       </div>
       {forms.map((form) => (
         <EntryCard
@@ -31,21 +31,19 @@ export function DraftsPanel({ drafts, members }: { drafts: DraftsState; members:
           badge={BADGES[form.source]}
           onChange={drafts.update}
           actions={
-            <Button variant="ghost" onClick={() => drafts.discard(form.key)} disabled={saving}>
+            <Button variant="ghost" size="sm" onClick={() => drafts.discard(form.key)} disabled={saving}>
               Discard
             </Button>
           }
         />
       ))}
       <div className="flex flex-wrap items-center justify-end gap-3">
-        <Button variant="outside" onClick={drafts.discardAll} disabled={saving}>
+        <Button variant="ghost" onClick={drafts.discardAll} disabled={saving}>
           Discard all
         </Button>
-        {saving ? (
-          <Spinner label="Saving…" />
-        ) : (
-          <Button onClick={() => void drafts.confirmAll()}>{count === 1 ? "Confirm entry" : `Confirm all ${count}`}</Button>
-        )}
+        <Button size="lg" isLoading={saving} onClick={() => void drafts.confirmAll()}>
+          {count === 1 ? "Confirm entry" : `Confirm all ${count}`}
+        </Button>
       </div>
     </section>
   );
