@@ -2,9 +2,9 @@
 name: Kinvoice
 description: One fair monthly care invoice, pinned to the family fridge door.
 colors:
-  enamel: "#2446a0"
-  enamel-deep: "#182f73"
-  enamel-hi: "#3a63c8"
+  enamel: "#1c43a8"
+  enamel-deep: "#11307f"
+  enamel-hi: "#2550c0"
   on-enamel: "#ffffff"
   on-enamel-soft: "#d8e1ff"
   marigold: "#ffb81c"
@@ -158,7 +158,7 @@ The evidence of care already lives on the fridge: a pharmacy receipt, an appoint
 
 Between the enamel bands, the page drops to calm paper surfaces (white and cool mist) where the product's artifacts are shown at life size: the quick-log box, the confirmed receipt entry, the sibling's phone. The register stays warm and plain. The world is physical and specific, but the numbers on it are real, set in a heavy rounded display face that makes a dollar figure read at a glance.
 
-**Scope.** This world is built and shipped on the landing page (`/`). It is the new brand direction. The app screens (`/app`, `/setup`, `/i`) still run an older system, recorded under "App surfaces (current)" in each section below; the app may adopt the fridge-door world later. Do not mix the two systems on one surface.
+**Scope.** This world is shipped on every surface: the landing (`/`) at full strength, and the app (`/app`, `/setup`, `/i`) in its Operate register: an enamel band for the header, white paper cards on the mist ground, cobalt as the accent, Golos Text and Unbounded. App tokens live as Tailwind `@theme` names in `src/app/globals.css`.
 
 **Key Characteristics:**
 - Full-bleed cobalt enamel fields alternate with white and mist paper sections.
@@ -203,8 +203,8 @@ Sibling meters pair each caregiver color with a tint for the siblings (cobalt ti
 
 **The Cobalt Shadow Rule.** Every shadow is tinted deep door-navy (`rgb(8 18 48 / …)` or `rgb(24 47 115 / …)`), never neutral black. Objects sit on blue enamel, so their shadows are blue.
 
-### App surfaces (current)
-Warm paper `#faf7f2` / `#f2ede4` / `#fffdf9`, ink `#1f2a2e` / `#3d4a4f` / `#6b7471`, lines `#e4ddd1` / `#cfc6b7`, a single sage accent `#3f6f63` (strong `#2f574d`, soft `#e3ece7`), and muted status pairs (success `#3c7a55`, warning `#9a6a1f`, danger `#a4473d`, each with a soft tint). Defined as Tailwind `@theme` tokens in `src/app/globals.css`; components use the token names, never raw hex.
+### App surfaces
+The app uses the same world through the `@theme` tokens in `src/app/globals.css` (paper = mist `#eef2fc`, surface = white, accent = cobalt `#1c43a8`, the `.enamel-band` header). Primary buttons on light ground are cobalt; marigold is reserved for the current step and the logo magnet.
 
 ## Typography
 
@@ -232,8 +232,8 @@ Warm paper `#faf7f2` / `#f2ede4` / `#fffdf9`, ink `#1f2a2e` / `#3d4a4f` / `#6b74
 
 **The Heavy Money Rule.** Every dollar figure that matters (the suggested contribution, the price, a drafted amount) is set in Unbounded bold. Ledger rows inside a sheet use Golos 600.
 
-### App surfaces (current)
-Inter (`--font-sans`) for UI and Fraunces (`--font-display`, optical sizing) for display. Latin subset only; it does not yet carry Cyrillic.
+### App surfaces
+The app uses the same world through the `@theme` tokens in `src/app/globals.css` (paper = mist `#eef2fc`, surface = white, accent = cobalt `#1c43a8`, the `.enamel-band` header). Primary buttons on light ground are cobalt; marigold is reserved for the current step and the logo magnet.
 
 ## Layout
 
@@ -267,8 +267,8 @@ This world is physically layered. Paper objects lift off the enamel with a three
 ### Motion
 Entrances use one curve, `cubic-bezier(0.16, 1, 0.3, 1)`. Scraps snap onto the door one by one (760ms, 160ms stagger, falling 28px with extra rotation). Each magnet clacks on 400ms after its object, and the labels rise in last. The invoice lands last. Meters rise on scroll through a view timeline (1100ms). With a fine pointer, objects parallax by depth (`--d` from 3 to 9). Parallax is off for touch and reduced motion, and the global reduced-motion rule collapses every animation.
 
-### App surfaces (current)
-Near-flat: one card shadow (`0 1px 2px rgb(31 42 46 / 0.04), 0 4px 16px rgb(31 42 46 / 0.04)`) and `shadow-sm` on the primary button.
+### App surfaces
+The app uses the same world through the `@theme` tokens in `src/app/globals.css` (paper = mist `#eef2fc`, surface = white, accent = cobalt `#1c43a8`, the `.enamel-band` header). Primary buttons on light ground are cobalt; marigold is reserved for the current step and the logo magnet.
 
 ## Shapes
 
@@ -276,8 +276,8 @@ Paper is paper: the invoice and read-labels have barely rounded 6px corners, whi
 
 Controls are softer: 14px buttons, 12px pay buttons and inner wells, 16px artifact panels, 34px phone body with a 26px screen. Pills (999px) are reserved for the language switch, the price line and the first-month offer. Circles are for magnets and status dots.
 
-### App surfaces (current)
-`--radius-card` 1rem, `--radius-control` 0.625rem.
+### App surfaces
+The app uses the same world through the `@theme` tokens in `src/app/globals.css` (paper = mist `#eef2fc`, surface = white, accent = cobalt `#1c43a8`, the `.enamel-band` header). Primary buttons on light ground are cobalt; marigold is reserved for the current step and the logo magnet.
 
 ## Components
 
@@ -310,8 +310,8 @@ White, 16px corners, 20px padding, long soft cobalt shadow, max about 28rem. Inn
 ### Meters
 A 180px track on `#f7f9fe` with hairline gridlines every 36px and 10px corners. The fill is inset 18% on each side with 8px top corners and grows from the bottom.
 
-### App surfaces (current)
-Button variants primary (sage), secondary (surface with strong line), ghost and danger, in sm/md/lg sizes (32/40/48px) with control radius and Inter 500. A 2px sage focus outline.
+### App surfaces
+The app uses the same world through the `@theme` tokens in `src/app/globals.css` (paper = mist `#eef2fc`, surface = white, accent = cobalt `#1c43a8`, the `.enamel-band` header). Primary buttons on light ground are cobalt; marigold is reserved for the current step and the logo magnet.
 
 ## Do's and Don'ts
 

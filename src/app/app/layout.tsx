@@ -1,4 +1,4 @@
-// Owner: Yernur. App shell for the caregiver area.
+// Owner: Yernur. App shell for the caregiver area: the enamel door as a header band.
 import { AppNav } from "@/components/layout/AppNav";
 import { Logo } from "@/components/layout/Logo";
 import { WorkspaceProvider } from "@/components/layout/WorkspaceProvider";
@@ -6,9 +6,9 @@ import { WorkspaceProvider } from "@/components/layout/WorkspaceProvider";
 export default function AppLayout({ children }: LayoutProps<"/app">) {
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <header className="sticky top-0 z-20 border-b border-line bg-paper/90 backdrop-blur">
+      <header className="enamel-band sticky top-0 z-20 shadow-[0_10px_24px_-18px_rgb(17_48_127/0.8)]">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-8">
-          <Logo href="/app" />
+          <Logo href="/app" tone="enamel" />
           <AppNav />
         </div>
       </header>

@@ -1,46 +1,53 @@
 @import "tailwindcss";
 
 /*
- * Kinvoice design tokens. Owner: Yernur.
- * Calm, warm, trustworthy: warm paper, deep ink, one sage accent.
+ * Kinvoice design tokens: the family fridge door (see DESIGN.md).
+ * Cobalt enamel, white paper on a cool mist ground, marigold for the one action on an enamel field.
  * Use the Tailwind names (bg-paper, text-ink, text-ink-muted, bg-accent, border-line, …),
  * never raw hex values in components.
  */
 @theme {
-  /* surfaces */
-  --color-paper: #faf7f2;
-  --color-paper-deep: #f2ede4;
-  --color-surface: #fffdf9;
+  /* surfaces: mist ground, paper cards */
+  --color-paper: #eef2fc;
+  --color-paper-deep: #e2e8f7;
+  --color-surface: #ffffff;
 
   /* ink */
-  --color-ink: #1f2a2e;
-  --color-ink-soft: #3d4a4f;
-  --color-ink-muted: #6b7471;
-  --color-line: #e4ddd1;
-  --color-line-strong: #cfc6b7;
+  --color-ink: #161d2c;
+  --color-ink-soft: #465066;
+  --color-ink-muted: #5d6680;
+  --color-line: #dfe4f0;
+  --color-line-strong: #c3cbdf;
 
-  /* accent: sage / teal */
-  --color-accent: #3f6f63;
-  --color-accent-strong: #2f574d;
-  --color-accent-soft: #e3ece7;
+  /* accent: cobalt enamel */
+  --color-accent: #1c43a8;
+  --color-accent-strong: #11307f;
+  --color-accent-soft: #e1e8fb;
   --color-accent-ink: #ffffff;
 
-  /* status (muted, never alarming) */
-  --color-success: #3c7a55;
-  --color-success-soft: #e2efe6;
-  --color-warning: #9a6a1f;
-  --color-warning-soft: #f6ead3;
-  --color-danger: #a4473d;
-  --color-danger-soft: #f6e1dd;
+  /* the door and its one bright action */
+  --color-enamel: #1c43a8;
+  --color-enamel-deep: #11307f;
+  --color-on-enamel-soft: #d8e1ff;
+  --color-marigold: #ffb81c;
+  --color-marigold-deep: #f0a000;
+
+  /* status (calm, never alarming) */
+  --color-success: #17704f;
+  --color-success-soft: #e0f4ea;
+  --color-warning: #8a5800;
+  --color-warning-soft: #fff1cc;
+  --color-danger: #b0402f;
+  --color-danger-soft: #fbe4df;
 
   /* type */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-kv-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-kv-display), ui-sans-serif, system-ui, sans-serif;
 
-  /* shape */
-  --radius-card: 1rem;
+  /* shape: paper corners are small; shadows are navy, never black */
+  --radius-card: 0.875rem;
   --radius-control: 0.625rem;
-  --shadow-card: 0 1px 2px rgb(31 42 46 / 0.04), 0 4px 16px rgb(31 42 46 / 0.04);
+  --shadow-card: 0 1px 1px rgb(17 48 127 / 0.06), 0 14px 30px -18px rgb(17 48 127 / 0.35);
 }
 
 html {
@@ -62,10 +69,26 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1;
+}
+
+/* Unbounded is wide: tighten it a touch wherever it sets a heading or a figure. */
+.font-display {
+  letter-spacing: -0.02em;
+}
+
+/* The enamel door as a band: app header, sibling page header. Same material as the landing. */
+.enamel-band {
+  color: #fff;
+  background:
+    linear-gradient(90deg, transparent 50%, rgb(255 255 255 / 0.07) 60%, rgb(255 255 255 / 0.02) 66%, transparent 74%),
+    linear-gradient(180deg, #2550c0 0%, #1c43a8 45%, #11307f 100%);
+  background-color: #1c43a8;
 }
 
 ::selection {
-  background: var(--color-accent-soft);
+  background: var(--color-marigold);
+  color: var(--color-ink);
 }
 
 :focus-visible {

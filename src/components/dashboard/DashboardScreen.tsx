@@ -8,6 +8,7 @@ import { Button, EmptyState, LoadingBlock, MonthPicker, buttonClass } from "@/co
 import { CategoryBreakdown } from "./CategoryBreakdown";
 import { currentMonth, isEmptyMonth } from "./dashboard-view";
 import { MemberBalances } from "./MemberBalances";
+import { MonthProgress } from "./MonthProgress";
 import { MonthSummary } from "./MonthSummary";
 import { RecentEntries } from "./RecentEntries";
 import { useMonthData, type MonthData } from "./use-month-data";
@@ -41,7 +42,7 @@ export function DashboardScreen() {
 }
 
 function MonthBody({ data, month, onRetry }: { data: MonthData; month: string; onRetry: () => void }) {
-  const { view } = useWorkspace();
+  const { api, view } = useWorkspace();
   if (data.state === "loading") return <LoadingBlock label={`Loading ${monthLabel(month)}`} />;
   if (data.state === "error") {
     return (
@@ -67,6 +68,7 @@ function MonthBody({ data, month, onRetry }: { data: MonthData; month: string; o
   }
   return (
     <>
+      <MonthProgress api={api} month={month} entries={data.entries.length} />
       <MonthSummary balance={data.balance} />
       <MemberBalances balance={data.balance} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr]">

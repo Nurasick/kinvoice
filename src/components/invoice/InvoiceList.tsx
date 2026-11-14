@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
 import { monthLabel } from "@/components/log/labels";
 import type { Invoice } from "@/shared/domain";
+import { personalLink } from "./share-links";
 import {
   Badge,
   Button,
@@ -89,6 +90,7 @@ function InvoiceCard({
             key={row.member.memberId}
             api={api}
             invoiceId={invoice.id}
+            publicToken={invoice.publicToken}
             row={row}
             onChanged={onChanged}
           />
@@ -108,11 +110,13 @@ const STATUS: Record<SiblingStatus, { label: string; tone: BadgeTone }> = {
 interface SiblingPaymentProps {
   api: WorkspaceApi;
   invoiceId: string;
+  publicToken: string;
   row: SiblingRow;
   onChanged: () => void;
 }
 
-function SiblingPayment({ api, invoiceId, row, onChanged }: SiblingPaymentProps) {
+function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: SiblingPaymentProps) {
+  const origin = useOrigin();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const canMark = row.status === "waiting" || row.status === "sent";
@@ -144,6 +148,14 @@ function SiblingPayment({ api, invoiceId, row, onChanged }: SiblingPaymentProps)
       {canMark && (
         <div className="flex items-center gap-2">
           {failed && <span className="text-xs text-danger">Didn’t save. Try again.</span>}
+          {row.status === "waiting" && (
+            <CopyButton
+              value={personalLink(origin, publicToken, row.member.memberId)}
+              label={`Copy ${row.member.name}’s link`}
+              variant="ghost"
+              size="sm"
+            />
+          )}
           <Button
             variant={row.status === "sent" ? "primary" : "secondary"}
             size="sm"

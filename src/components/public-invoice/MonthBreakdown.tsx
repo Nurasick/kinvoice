@@ -17,13 +17,16 @@ export function MonthBreakdown({ invoice }: { invoice: PublicInvoice }) {
           /hr, but it is never added to anyone’s contribution.
         </p>
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[30rem] text-sm">
+          <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-line text-left text-xs text-ink-muted">
                 <th className="py-2 pr-3 font-medium">Name</th>
                 <th className="py-2 pr-3 text-right font-medium">Paid</th>
-                <th className="py-2 pr-3 text-right font-medium">Time given</th>
-                <th className="py-2 text-right font-medium">Suggested contribution</th>
+                <th className="py-2 pr-3 text-right font-medium">Time</th>
+                <th className="py-2 text-right font-medium">
+                  <span className="sm:hidden">Suggested</span>
+                  <span className="hidden sm:inline">Suggested contribution</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">

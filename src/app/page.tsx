@@ -4,7 +4,7 @@ import { cookies, headers } from "next/headers";
 import { Pricing, TrustAndClose } from "@/components/landing/Closing";
 import { landingCopy } from "@/components/landing/copy";
 import { FridgeHero } from "@/components/landing/FridgeHero";
-import { landingFontVars } from "@/components/landing/fonts";
+import { landingFontVars } from "@/lib/fonts";
 import { Imbalance } from "@/components/landing/Imbalance";
 import { landingData } from "@/components/landing/landing-data";
 import { Steps } from "@/components/landing/Steps";

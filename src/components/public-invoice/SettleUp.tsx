@@ -32,13 +32,16 @@ export function SettleUp({
   token,
   invoice,
   monthName,
+  preselect = null,
 }: {
   token: string;
   invoice: PublicInvoice;
   monthName: string;
+  /** Member id from a personal link (?for=…); opens straight on that sibling's amount. */
+  preselect?: string | null;
 }) {
   const list = siblings(invoice);
-  const [memberId, setMemberId] = useState<string | null>(() => initialSibling(invoice, null));
+  const [memberId, setMemberId] = useState<string | null>(() => initialSibling(invoice, preselect));
   const [payments, setPayments] = useState<PaymentMark[]>(invoice.payments);
 
   useEffect(() => {
@@ -59,7 +62,9 @@ export function SettleUp({
     <Card tone="accent" className="flex flex-col gap-5">
       <div>
         <h2 className="font-display text-xl font-medium">Your part this month</h2>
-        <p className="mt-1 text-sm text-ink-soft">Tap your name to see your suggested contribution.</p>
+        <p className="mt-1 text-sm text-ink-soft">
+          {me ? "Not you? Tap your name." : "Tap your name to see your suggested contribution."}
+        </p>
         <div role="radiogroup" aria-label="Who is reading" className="mt-3 flex flex-wrap gap-2">
           {list.map((m) => (
             <button
