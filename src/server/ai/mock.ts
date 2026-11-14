@@ -33,13 +33,13 @@ export const mockAi: AiService = {
         amountCents,
         category: isMeds ? "medication" : "other",
         merchant: guessMerchant(text),
-        note: text.slice(0, 120),
+        note: isMeds ? "Medication" : undefined,
       });
     }
     const minutes = parseDuration(text);
     if (minutes) {
       const isAppt = /doctor|cardio|appoint|clinic|dentist|drove/i.test(text);
-      drafts.push({ kind: "time", date: today, minutes, category: isAppt ? "appointments" : "other", note: text.slice(0, 120) });
+      drafts.push({ kind: "time", date: today, minutes, category: isAppt ? "appointments" : "other" });
     }
     return { drafts, fallback: drafts.length === 0 };
   },
