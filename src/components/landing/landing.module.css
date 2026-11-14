@@ -1,0 +1,578 @@
+/*
+ * Landing world: the family fridge door. Owner: Nurali.
+ * Cobalt appliance enamel is the page; paper objects (thermal receipt, manila appointment card,
+ * canary sticky note, white invoice) are held on it by round enamel magnets.
+ */
+
+.root {
+  --enamel: #2446a0;
+  --enamel-deep: #182f73;
+  --enamel-hi: #3a63c8;
+  --on-enamel: #ffffff;
+  --on-enamel-soft: #d8e1ff;
+  --paper: #ffffff;
+  --thermal: #f6f6f2;
+  --ink: #161d2c;
+  --ink-soft: #465066;
+  --ink-faint: #6b7489;
+  --manila: #f2e2b3;
+  --manila-rule: #c8432f;
+  --sticky: #ffdf5e;
+  --tomato: #e4513b;
+  --marigold: #ffb81c;
+  --marigold-deep: #f0a000;
+  --mint: #4fc59f;
+  --mist: #eef2fc;
+  --line: #dfe4f0;
+  --pay: #2446a0;
+
+  font-family: var(--font-kv-body), ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--mist);
+  font-feature-settings: "tnum" 1;
+}
+
+.root ::selection {
+  background: var(--marigold);
+  color: var(--ink);
+}
+
+.root :focus-visible {
+  outline: 3px solid var(--marigold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.display {
+  font-family: var(--font-kv-display), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.hand {
+  font-family: var(--font-kv-hand), cursive;
+}
+
+.mono {
+  font-family: var(--font-kv-mono), ui-monospace, monospace;
+}
+
+/* ---------- enamel door ---------- */
+
+.enamel {
+  position: relative;
+  color: var(--on-enamel);
+  background:
+    radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%),
+    linear-gradient(
+      180deg,
+      var(--enamel-hi) 0%,
+      var(--enamel) 38%,
+      var(--enamel) 72%,
+      var(--enamel-deep) 100%
+    );
+  overflow: clip;
+}
+
+/* Fine enamel speckle so the field reads as a painted surface, not a flat fill. */
+.enamel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.onEnamelSoft {
+  color: var(--on-enamel-soft);
+}
+
+/* The door handle: a brushed bar along the right edge of the door. */
+.handle {
+  position: absolute;
+  top: 18%;
+  right: clamp(10px, 1.6vw, 26px);
+  width: 14px;
+  height: 46%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8d97ad 0%, #f4f6fb 35%, #c5ccdb 60%, #7d879e 100%);
+  box-shadow:
+    -6px 10px 18px rgb(8 18 48 / 0.35),
+    inset 0 0 0 1px rgb(255 255 255 / 0.25);
+}
+
+.handle::before,
+.handle::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  width: 22px;
+  height: 18px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #6f7a92, #cfd5e2);
+}
+
+.handle::before {
+  top: -6px;
+}
+
+.handle::after {
+  bottom: -6px;
+}
+
+/* ---------- buttons ---------- */
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.5rem;
+  padding: 0 1.6rem;
+  border-radius: 14px;
+  background: var(--marigold);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  box-shadow:
+    0 2px 0 var(--marigold-deep),
+    0 14px 28px -10px rgb(10 20 60 / 0.55);
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 180ms;
+}
+
+.btnPrimary:hover {
+  background: #ffc540;
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 0 var(--marigold-deep),
+    0 20px 34px -12px rgb(10 20 60 / 0.6);
+}
+
+.btnPrimary:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 var(--marigold-deep),
+    0 8px 16px -8px rgb(10 20 60 / 0.5);
+}
+
+.btnPrimary[aria-busy="true"] {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3.5rem;
+  padding: 0 1.25rem;
+  border-radius: 14px;
+  color: var(--on-enamel);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 0.45);
+  text-underline-offset: 6px;
+  transition: text-decoration-color 160ms;
+}
+
+.btnGhost:hover {
+  text-decoration-color: var(--marigold);
+}
+
+.btnInk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 0 1.5rem;
+  border-radius: 14px;
+  background: var(--enamel);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 12px 24px -12px rgb(24 47 115 / 0.7);
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 180ms;
+}
+
+.btnInk:hover {
+  background: var(--enamel-deep);
+  transform: translateY(-2px);
+}
+
+/* ---------- language switch ---------- */
+
+.lang {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgb(8 20 60 / 0.28);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.25);
+}
+
+.langItem {
+  min-width: 2.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--on-enamel-soft);
+  transition:
+    background-color 160ms,
+    color 160ms;
+}
+
+.langItem:hover {
+  color: #fff;
+}
+
+.langItem[aria-current="true"] {
+  background: #fff;
+  color: var(--enamel-deep);
+}
+
+/* ---------- the scene on the door ---------- */
+
+.scene {
+  position: relative;
+  height: 780px;
+  max-width: 440px;
+  margin-inline: auto;
+}
+
+/* Parallax layer: moves with the pointer by its depth. The inner .drop handles the load animation. */
+.item {
+  position: absolute;
+  transform: translate3d(calc(var(--px, 0) * var(--d, 4) * 1px), calc(var(--py, 0) * var(--d, 4) * 1px), 0);
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.drop {
+  position: relative;
+  transform: rotate(var(--rot, 0deg));
+  animation: snap 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 160ms + 120ms);
+}
+
+@keyframes snap {
+  from {
+    opacity: 0;
+    transform: translateY(-28px) rotate(calc(var(--rot, 0deg) * 2.2)) scale(1.04);
+  }
+  45% {
+    opacity: 1;
+  }
+}
+
+.posReceipt {
+  left: 0;
+  top: 0;
+  width: 48%;
+  --d: 7;
+  --rot: -4deg;
+  --i: 0;
+  z-index: 2;
+}
+
+.posCard {
+  right: 0;
+  top: 10px;
+  width: 47%;
+  --d: 5;
+  --rot: 4deg;
+  --i: 1;
+  z-index: 1;
+}
+
+.posSticky {
+  left: 6%;
+  top: 236px;
+  width: 50%;
+  --d: 9;
+  --rot: 3deg;
+  --i: 2;
+  z-index: 3;
+}
+
+.posInvoice {
+  left: 2%;
+  right: 2%;
+  top: 410px;
+  --d: 3;
+  --rot: -1deg;
+  --i: 3;
+  z-index: 4;
+}
+
+@media (min-width: 64rem) {
+  .scene {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 46%;
+    right: 3.5rem;
+    max-width: none;
+    height: auto;
+    margin: 0;
+  }
+
+  .posReceipt {
+    left: 0;
+    top: 6%;
+    width: 228px;
+  }
+
+  .posCard {
+    left: auto;
+    right: 0;
+    top: 2%;
+    width: 232px;
+  }
+
+  .posSticky {
+    left: 3%;
+    right: auto;
+    top: 62%;
+    width: 196px;
+  }
+
+  .posInvoice {
+    left: auto;
+    right: 5%;
+    top: 30%;
+    width: min(400px, 58%);
+  }
+}
+
+/* ---------- magnets ---------- */
+
+.magnet {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  border-radius: 50%;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.75) 0 12%, transparent 13%),
+    var(--m, var(--tomato));
+  box-shadow:
+    0 6px 8px -2px rgb(8 18 48 / 0.45),
+    inset 0 -3px 4px rgb(0 0 0 / 0.22),
+    inset 0 2px 2px rgb(255 255 255 / 0.35);
+  animation: clack 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 160ms + 520ms);
+}
+
+@keyframes clack {
+  from {
+    transform: scale(1.35) translateY(-6px);
+    opacity: 0;
+  }
+}
+
+/* ---------- paper objects ---------- */
+
+.paperShadow {
+  box-shadow:
+    0 1px 1px rgb(8 18 48 / 0.18),
+    0 18px 30px -14px rgb(8 18 48 / 0.6),
+    0 34px 60px -30px rgb(8 18 48 / 0.55);
+}
+
+.receipt {
+  position: relative;
+  background: var(--thermal);
+  color: #2b3140;
+  padding: 1.1rem 1rem 1.6rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Torn zigzag bottom edge of thermal paper. */
+.receipt::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -9px;
+  height: 10px;
+  background:
+    linear-gradient(-45deg, transparent 6px, var(--thermal) 0) 0 0 / 12px 12px repeat-x,
+    linear-gradient(45deg, transparent 6px, var(--thermal) 0) 0 0 / 12px 12px repeat-x;
+}
+
+.dash {
+  border-top: 1px dashed #9aa1b1;
+}
+
+.card {
+  background: var(--manila);
+  color: #3a2f1d;
+  padding: 1.1rem 1.1rem 1rem;
+  border-top: 6px solid var(--manila-rule);
+}
+
+.sticky {
+  position: relative;
+  background: var(--sticky);
+  color: #2a2410;
+  padding: 1.3rem 1.1rem 1.2rem;
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+
+/* Sticky notes curl at the bottom corner and lift off the door. */
+.sticky::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  width: 60%;
+  height: 18px;
+  z-index: -1;
+  transform: skew(6deg) rotate(4deg);
+  box-shadow: 0 14px 14px rgb(8 18 48 / 0.45);
+}
+
+.invoice {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 1.5rem 1.5rem 1.25rem;
+}
+
+.payBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  border-radius: 12px;
+  background: var(--pay);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ---------- printed labels ("what Kinvoice reads") ---------- */
+
+.tag {
+  position: absolute;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 16px -8px rgb(8 18 48 / 0.6);
+  animation: tagIn 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 160ms + 900ms);
+}
+
+.tag b {
+  font-weight: 600;
+  color: var(--enamel);
+}
+
+.tagDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint);
+}
+
+@keyframes tagIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* ---------- imbalance meters ---------- */
+
+.meterTrack {
+  position: relative;
+  height: 180px;
+  border-radius: 10px;
+  background: repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 36px), #f7f9fe;
+  overflow: hidden;
+}
+
+.meterFill {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 0;
+  border-radius: 8px 8px 0 0;
+  transform-origin: bottom;
+  animation: rise 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-timeline: view();
+  animation-range: entry 10% cover 40%;
+}
+
+@keyframes rise {
+  from {
+    transform: scaleY(0.04);
+  }
+}
+
+/* ---------- small shared bits ---------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.stepNum {
+  font-family: var(--font-kv-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(4.5rem, 3rem + 6vw, 8rem);
+  line-height: 0.8;
+  color: var(--enamel);
+  letter-spacing: -0.04em;
+}
+
+.phone {
+  width: 260px;
+  border-radius: 34px;
+  padding: 10px;
+  background: #11161f;
+  box-shadow: 0 30px 60px -28px rgb(8 18 48 / 0.6);
+}
+
+.phoneScreen {
+  border-radius: 26px;
+  background: #fff;
+  padding: 1.25rem 1rem 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transform: none;
+    transition: none;
+  }
+  .meterFill {
+    animation: none;
+  }
+}
