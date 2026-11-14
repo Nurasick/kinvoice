@@ -4,12 +4,15 @@
 import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/layout/Logo";
+import { frameCopy } from "@/components/layout/copy";
+import { useLocale } from "@/lib/i18n/client";
 import { LoadingBlock } from "@/components/ui";
 import { saveWorkspaceKey } from "@/lib/workspace-key";
 
 export default function EditLinkPage({ params }: PageProps<"/w/[key]">) {
   const { key } = use(params);
   const router = useRouter();
+  const { locale } = useLocale();
   useEffect(() => {
     saveWorkspaceKey(decodeURIComponent(key));
     router.replace("/app");
@@ -20,7 +23,7 @@ export default function EditLinkPage({ params }: PageProps<"/w/[key]">) {
         <Logo />
       </header>
       <main className="flex-1 px-4">
-        <LoadingBlock label="Opening your family space" />
+        <LoadingBlock label={frameCopy(locale).states.openingSpace} />
       </main>
     </div>
   );

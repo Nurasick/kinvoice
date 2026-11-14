@@ -2,7 +2,9 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { publicApi } from "@/lib/api/client";
 import { saveWorkspaceKey } from "@/lib/workspace-key";
+import { useLocale } from "@/lib/i18n/client";
 import { Button, Card, Field, Input } from "@/components/ui";
+import { setupCopy } from "./copy";
 import { emptyDraft, toCreateRequest, type SetupDraft, type SetupErrors } from "./setup-draft";
 import { DollarInput } from "./DollarInput";
 import { PaymentHandlesFields } from "./PaymentHandlesFields";
@@ -17,6 +19,9 @@ export function SetupForm({ onCreated }: SetupFormProps) {
   const [draft, setDraft] = useState<SetupDraft>(emptyDraft);
   const [errors, setErrors] = useState<SetupErrors>({});
   const [isSaving, setIsSaving] = useState(false);
+  const { locale } = useLocale();
+  const c = setupCopy(locale);
+  const t = c.setup;
 
   function set<K extends keyof SetupDraft>(key: K, value: SetupDraft[K]): void {
     setDraft((d) => ({ ...d, [key]: value }));
@@ -39,9 +44,7 @@ export function SetupForm({ onCreated }: SetupFormProps) {
       saveWorkspaceKey(editKey);
       onCreated(editKey);
     } catch {
-      setErrors({
-        form: "We couldn't save your family just now. Your details are still here, so please try again.",
-      });
+      setErrors({ form: "setupFailed" });
       setIsSaving(false);
     }
   }
@@ -50,20 +53,20 @@ export function SetupForm({ onCreated }: SetupFormProps) {
 
   return (
     <form onSubmit={(e) => void submit(e)} noValidate className="flex flex-col gap-6">
-      <Section title="Who you're caring for" description="First names are enough.">
+      <Section title={t.whoTitle} description={t.whoBody}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Parent's name" error={errors.parentName}>
+          <Field label={c.fields.parentName} error={errors.parentName && c.errors[errors.parentName]}>
             {(p) => (
               <Input
                 {...p}
                 value={draft.parentName}
                 onChange={(e) => set("parentName", e.target.value)}
-                placeholder="Mom, or Linda"
+                placeholder={t.parentPlaceholder}
                 maxLength={60}
               />
             )}
           </Field>
-          <Field label="Your name" error={errors.caregiverName}>
+          <Field label={t.yourName} error={errors.caregiverName && c.errors[errors.caregiverName]}>
             {(p) => (
               <Input
                 {...p}
@@ -78,37 +81,35 @@ export function SetupForm({ onCreated }: SetupFormProps) {
         </div>
       </Section>
 
-      <Section
-        title="Your siblings"
-        description="They'll get a link. They never need an account. Emails are just for your reference."
-      >
+      <Section title={t.siblingsTitle} description={t.siblingsBody}>
         <SiblingsFields siblings={draft.siblings} errors={errors} onChange={(s) => set("siblings", s)} />
       </Section>
 
-      <Section
-        title="Value of your time"
-        description="Shown next to the money so the time you give is seen. It's never added to anyone's suggested contribution."
-      >
+      <Section title={t.timeTitle} description={t.timeBody}>
         <div className="max-w-48">
-          <Field label="Per hour of care" error={errors.hourlyRate}>
-            {(p) => <DollarInput {...p} value={draft.hourlyRate} onChange={(v) => set("hourlyRate", v)} />}
+          <Field label={c.settings.rateLabel} error={errors.hourlyRate && c.errors[errors.hourlyRate]}>
+            {(p) => (
+              <DollarInput
+                {...p}
+                suffix={c.fields.perHour}
+                value={draft.hourlyRate}
+                onChange={(v) => set("hourlyRate", v)}
+              />
+            )}
           </Field>
         </div>
       </Section>
 
-      <Section
-        title="How siblings can pay you"
-        description="Optional. Pay buttons only show for the ones you fill in."
-      >
+      <Section title={t.payTitle} description={t.payBody}>
         <PaymentHandlesFields values={draft} onChange={set} />
       </Section>
 
       <div className="flex flex-col-reverse items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p role={hasErrors ? "alert" : undefined} className="text-sm text-danger">
-          {errors.form ?? (hasErrors ? "A few details need a look above." : "")}
+          {errors.form ? c.errors[errors.form] : hasErrors ? t.needsLook : ""}
         </p>
         <Button type="submit" size="lg" isLoading={isSaving}>
-          Create our family space
+          {t.submit}
         </Button>
       </div>
     </form>
