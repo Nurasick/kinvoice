@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Kinvoice design tokens. Owner: Yernur.
+ * Calm, warm, trustworthy: warm paper, deep ink, one sage accent.
+ * Use the Tailwind names (bg-paper, text-ink, text-ink-muted, bg-accent, border-line, …),
+ * never raw hex values in components.
+ */
+@theme {
+  /* surfaces */
+  --color-paper: #faf7f2;
+  --color-paper-deep: #f2ede4;
+  --color-surface: #fffdf9;
+
+  /* ink */
+  --color-ink: #1f2a2e;
+  --color-ink-soft: #3d4a4f;
+  --color-ink-muted: #6b7471;
+  --color-line: #e4ddd1;
+  --color-line-strong: #cfc6b7;
+
+  /* accent: sage / teal */
+  --color-accent: #3f6f63;
+  --color-accent-strong: #2f574d;
+  --color-accent-soft: #e3ece7;
+  --color-accent-ink: #ffffff;
+
+  /* status (muted, never alarming) */
+  --color-success: #3c7a55;
+  --color-success-soft: #e2efe6;
+  --color-warning: #9a6a1f;
+  --color-warning-soft: #f6ead3;
+  --color-danger: #a4473d;
+  --color-danger-soft: #f6e1dd;
+
+  /* type */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  /* shape */
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
+  --shadow-card: 0 1px 2px rgb(31 42 46 / 0.04), 0 4px 16px rgb(31 42 46 / 0.04);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
