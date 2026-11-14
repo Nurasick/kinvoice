@@ -28,6 +28,7 @@ export interface ResponsesClient {
     create(
       body: {
         model: string;
+        reasoning: { effort: "minimal" | "low" };
         instructions: string;
         input: { role: "user"; content: ContentPart[] }[];
         text: { format: { type: "json_schema"; name: string; schema: JsonSchema; strict: true } };
@@ -61,6 +62,8 @@ async function callJson(deps: OpenAiDeps, call: JsonCall): Promise<unknown> {
     const res = await deps.client.responses.create(
       {
         model: deps.model,
+        // Default reasoning takes 9–14 s on gpt-5-mini and trips the 12 s timeout; minimal answers in 3–5 s.
+        reasoning: { effort: "minimal" },
         instructions: call.instructions,
         input: [{ role: "user", content: call.content }],
         text: { format: { type: "json_schema", name: call.name, schema: call.schema, strict: true } },
