@@ -60,7 +60,13 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const value = useMemo<WorkspaceContextValue | null>(() => {
     if (state.status !== "ready") return null;
     const caregiver = state.view.members.find((m) => m.role === "caregiver") ?? state.view.members[0];
-    return { editKey: state.editKey, api: workspaceApi(state.editKey), view: state.view, caregiver, refresh: load };
+    return {
+      editKey: state.editKey,
+      api: workspaceApi(state.editKey),
+      view: state.view,
+      caregiver,
+      refresh: load,
+    };
   }, [state, load]);
 
   if (state.status === "loading") return <LoadingBlock label="Opening your family workspace" />;

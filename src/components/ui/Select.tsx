@@ -29,7 +29,13 @@ export function Select({ options, placeholder, className, ...rest }: SelectProps
         viewBox="0 0 20 20"
         className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-ink-muted"
       >
-        <path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path
+          d="M5.5 7.5 10 12l4.5-4.5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
       </svg>
     </div>
   );

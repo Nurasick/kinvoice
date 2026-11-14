@@ -14,7 +14,10 @@ export function Spinner({ size = "md", label = "Loading", className }: SpinnerPr
     <span role={label ? "status" : undefined} className={cn("inline-flex items-center", className)}>
       <span
         aria-hidden
-        className={cn("animate-spin rounded-full border-current border-r-transparent opacity-70", SIZES[size])}
+        className={cn(
+          "animate-spin rounded-full border-current border-r-transparent opacity-70",
+          SIZES[size],
+        )}
       />
       {label && <span className="sr-only">{label}</span>}
     </span>

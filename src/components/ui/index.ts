@@ -9,3 +9,4 @@ export { Badge, type BadgeProps, type BadgeTone } from "./Badge";
 export { Money, Duration, type MoneyProps, type DurationProps } from "./Money";
 export { Spinner, LoadingBlock, type SpinnerProps } from "./Spinner";
 export { EmptyState, type EmptyStateProps } from "./EmptyState";
+export { CopyButton, type CopyButtonProps } from "./CopyButton";

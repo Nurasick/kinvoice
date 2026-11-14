@@ -19,7 +19,11 @@ const SIZES: Record<ButtonSize, string> = {
 };
 
 /** Shared class string so links can look like buttons: `<Link className={buttonClass()} />`. */
-export function buttonClass(variant: ButtonVariant = "primary", size: ButtonSize = "md", extra?: string): string {
+export function buttonClass(
+  variant: ButtonVariant = "primary",
+  size: ButtonSize = "md",
+  extra?: string,
+): string {
   return cn(
     "inline-flex items-center justify-center rounded-[var(--radius-control)] font-medium whitespace-nowrap",
     "transition-colors disabled:cursor-not-allowed disabled:opacity-55",
