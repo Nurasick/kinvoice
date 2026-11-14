@@ -19,7 +19,14 @@ const NOTE_RULE =
   "a short neutral description in everyday words (max ~60 chars), e.g. 'Drove Mom to a doctor's appointment'. " +
   "No diagnoses, specialties or drug names.";
 
-export function quickLogInstructions(today: string, members: readonly Member[]): string {
+/** Which language notes are written in: the text's own language first, the app's language as the tie-break. */
+function noteLanguage(locale: Locale, source: "text" | "receipt"): string {
+  if (source === "receipt") return `Write the note in ${LANGUAGE_NAME[locale]}.`;
+  const tieBreak = locale === "en" ? "" : ` If the language is unclear or mixed, use ${LANGUAGE_NAME[locale]} (the app's language).`;
+  return `Write it in the same language as the user's text (Russian text → Russian note, Kazakh → Kazakh).${tieBreak}`;
+}
+
+export function quickLogInstructions(today: string, members: readonly Member[], locale: Locale = "en"): string {
   const people = members.map((m) => `- ${m.name} (${m.role}) → memberId "${m.id}"`).join("\n");
   return [
     "You turn a family caregiver's quick note about caring for an elderly parent into draft log entries.",
@@ -33,7 +40,7 @@ export function quickLogInstructions(today: string, members: readonly Member[]):
     `- expense categories: ${ExpenseCategory.options.join(", ")}. ${CATEGORY_HINTS}`,
     `- time categories: ${TimeCategory.options.join(", ")}. Driving to/attending a doctor visit → appointments.`,
     "- merchant: store or company name for expenses (e.g. CVS), else null.",
-    `- note: ${NOTE_RULE} Write it in the same language as the user's text (Russian text → Russian note, Kazakh → Kazakh).`,
+    `- note: ${NOTE_RULE} ${noteLanguage(locale, "text")}`,
     "- The text may be English, Russian or Kazakh ('3 часа' / '3 сағат' = 180 minutes, 'полчаса' / 'жарты сағат' = 30). Amounts are US dollars.",
     "- memberId: who paid / gave the time, only from this list; null if it's the writer or unclear:",
     people,
@@ -41,7 +48,7 @@ export function quickLogInstructions(today: string, members: readonly Member[]):
   ].join("\n");
 }
 
-export function receiptInstructions(today: string): string {
+export function receiptInstructions(today: string, locale: Locale = "en"): string {
   return [
     "Read this receipt for an elderly parent's care costs.",
     "amountCents: the final TOTAL actually paid, in integer cents (e.g. $43.17 → 4317). null if unreadable. Never guess.",
@@ -49,7 +56,7 @@ export function receiptInstructions(today: string): string {
     "merchant: the business name printed on the receipt, short (e.g. 'CVS Pharmacy'). Never an address, phone or city; null if no name is printed.",
     "The TOTAL actually charged wins over subtotal, copay or insurance lines (e.g. 'COPAY $10.00' above 'TOTAL $21.98' → 2198).",
     `category: one of ${ExpenseCategory.options.join(", ")}. ${CATEGORY_HINTS}`,
-    `note: what was bought, ${NOTE_RULE} Write 'Prescription' instead of Rx numbers or drug names.`,
+    `note: what was bought, ${NOTE_RULE} Write 'Prescription' (in the note's language) instead of Rx numbers or drug names. ${noteLanguage(locale, "receipt")}`,
     "isReceipt: false if the image is not a receipt or invoice; then set the other fields to null.",
   ].join("\n");
 }

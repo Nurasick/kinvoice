@@ -20,6 +20,13 @@ describe("prompts", () => {
     expect(text).toContain("Today is 2026-11-14");
   });
 
+  it("notes: text's language first, the app's language breaks ties; receipts use the app's language", () => {
+    expect(quickLogInstructions("2026-11-14", members)).not.toMatch(/the app's language/);
+    expect(quickLogInstructions("2026-11-14", members, "kk")).toMatch(/unclear or mixed, use Kazakh \(the app's language\)/);
+    expect(receiptInstructions("2026-11-14", "ru")).toMatch(/Write the note in Russian\./);
+    expect(receiptInstructions("2026-11-14")).toMatch(/Write the note in English\./);
+  });
+
   it("receipt merchant is a business name, never an address; total beats copay", () => {
     const text = receiptInstructions("2026-11-14");
     expect(text).toMatch(/Never an address/);

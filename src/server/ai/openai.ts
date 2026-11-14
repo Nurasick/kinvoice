@@ -114,10 +114,11 @@ function receiptDraft(raw: unknown): { draft: DraftEntry | null; complete: boole
 export function createOpenAiService(deps?: OpenAiDeps): AiService {
   const resolved = deps ?? defaultDeps();
   return {
-    async parseQuickLog({ text, today, members }) {
+    async parseQuickLog(input) {
+      const { text, today, members } = input;
       const raw = await callJson(resolved, {
         name: "quick_log",
-        instructions: quickLogInstructions(today, members),
+        instructions: quickLogInstructions(today, members, localeOf(input)),
         content: [{ type: "input_text", text }],
         schema: quickLogSchema(members.map((m) => m.id)),
       });
@@ -130,7 +131,7 @@ export function createOpenAiService(deps?: OpenAiDeps): AiService {
       if (!part) return { draft: null, fallback: true };
       const raw = await callJson(resolved, {
         name: "receipt",
-        instructions: receiptInstructions(input.today),
+        instructions: receiptInstructions(input.today, localeOf(input)),
         content: [part],
         schema: receiptSchema,
       });

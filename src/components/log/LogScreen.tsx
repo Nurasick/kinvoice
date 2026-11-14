@@ -5,7 +5,7 @@
  * AI failure never shows an error page — it opens the manual card instead.
  */
 import { useState } from "react";
-import type { Locale } from "@/lib/i18n/locales";
+import { useLocale } from "@/lib/i18n/client";
 import { Button, Card, CardHeader, EmptyState, LoadingBlock } from "@/components/ui";
 import { useWorkspace } from "@/components/layout/WorkspaceProvider";
 import { LogCopyProvider, useLogCopy } from "./copy-context";
@@ -84,7 +84,9 @@ function LogBody() {
   );
 }
 
-export function LogScreen({ locale = "en" }: { locale?: Locale }) {
+/** The language comes from Nurali's app-wide LocaleProvider, so the header switch updates this screen. */
+export function LogScreen() {
+  const { locale } = useLocale();
   return (
     <LogCopyProvider locale={locale}>
       <LogBody />
