@@ -103,11 +103,20 @@ export function receiptContent({ bytes, mimeType }: ReceiptInput): ContentPart |
   return null;
 }
 
+/** "123 Main Street", "730 Oakridge Ave" — a house number plus a street word. "7-Eleven" or "99 Ranch Market" pass. */
+const STREET_ADDRESS = /^\d+[a-z]?\s+.*\b(street|st|avenue|ave|road|rd|boulevard|blvd|drive|dr|lane|ln|way|plaza|suite|ste|hwy|highway)\b\.?/i;
+
+/** On a receipt with no printed name the model sometimes returns the address as the merchant; drop it. */
+export function isAddressLike(merchant: string): boolean {
+  return STREET_ADDRESS.test(merchant.trim());
+}
+
 function receiptDraft(raw: unknown): { draft: DraftEntry | null; complete: boolean } {
   if (typeof raw !== "object" || raw === null || (raw as { isReceipt?: unknown }).isReceipt === false) {
     return { draft: null, complete: false };
   }
-  const draft = salvageDraft(raw, [], "expense");
+  const salvaged = salvageDraft(raw, [], "expense");
+  const draft = salvaged?.merchant && isAddressLike(salvaged.merchant) ? { ...salvaged, merchant: undefined } : salvaged;
   return { draft, complete: draft?.amountCents !== undefined };
 }
 
