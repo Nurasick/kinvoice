@@ -4,6 +4,7 @@
  */
 import type { DraftEntry } from "@/shared/domain";
 import { parseDollarsToCents } from "@/lib/money";
+import { localeOf } from "./locale";
 import { templateInvoiceMessage } from "./template";
 import type { AiService } from "./types";
 
@@ -13,10 +14,11 @@ function guessMerchant(text: string): string | undefined {
   return MERCHANTS.find((m) => text.toLowerCase().includes(m.toLowerCase()));
 }
 
+/** Hours/minutes in English, Russian ("3 часа", "45 минут") or Kazakh ("3 сағат"). */
 function parseDuration(text: string): number | undefined {
-  const hours = /(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hours?)\b/i.exec(text);
-  if (hours) return Math.round(Number(hours[1]) * 60);
-  const mins = /(\d+)\s*(?:m|min|mins|minutes?)\b/i.exec(text);
+  const hours = /(\d+(?:[.,]\d+)?)\s*(?:h|hr|hrs|hours?|ч|час\p{L}*|сағ\p{L}*)(?!\p{L})/iu.exec(text);
+  if (hours) return Math.round(Number(hours[1].replace(",", ".")) * 60);
+  const mins = /(\d+)\s*(?:m|min|mins|minutes?|мин\p{L}*)(?!\p{L})/iu.exec(text);
   return mins ? Number(mins[1]) : undefined;
 }
 
@@ -26,7 +28,7 @@ export const mockAi: AiService = {
     const amount = /\$\s?([\d,]+(?:\.\d{1,2})?)/.exec(text);
     const amountCents = amount ? parseDollarsToCents(amount[1]) : null;
     if (amountCents) {
-      const isMeds = /med|pharm|prescri|cvs|walgreens/i.test(text);
+      const isMeds = /med|pharm|prescri|cvs|walgreens|лекарств|аптек|дәрі/i.test(text);
       drafts.push({
         kind: "expense",
         date: today,
@@ -38,7 +40,7 @@ export const mockAi: AiService = {
     }
     const minutes = parseDuration(text);
     if (minutes) {
-      const isAppt = /doctor|cardio|appoint|clinic|dentist|drove/i.test(text);
+      const isAppt = /doctor|cardio|appoint|clinic|dentist|drove|врач|кардиолог|отвез|дәрігер|апардым/i.test(text);
       drafts.push({ kind: "time", date: today, minutes, category: isAppt ? "appointments" : "other" });
     }
     return { drafts, fallback: drafts.length === 0 };
@@ -52,6 +54,6 @@ export const mockAi: AiService = {
   },
 
   async draftInvoiceMessage(input) {
-    return { message: templateInvoiceMessage(input), fallback: false };
+    return { message: templateInvoiceMessage(input, localeOf(input)), fallback: false };
   },
 };

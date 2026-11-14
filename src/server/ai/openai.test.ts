@@ -153,4 +153,21 @@ describe("draftInvoiceMessage", () => {
     });
     expect(await ai.draftInvoiceMessage(input)).toEqual({ message: templateInvoiceMessage(input), fallback: true });
   });
+
+  it("asks for Russian and accepts a Russian message with the real numbers", async () => {
+    const ru = { ...input, locale: "ru" };
+    const message = "Привет, Mike! Расходы на маму — $100.00. Предлагаемый вклад — $50.00. Спасибо! Sarah";
+    const { ai, create } = serviceReturning(replyWith({ message }));
+    expect(await ai.draftInvoiceMessage(ru)).toEqual({ message, fallback: false });
+    expect(create.mock.calls[0][0].instructions).toMatch(/Language: Russian/);
+    expect(create.mock.calls[0][0].instructions).toContain("предлагаемый вклад");
+  });
+
+  it("Kazakh: 'debt' wording falls back to the Kazakh template", async () => {
+    const kk = { ...input, locale: "kk" };
+    const { ai } = serviceReturning(replyWith({ message: "Mike, сенің қарызың $50.00." }));
+    const res = await ai.draftInvoiceMessage(kk);
+    expect(res).toEqual({ message: templateInvoiceMessage(input, "kk"), fallback: true });
+    expect(res.message).toContain("Ұсынылған үлес — Mike: $50.00.");
+  });
 });

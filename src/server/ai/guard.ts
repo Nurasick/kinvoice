@@ -7,6 +7,11 @@ import type { MonthlyBalance } from "@/shared/domain";
 import { parseDollarsToCents } from "@/lib/money";
 
 const FORBIDDEN = /\b(owe|owes|owed|owing|debt|debts)\b/i;
+/** Russian and Kazakh "debt / owes" words; \b doesn't work on Cyrillic, so letter lookarounds. */
+const FORBIDDEN_RU_KK =
+  /(?<!\p{L})(долг|долга|долги|долгов|долгу|должен|должна|должны|задолженност\p{L}*|задолжал\p{L}*|қарыз\p{L}*|борыш\p{L}*)(?!\p{L})/iu;
+/** An amount written without "$" first ("300 долларов", "218.40 USD") escapes the $ check, so it's refused. */
+const WORDED_AMOUNT = /\d[\d\s.,]*\s?(?:доллар|долл\.|dollars?\b|usd\b|руб|тенге|теңге|₸)/iu;
 const DOLLARS = /\$\s?\d[\d,]*(?:\.\d+)?/g;
 const MAX_LENGTH = 1500;
 
@@ -38,7 +43,8 @@ function requiredContributions(balance: MonthlyBalance): Map<number, number> {
  */
 export function isSafeInvoiceMessage(message: string, balance: MonthlyBalance): boolean {
   const trimmed = message.trim();
-  if (!trimmed || trimmed.length > MAX_LENGTH || FORBIDDEN.test(trimmed)) return false;
+  if (!trimmed || trimmed.length > MAX_LENGTH) return false;
+  if (FORBIDDEN.test(trimmed) || FORBIDDEN_RU_KK.test(trimmed) || WORDED_AMOUNT.test(trimmed)) return false;
   const allowed = allowedCents(balance);
   const seen = new Map<number, number>();
   for (const match of trimmed.matchAll(DOLLARS)) {
