@@ -4,10 +4,9 @@
  * link still opens on that sibling's amount. Plain links work without JS; JS also remembers the choice.
  */
 import Link from "next/link";
-import { LOCALES, LOCALE_COOKIE, LOCALE_LABELS, LOCALE_QUERY, type Locale } from "@/lib/i18n/locales";
+import { useLocale } from "@/lib/i18n/client";
+import { LOCALES, LOCALE_LABELS, LOCALE_QUERY, type Locale } from "@/lib/i18n/locales";
 import { cn } from "@/components/ui";
-
-const ONE_YEAR = 60 * 60 * 24 * 365;
 
 export interface LocaleSwitchProps {
   current: Locale;
@@ -17,6 +16,7 @@ export interface LocaleSwitchProps {
 }
 
 export function LocaleSwitch({ current, label, forMember }: LocaleSwitchProps) {
+  const { rememberLocale } = useLocale();
   return (
     <nav aria-label={label} className="flex gap-1 rounded-full bg-enamel-deep/60 p-1">
       {LOCALES.map((locale) => {
@@ -28,9 +28,7 @@ export function LocaleSwitch({ current, label, forMember }: LocaleSwitchProps) {
             href={`?${query.toString()}`}
             scroll={false}
             replace
-            onClick={() => {
-              document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
-            }}
+            onClick={() => rememberLocale(locale)}
             aria-current={locale === current ? "true" : undefined}
             hrefLang={locale}
             lang={locale}

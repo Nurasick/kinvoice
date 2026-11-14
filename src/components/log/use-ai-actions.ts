@@ -5,6 +5,7 @@
  */
 import { useCallback } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
+import { useLocale } from "@/lib/i18n/client";
 import { logCopy, type LogCopy } from "./copy";
 import { localToday } from "./draft-form";
 import type { DraftsState } from "./use-drafts";
@@ -12,13 +13,14 @@ import type { DraftsState } from "./use-drafts";
 export function useAiActions(api: WorkspaceApi, drafts: DraftsState, t: LogCopy = logCopy("en")) {
   const { addDrafts, addEmpty, setNotice } = drafts;
   const n = t.notice;
+  const { locale } = useLocale();
 
   /** Returns true when the text box can be cleared. */
   const quickLog = useCallback(
     async (text: string): Promise<boolean> => {
       setNotice(null);
       try {
-        const res = await api.quickLog({ text, today: localToday() });
+        const res = await api.quickLog({ text, today: localToday(), locale });
         if (res.drafts.length > 0) addDrafts(res.drafts, "quick_log");
         else addEmpty("expense", text);
         if (res.fallback) setNotice({ tone: "info", text: n.quickFallback });
@@ -28,7 +30,7 @@ export function useAiActions(api: WorkspaceApi, drafts: DraftsState, t: LogCopy 
       }
       return true;
     },
-    [api, addDrafts, addEmpty, setNotice, n],
+    [api, addDrafts, addEmpty, setNotice, n, locale],
   );
 
   const receipt = useCallback(
