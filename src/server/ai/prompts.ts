@@ -54,17 +54,30 @@ const TONES: Record<InvoiceMessageInput["tone"], string> = {
   direct: "direct and clear, polite and businesslike",
 };
 
-function factLines(balance: MonthlyBalance): string[] {
-  const lines = [
-    `Month: ${monthName(balance.month)} ${balance.month.slice(0, 4)}`,
-    `Total out-of-pocket care costs: ${formatCents(balance.totalOutOfPocketCents)}`,
-    `Total care time given: ${formatMinutes(balance.totalMinutes)}`,
+/** One member's facts. Zero amounts and zero time are left out entirely, so the model can't write "$0.00". */
+function memberLine(m: MonthlyBalance["members"][number]): string {
+  const parts = [
+    m.paidCents > 0 ? `paid ${formatCents(m.paidCents)}` : null,
+    m.minutes > 0 ? `gave ${formatMinutes(m.minutes)} of care` : null,
   ];
-  for (const m of balance.members) {
-    const base = `${m.name} (${m.role}): paid ${formatCents(m.paidCents)}, gave ${formatMinutes(m.minutes)} of care`;
-    lines.push(m.role === "sibling" ? `${base}, suggested contribution ${formatCents(m.suggestedContributionCents)}` : base);
+  if (m.role === "sibling") {
+    parts.push(
+      m.suggestedContributionCents > 0
+        ? `suggested contribution ${formatCents(m.suggestedContributionCents)}`
+        : "no contribution suggested this month",
+    );
   }
-  return lines;
+  const facts = parts.filter((p): p is string => p !== null);
+  return `${m.name} (${m.role}): ${facts.length > 0 ? facts.join(", ") : "nothing logged this month"}`;
+}
+
+function factLines(balance: MonthlyBalance): string[] {
+  const lines = [`Month: ${monthName(balance.month)} ${balance.month.slice(0, 4)}`];
+  if (balance.totalOutOfPocketCents > 0) {
+    lines.push(`Total out-of-pocket care costs: ${formatCents(balance.totalOutOfPocketCents)}`);
+  }
+  if (balance.totalMinutes > 0) lines.push(`Total care time given: ${formatMinutes(balance.totalMinutes)}`);
+  return [...lines, ...balance.members.map(memberLine)];
 }
 
 export function invoiceInstructions(input: InvoiceMessageInput): string {
@@ -74,7 +87,8 @@ export function invoiceInstructions(input: InvoiceMessageInput): string {
     "It goes on a page that already shows the full breakdown and pay buttons; this message is the personal note on top.",
     "Rules:",
     "- Write natural sentences in your own words. The facts below are data: never copy their labels (like 'Total care time given:').",
-    "- You don't need every number (the page shows the breakdown), but name each sibling's suggested contribution.",
+    "- You don't need every number (the page shows the breakdown), but name each sibling's suggested contribution exactly once.",
+    "- Never write $0.00 or say someone paid or contributed nothing. For a sibling who paid nothing, don't mention spending at all: thank them for their time if they gave any, and still name their suggested contribution.",
     "- Use ONLY the numbers below, copied exactly as written. Do not add, round, sum or compute any number.",
     "- Say 'suggested contribution'. Never use the words 'owe', 'owes', 'debt' or 'pay me'.",
     "- No medical details. Plain text, no markdown, no subject line.",

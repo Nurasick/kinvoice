@@ -22,13 +22,32 @@ export function allowedCents(balance: MonthlyBalance): Set<number> {
   return new Set(values.filter((v): v is number => typeof v === "number"));
 }
 
+/** Cents value → how many times it may appear as a suggested contribution (two siblings can share an amount). */
+function requiredContributions(balance: MonthlyBalance): Map<number, number> {
+  const counts = new Map<number, number>();
+  for (const m of balance.members) {
+    if (m.role !== "sibling" || m.suggestedContributionCents <= 0) continue;
+    counts.set(m.suggestedContributionCents, (counts.get(m.suggestedContributionCents) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/**
+ * True when the message only quotes real, non-zero amounts and names every
+ * suggested contribution exactly once (no "$0.00 contributed", no repeats).
+ */
 export function isSafeInvoiceMessage(message: string, balance: MonthlyBalance): boolean {
   const trimmed = message.trim();
   if (!trimmed || trimmed.length > MAX_LENGTH || FORBIDDEN.test(trimmed)) return false;
   const allowed = allowedCents(balance);
+  const seen = new Map<number, number>();
   for (const match of trimmed.matchAll(DOLLARS)) {
     const cents = parseDollarsToCents(match[0]);
-    if (cents === null || !allowed.has(cents)) return false;
+    if (cents === null || cents === 0 || !allowed.has(cents)) return false;
+    seen.set(cents, (seen.get(cents) ?? 0) + 1);
+  }
+  for (const [cents, times] of requiredContributions(balance)) {
+    if (seen.get(cents) !== times) return false;
   }
   return true;
 }

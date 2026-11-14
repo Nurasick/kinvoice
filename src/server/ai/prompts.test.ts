@@ -32,4 +32,12 @@ describe("prompts", () => {
     expect(text).toMatch(/Never use the words 'owe'/);
     expect(text).toMatch(/never copy their labels/);
   });
+
+  it("invoice facts never contain a zero amount", () => {
+    const text = invoiceInstructions({ tone: "brief", parentName: "Linda", caregiverName: "Sarah", balance });
+    const facts = text.split("Facts:")[1];
+    expect(facts).not.toContain("$0.00");
+    expect(facts).toContain("Mike (sibling): suggested contribution $450.00");
+    expect(text).toMatch(/Never write \$0\.00/);
+  });
 });

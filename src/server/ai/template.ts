@@ -27,18 +27,28 @@ function greeting(balance: MonthlyBalance): string {
   return "Hi everyone";
 }
 
+/** "$1,015.19 out of pocket and 17h 45m of care time" — zero parts left out, never "$0.00". */
+function totals(balance: MonthlyBalance): string | null {
+  const parts = [
+    balance.totalOutOfPocketCents > 0 ? `${formatCents(balance.totalOutOfPocketCents)} out of pocket` : null,
+    balance.totalMinutes > 0 ? `${formatMinutes(balance.totalMinutes)} of care time` : null,
+  ].filter((p): p is string => p !== null);
+  return parts.length > 0 ? parts.join(" and ") : null;
+}
+
 export function templateInvoiceMessage({ tone, parentName, caregiverName, balance }: InvoiceMessageInput): string {
   const month = monthName(balance.month);
-  const total = formatCents(balance.totalOutOfPocketCents);
-  const hours = formatMinutes(balance.totalMinutes);
+  const sum = totals(balance);
   const asks = contributions(balance);
   const askLine = asks ? `Suggested contribution — ${asks}.` : "No contributions are suggested this month.";
 
   if (tone === "brief") {
-    return `${month} care for ${parentName}: ${total} out of pocket, ${hours} of care time. ${askLine} Details below. — ${caregiverName}`;
+    return `${month} care for ${parentName}${sum ? `: ${sum}` : ""}. ${askLine} Details below. — ${caregiverName}`;
   }
   if (tone === "direct") {
-    return `Here is ${parentName}'s care summary for ${month}. Out-of-pocket costs were ${total}, and ${hours} of care time went in. Costs are split equally. ${askLine} You can use the buttons below. Thanks, ${caregiverName}`;
+    const summary = sum ? ` This month: ${sum}. Costs are split equally.` : "";
+    return `Here is ${parentName}'s care summary for ${month}.${summary} ${askLine} You can use the buttons below. Thanks, ${caregiverName}`;
   }
-  return `${greeting(balance)}, here's how ${month} went with ${parentName}. Between appointments, groceries and everything in between, care cost ${total} this month, and we spent ${hours} together. ${askLine} Thank you for being part of this. Love, ${caregiverName}`;
+  const story = sum ? ` Between appointments, groceries and everything in between, this month came to ${sum}.` : "";
+  return `${greeting(balance)}, here's how ${month} went with ${parentName}.${story} ${askLine} Thank you for being part of this. Love, ${caregiverName}`;
 }
