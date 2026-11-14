@@ -1,18 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import { editLink } from "@/lib/workspace-key";
-import { Card, CopyButton, buttonClass } from "@/components/ui";
-
-const noop = (): (() => void) => () => {};
+import { Card, CopyButton, buttonClass, useOrigin } from "@/components/ui";
 
 /** Shown once after setup: the private edit link is the only way back in from another device. */
 export function SetupDone({ editKey }: { editKey: string }) {
-  const origin = useSyncExternalStore(
-    noop,
-    () => window.location.origin,
-    () => "",
-  );
+  const origin = useOrigin();
   const link = editLink(origin, editKey);
 
   return (
