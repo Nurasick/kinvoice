@@ -3,8 +3,8 @@ import { cn } from "./cn";
 
 export const controlClass: string = cn(
   "w-full rounded-[var(--radius-control)] border border-line-strong bg-surface px-3 text-sm text-ink",
-  "placeholder:text-ink-muted/70 transition-colors",
-  "focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25",
+  "placeholder:text-ink-muted transition-colors",
+  "focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/40",
   "disabled:cursor-not-allowed disabled:bg-paper-deep disabled:text-ink-muted",
   "aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/20",
 );

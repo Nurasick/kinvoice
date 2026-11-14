@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
 import { monthLabel } from "@/components/log/labels";
 import type { Invoice } from "@/shared/domain";
@@ -119,6 +119,7 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
   const origin = useOrigin();
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  const rowRef = useRef<HTMLLIElement>(null);
   const canMark = row.status === "waiting" || row.status === "sent";
 
   async function markReceived(): Promise<void> {
@@ -131,6 +132,8 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
         method: row.method,
       });
       onChanged();
+      // The button disappears once received: keep keyboard focus on this sibling's row, not the page top.
+      rowRef.current?.focus();
     } catch {
       setFailed(true);
     } finally {
@@ -139,11 +142,19 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
   }
 
   return (
-    <li className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
+    <li
+      ref={rowRef}
+      tabIndex={-1}
+      aria-label={`${row.member.name}: ${STATUS[row.status].label}`}
+      className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-[var(--radius-control)] py-3"
+    >
       <div className="flex min-w-0 items-center gap-3">
         <span className="font-medium text-ink">{row.member.name}</span>
         <Money cents={row.amountCents} className="text-sm text-ink-muted" />
-        <Badge tone={STATUS[row.status].tone}>{STATUS[row.status].label}</Badge>
+        {/* Live region: screen readers hear "Received" after Mark as received, or a sibling's update. */}
+        <span aria-live="polite">
+          <Badge tone={STATUS[row.status].tone}>{STATUS[row.status].label}</Badge>
+        </span>
       </div>
       {canMark && (
         <div className="flex items-center gap-2">
