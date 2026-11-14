@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatDuration, monthName } from "./format";
-import { decideLocale, fromAcceptLanguage, resolveLocale, withLocale } from "./locales";
+import { decideLocale, fromAcceptLanguage, isPageLoad, resolveLocale, withLocale } from "./locales";
 
 describe("resolveLocale", () => {
   it("prefers the URL, then the cookie, then the browser, then English", () => {
@@ -53,6 +53,27 @@ describe("decideLocale", () => {
     expect(decideLocale({ query: "ru", cookie: "ru" }).shouldPersist).toBe(false);
     expect(decideLocale({ cookie: "kk", acceptLanguage: "ru" })).toEqual({ locale: "kk", shouldPersist: false });
     expect(decideLocale({ query: "fr", acceptLanguage: "ru-RU" })).toEqual({ locale: "ru", shouldPersist: false });
+  });
+});
+
+describe("prefetches never change the remembered language", () => {
+  const h = (entries: Record<string, string>) => new Headers(entries);
+
+  it("treats router prefetches and RSC fetches as not a page load", () => {
+    expect(isPageLoad(h({ rsc: "1", "next-router-prefetch": "1" }))).toBe(false);
+    expect(isPageLoad(h({ rsc: "1" }))).toBe(false);
+    expect(isPageLoad(h({ "sec-purpose": "prefetch" }))).toBe(false);
+    expect(isPageLoad(h({ "sec-fetch-dest": "empty" }))).toBe(false);
+  });
+
+  it("treats a browser opening a link as a page load", () => {
+    expect(isPageLoad(h({ "sec-fetch-dest": "document" }))).toBe(true);
+    expect(isPageLoad(h({}))).toBe(true);
+  });
+
+  it("does not persist ?lang from a prefetch, but does from a page load", () => {
+    expect(decideLocale({ query: "kk", cookie: "en", isPageLoad: false })).toEqual({ locale: "kk", shouldPersist: false });
+    expect(decideLocale({ query: "kk", cookie: "en", isPageLoad: true }).shouldPersist).toBe(true);
   });
 });
 

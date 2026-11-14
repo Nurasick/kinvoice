@@ -9,6 +9,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { ApiErrorBody } from "@/shared/api";
 import {
   decideLocale,
+  isPageLoad,
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
   LOCALE_HEADER,
@@ -27,6 +28,7 @@ function withLocale(request: NextRequest): NextResponse {
     query: request.nextUrl.searchParams.get(LOCALE_QUERY),
     cookie: request.cookies.get(LOCALE_COOKIE)?.value,
     acceptLanguage: request.headers.get("accept-language"),
+    isPageLoad: isPageLoad(request.headers),
   });
   const headers = new Headers(request.headers);
   headers.set(LOCALE_HEADER, locale);

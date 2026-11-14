@@ -27,6 +27,7 @@ export function LocaleSwitch({ current, label, forMember }: LocaleSwitchProps) {
             key={locale}
             href={`?${query.toString()}`}
             scroll={false}
+            prefetch={false}
             replace
             onClick={() => rememberLocale(locale)}
             aria-current={locale === current ? "true" : undefined}

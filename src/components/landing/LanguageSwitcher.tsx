@@ -14,6 +14,7 @@ export function LanguageSwitcher({ current, label }: { current: Locale; label: s
           key={locale}
           href={`?${LOCALE_QUERY}=${locale}`}
           scroll={false}
+          prefetch={false}
           onClick={() => rememberLocale(locale)}
           className={s.langItem}
           aria-current={locale === current ? "true" : undefined}
