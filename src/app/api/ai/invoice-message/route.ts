@@ -6,18 +6,18 @@ import { caregiverName, getMonthlyBalance } from "@/server/services";
 
 /**
  * POST /api/ai/invoice-message — AI words over deterministic numbers. Owner: Olzhas.
- * Language: the app's `lang` cookie, then Accept-Language (a body `locale` will win once N1 lands).
+ * Language: the body `locale` (the UI the caregiver is using), then the `lang` cookie, then Accept-Language.
  */
 export const POST = handle(async (req: Request) => {
   const view = await requireWorkspace(req);
-  const { month, tone } = await parseJson(req, InvoiceMessageRequest);
+  const { month, tone, locale } = await parseJson(req, InvoiceMessageRequest);
   const balance = await getMonthlyBalance(view, month);
   const input = {
     tone,
     parentName: view.workspace.parentName,
     caregiverName: caregiverName(view),
     balance,
-    locale: requestLocale(req),
+    locale: requestLocale(req, locale),
   };
   return ok(await getAiService().draftInvoiceMessage(input));
 });
