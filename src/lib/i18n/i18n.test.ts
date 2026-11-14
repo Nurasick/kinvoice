@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatDuration, monthName } from "./format";
-import { fromAcceptLanguage, resolveLocale } from "./locales";
+import { decideLocale, fromAcceptLanguage, resolveLocale, withLocale } from "./locales";
 
 describe("resolveLocale", () => {
   it("prefers the URL, then the cookie, then the browser, then English", () => {
@@ -40,5 +40,26 @@ describe("monthName", () => {
     expect(monthName(nov, "en")).toBe("November");
     expect(monthName(nov, "ru")).toBe("Ноябрь");
     expect(monthName(nov, "kk")).toBe("Қараша");
+  });
+});
+
+describe("decideLocale", () => {
+  it("persists a language chosen in the URL", () => {
+    expect(decideLocale({ query: "ru", cookie: null })).toEqual({ locale: "ru", shouldPersist: true });
+    expect(decideLocale({ query: "kz", cookie: "en" })).toEqual({ locale: "kk", shouldPersist: true });
+  });
+
+  it("does not rewrite the cookie when nothing new was chosen", () => {
+    expect(decideLocale({ query: "ru", cookie: "ru" }).shouldPersist).toBe(false);
+    expect(decideLocale({ cookie: "kk", acceptLanguage: "ru" })).toEqual({ locale: "kk", shouldPersist: false });
+    expect(decideLocale({ query: "fr", acceptLanguage: "ru-RU" })).toEqual({ locale: "ru", shouldPersist: false });
+  });
+});
+
+describe("withLocale", () => {
+  it("adds or replaces lang and keeps the other parameters", () => {
+    expect(withLocale("/i/abc?for=m1", "ru")).toBe("/i/abc?for=m1&lang=ru");
+    expect(withLocale("/app/invoice?month=2026-11&lang=en", "kk")).toBe("/app/invoice?month=2026-11&lang=kk");
+    expect(withLocale("/", "en")).toBe("/?lang=en");
   });
 });

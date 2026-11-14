@@ -5,6 +5,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
+import { useLocale } from "@/lib/i18n/client";
 import type { Invoice, InvoiceTone } from "@/shared/domain";
 
 export interface Composer {
@@ -37,6 +38,7 @@ export function useComposer(
   const [error, setError] = useState<string | null>(null);
   const [published, setPublished] = useState<Invoice | null>(null);
   const request = useRef(0);
+  const { locale } = useLocale();
 
   const draft = useCallback(
     async (forTone: InvoiceTone): Promise<void> => {
@@ -44,7 +46,7 @@ export function useComposer(
       setIsDrafting(true);
       setError(null);
       try {
-        const res = await api.draftInvoiceMessage({ month, tone: forTone });
+        const res = await api.draftInvoiceMessage({ month, tone: forTone, locale });
         if (id !== request.current) return;
         setMessage(res.message);
         setIsTemplate(res.fallback);
@@ -55,7 +57,7 @@ export function useComposer(
         if (id === request.current) setIsDrafting(false);
       }
     },
-    [api, month],
+    [api, month, locale],
   );
 
   useEffect(() => {

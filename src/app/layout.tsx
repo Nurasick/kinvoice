@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { appFontVars } from "@/lib/fonts";
-import { DEFAULT_LOCALE, isLocale, LOCALE_HEADER } from "@/lib/i18n/locales";
+import { LocaleProvider } from "@/lib/i18n/client";
+import { getRequestLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  // The proxy sets this only for the translated landing; every other page is English.
-  const fromProxy = (await headers()).get(LOCALE_HEADER);
-  const lang = isLocale(fromProxy) ? fromProxy : DEFAULT_LOCALE;
+  const locale = await getRequestLocale();
   return (
-    <html lang={lang} className={`${appFontVars} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+    <html lang={locale} className={`${appFontVars} h-full antialiased`}>
+      <body className="flex min-h-full flex-col">
+        <LocaleProvider initial={locale}>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

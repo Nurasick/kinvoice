@@ -60,3 +60,30 @@ export function resolveLocale(input: {
     normalize(query) ?? normalize(input.cookie) ?? fromAcceptLanguage(input.acceptLanguage) ?? DEFAULT_LOCALE
   );
 }
+
+/** How long the language choice is remembered. */
+export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+export interface LocaleDecision {
+  locale: Locale;
+  /** The URL chose a language the cookie doesn't hold yet: remember it. */
+  shouldPersist: boolean;
+}
+
+/** What the proxy decides for one page request. Same order as resolveLocale. */
+export function decideLocale(input: {
+  query?: string | null;
+  cookie?: string | null;
+  acceptLanguage?: string | null;
+}): LocaleDecision {
+  const locale = resolveLocale(input);
+  const fromQuery = normalize(input.query);
+  return { locale, shouldPersist: fromQuery !== null && fromQuery !== normalize(input.cookie) };
+}
+
+/** "/i/abc?for=m1" + "ru" → "/i/abc?for=m1&lang=ru". Keeps every other parameter and the hash. */
+export function withLocale(pathAndQuery: string, locale: Locale): string {
+  const url = new URL(pathAndQuery, "http://local");
+  url.searchParams.set(LOCALE_QUERY, locale);
+  return `${url.pathname}${url.search}${url.hash}`;
+}

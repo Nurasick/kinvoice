@@ -1,11 +1,19 @@
 /**
  * Edge proxy. Owner: Nurali.
- * 1. Per-IP rate limits on AI and workspace-creation endpoints.
- * 2. Landing locale: resolves EN/RU/KZ for "/" so the root layout can set <html lang>.
+ * 1. Pages: resolves the UI language once (?lang → cookie → browser → English), hands it to the
+ *    root layout in a request header, and remembers a ?lang= choice in the cookie. So one choice
+ *    carries across the landing, the app and the sibling page.
+ * 2. API: per-IP rate limits on AI and workspace-creation endpoints.
  */
 import { NextResponse, type NextRequest } from "next/server";
 import type { ApiErrorBody } from "@/shared/api";
-import { LOCALE_COOKIE, LOCALE_HEADER, LOCALE_QUERY, resolveLocale } from "@/lib/i18n/locales";
+import {
+  decideLocale,
+  LOCALE_COOKIE,
+  LOCALE_COOKIE_MAX_AGE,
+  LOCALE_HEADER,
+  LOCALE_QUERY,
+} from "@/lib/i18n/locales";
 import { createRateLimiter, RATE_LIMITS } from "@/server/rate-limit";
 
 const check = createRateLimiter();
@@ -14,22 +22,23 @@ function clientIp(request: NextRequest): string {
   return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
 
-/** Only the landing is translated today, so only "/" gets a non-English <html lang>. */
-function withLandingLocale(request: NextRequest): NextResponse {
-  const locale = resolveLocale({
+function withLocale(request: NextRequest): NextResponse {
+  const { locale, shouldPersist } = decideLocale({
     query: request.nextUrl.searchParams.get(LOCALE_QUERY),
     cookie: request.cookies.get(LOCALE_COOKIE)?.value,
     acceptLanguage: request.headers.get("accept-language"),
   });
   const headers = new Headers(request.headers);
   headers.set(LOCALE_HEADER, locale);
-  return NextResponse.next({ request: { headers } });
+  const response = NextResponse.next({ request: { headers } });
+  if (shouldPersist) {
+    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: LOCALE_COOKIE_MAX_AGE, sameSite: "lax" });
+  }
+  return response;
 }
 
-export function proxy(request: NextRequest): NextResponse {
+function rateLimited(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
-  if (pathname === "/") return withLandingLocale(request);
-
   const match = RATE_LIMITS.find((r) => pathname.startsWith(r.prefix));
   if (!match || request.method === "GET") return NextResponse.next();
 
@@ -42,6 +51,16 @@ export function proxy(request: NextRequest): NextResponse {
   return NextResponse.json(body, { status: 429, headers: { "retry-after": String(result.retryAfterSeconds) } });
 }
 
+export function proxy(request: NextRequest): NextResponse {
+  return request.nextUrl.pathname.startsWith("/api/") ? rateLimited(request) : withLocale(request);
+}
+
 export const config = {
-  matcher: ["/", "/api/ai/:path*", "/api/demo", "/api/workspaces"],
+  matcher: [
+    // every page, but not the API, Next internals or static files
+    "/((?!api/|_next/|favicon\\.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|txt|xml)$).*)",
+    "/api/ai/:path*",
+    "/api/demo",
+    "/api/workspaces",
+  ],
 };

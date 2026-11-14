@@ -1,6 +1,5 @@
 // Owner: Nurali. Landing: the family fridge door. Copy in EN / RU / KZ; numbers from the real demo seed.
 import type { Metadata } from "next";
-import { cookies, headers } from "next/headers";
 import { Pricing, TrustAndClose } from "@/components/landing/Closing";
 import { landingCopy } from "@/components/landing/copy";
 import { FridgeHero } from "@/components/landing/FridgeHero";
@@ -9,24 +8,15 @@ import { Imbalance } from "@/components/landing/Imbalance";
 import { landingData } from "@/components/landing/landing-data";
 import { Steps } from "@/components/landing/Steps";
 import s from "@/components/landing/landing.module.css";
-import { LOCALE_COOKIE, LOCALE_QUERY, resolveLocale, type Locale } from "@/lib/i18n/locales";
+import { getRequestLocale } from "@/lib/i18n/server";
 
-async function currentLocale(searchParams: PageProps<"/">["searchParams"]): Promise<Locale> {
-  const [params, jar, h] = await Promise.all([searchParams, cookies(), headers()]);
-  return resolveLocale({
-    query: params[LOCALE_QUERY],
-    cookie: jar.get(LOCALE_COOKIE)?.value,
-    acceptLanguage: h.get("accept-language"),
-  });
-}
-
-export async function generateMetadata({ searchParams }: PageProps<"/">): Promise<Metadata> {
-  const { meta } = landingCopy(await currentLocale(searchParams));
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = landingCopy(await getRequestLocale());
   return { title: meta.title, description: meta.description };
 }
 
-export default async function Home({ searchParams }: PageProps<"/">) {
-  const locale = await currentLocale(searchParams);
+export default async function Home() {
+  const locale = await getRequestLocale();
   const copy = landingCopy(locale);
   const data = landingData();
   return (
