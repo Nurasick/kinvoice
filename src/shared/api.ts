@@ -18,6 +18,7 @@ import {
   Invoice,
   InvoiceTone,
   IsoDate,
+  InputCents,
   IsoMonth,
   Member,
   MonthlyBalance,
@@ -181,7 +182,7 @@ export const ListInvoicesResponse = z.array(Invoice);
 /** POST /api/invoices/:id/payments — caregiver marks a sibling's payment as received. */
 export const MarkReceivedRequest = z.object({
   memberId: Id,
-  amountCents: z.number().int().positive(),
+  amountCents: InputCents,
   method: PaymentMethod,
 });
 export type MarkReceivedRequest = z.infer<typeof MarkReceivedRequest>;
@@ -195,7 +196,7 @@ export const GetPublicInvoiceResponse = PublicInvoice;
 /** POST /api/public/invoices/:token/payments — sibling says "I've sent it". */
 export const MarkSentRequest = z.object({
   memberId: Id,
-  amountCents: z.number().int().positive(),
+  amountCents: InputCents,
   method: PaymentMethod,
 });
 export type MarkSentRequest = z.infer<typeof MarkSentRequest>;

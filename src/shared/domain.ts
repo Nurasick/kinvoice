@@ -10,14 +10,29 @@ import { z } from "zod";
 
 // ---------- primitives ----------
 
+/** True for an existing calendar day ("2026-02-30" is false). */
+function isRealDate(s: string): boolean {
+  const d = new Date(`${s}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
 /** Calendar date, "YYYY-MM-DD" (no timezone; the caregiver's local day). */
-export const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD");
+export const IsoDate = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD")
+  .refine(isRealDate, "Not a real calendar date");
 /** Calendar month, "YYYY-MM". */
 export const IsoMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Expected YYYY-MM");
 /** Non-negative integer number of cents. */
 export const Cents = z.number().int().nonnegative();
 /** Positive integer number of minutes. */
 export const Minutes = z.number().int().positive();
+
+/** Input caps: keep values sane and inside Postgres `int` (≈ $21M). */
+export const MAX_AMOUNT_CENTS = 100_000_000; // $1,000,000 per entry or payment
+export const MAX_ENTRY_MINUTES = 31 * 24 * 60; // one month
+/** A money amount someone enters: positive integer cents, capped. */
+export const InputCents = z.number().int().positive("Amount must be positive").max(MAX_AMOUNT_CENTS);
 export const Id = z.string().min(1);
 
 // ---------- enums ----------
@@ -110,14 +125,14 @@ const EntryBase = z.object({
 
 export const ExpenseFields = EntryBase.extend({
   kind: z.literal("expense"),
-  amountCents: Cents.refine((v) => v > 0, "Amount must be positive"),
+  amountCents: InputCents,
   category: ExpenseCategory,
   merchant: z.string().trim().max(80).optional(),
 });
 
 export const TimeFields = EntryBase.extend({
   kind: z.literal("time"),
-  minutes: Minutes,
+  minutes: Minutes.max(MAX_ENTRY_MINUTES),
   category: TimeCategory,
 });
 
