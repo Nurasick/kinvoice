@@ -61,6 +61,14 @@ export function parseQuery<S extends z.ZodType>(req: Request, schema: S): z.infe
   return schema.parse(Object.fromEntries(new URL(req.url).searchParams));
 }
 
+const UUID = z.uuid();
+
+/** Path ids are UUIDs; anything else can't exist, so it's a 404 rather than a DB cast error (500). */
+export function requireUuid(id: string, what: string): string {
+  if (!UUID.safeParse(id).success) throw new HttpError("not_found", `${what} not found`);
+  return id;
+}
+
 /** Resolves the caller's workspace from the `x-workspace-key` header or throws 401. */
 export async function requireWorkspace(req: Request): Promise<WorkspaceView> {
   const key = req.headers.get(WORKSPACE_KEY_HEADER);

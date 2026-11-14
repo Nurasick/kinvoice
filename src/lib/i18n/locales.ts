@@ -9,6 +9,8 @@ export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "lang";
 export const LOCALE_QUERY = "lang";
+/** Request header the proxy sets with the resolved landing locale (read by the root layout for <html lang>). */
+export const LOCALE_HEADER = "x-kinvoice-locale";
 
 /** What the switcher shows. Kazakh is labelled KZ, the way people in Kazakhstan write it. */
 export const LOCALE_LABELS: Record<Locale, { short: string; name: string }> = {

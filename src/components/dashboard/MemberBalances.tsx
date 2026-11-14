@@ -4,10 +4,18 @@
  */
 import type { ReactNode } from "react";
 import type { MonthlyBalance } from "@/shared/domain";
+import type { SiblingRow } from "@/components/invoice/invoice-view";
 import { Badge, Card, Duration, Money } from "@/components/ui";
 import { memberMeters, type MemberMeter } from "./dashboard-view";
+import { rowFor, type Settlement } from "./settlement";
 
-export function MemberBalances({ balance }: { balance: MonthlyBalance }) {
+export interface MemberBalancesProps {
+  balance: MonthlyBalance;
+  /** Payment status from the invoice sent for this month, if any. */
+  settlement: Settlement | null;
+}
+
+export function MemberBalances({ balance, settlement }: MemberBalancesProps) {
   const rows = memberMeters(balance);
   return (
     <Card>
@@ -17,7 +25,7 @@ export function MemberBalances({ balance }: { balance: MonthlyBalance }) {
       </div>
       <ul className="flex flex-col divide-y divide-line">
         {rows.map((row) => (
-          <MemberRow key={row.member.memberId} row={row} />
+          <MemberRow key={row.member.memberId} row={row} payment={rowFor(settlement, row.member.memberId)} />
         ))}
       </ul>
       <p className="mt-4 border-t border-line pt-3 text-xs text-ink-muted">
@@ -33,16 +41,16 @@ function Legend() {
   return (
     <p className="flex gap-4 text-xs text-ink-muted">
       <span className="flex items-center gap-1.5">
-        <span aria-hidden className="h-2 w-4 rounded-full bg-accent" /> Money paid
+        <span aria-hidden className="h-2 w-4 rounded-full bg-chart-money" /> Money paid
       </span>
       <span className="flex items-center gap-1.5">
-        <span aria-hidden className="h-2 w-4 rounded-full bg-marigold-deep" /> Time given
+        <span aria-hidden className="h-2 w-4 rounded-full bg-chart-time" /> Time given
       </span>
     </p>
   );
 }
 
-function MemberRow({ row }: { row: MemberMeter }) {
+function MemberRow({ row, payment }: { row: MemberMeter; payment: SiblingRow | undefined }) {
   const m = row.member;
   return (
     <li className="grid grid-cols-1 gap-3 py-4 first:pt-0 last:pb-0 sm:grid-cols-[8rem_1fr_9rem] sm:items-center sm:gap-6">
@@ -59,7 +67,7 @@ function MemberRow({ row }: { row: MemberMeter }) {
         </Meter>
       </div>
       <div className="sm:text-right">
-        <Contribution row={row} />
+        <Contribution row={row} payment={payment} />
       </div>
     </li>
   );
@@ -84,12 +92,12 @@ function Meter({ fraction, tone, label, children }: MeterProps) {
         aria-valuemax={100}
         aria-valuenow={pct}
         aria-valuetext={`${pct}% of this month's total`}
-        className="h-2 overflow-hidden rounded-full bg-paper-deep"
+        className={`h-2 overflow-hidden rounded-full ${tone === "money" ? "bg-chart-money-track" : "bg-chart-time-track"}`}
       >
         {fraction > 0 && (
           <div
             className={
-              tone === "money" ? "h-full rounded-full bg-accent" : "h-full rounded-full bg-marigold-deep"
+              tone === "money" ? "h-full rounded-full bg-chart-money" : "h-full rounded-full bg-chart-time"
             }
             style={{ width: `${Math.max(fraction * 100, 2)}%` }}
           />
@@ -102,9 +110,26 @@ function Meter({ fraction, tone, label, children }: MeterProps) {
   );
 }
 
-function Contribution({ row }: { row: MemberMeter }) {
+const PAID: Record<"received" | "sent" | "waiting", { label: string; tone: "success" | "warning" | "neutral" }> = {
+  received: { label: "Received", tone: "success" },
+  sent: { label: "Says it’s sent", tone: "warning" },
+  waiting: { label: "Not paid yet", tone: "neutral" },
+};
+
+/** Before an invoice: the suggestion. After: what the sibling was sent and whether it arrived. */
+function Contribution({ row, payment }: { row: MemberMeter; payment: SiblingRow | undefined }) {
   const m = row.member;
   if (m.role === "caregiver") return <Badge tone="accent">Carrying this month</Badge>;
+  if (payment && payment.status !== "covered") {
+    const s = PAID[payment.status];
+    const cents = payment.status === "waiting" ? payment.member.suggestedContributionCents : payment.amountCents;
+    return (
+      <div className="flex items-center justify-between gap-2 sm:flex-col sm:items-end sm:gap-1">
+        <Money cents={cents} className="font-display text-lg font-bold text-ink" />
+        <Badge tone={s.tone}>{s.label}</Badge>
+      </div>
+    );
+  }
   if (m.suggestedContributionCents === 0) return <Badge tone="success">Covered their share</Badge>;
   return (
     <div className="flex items-baseline justify-between gap-2 rounded-[var(--radius-control)] bg-paper px-3 py-2 sm:block sm:bg-transparent sm:p-0">

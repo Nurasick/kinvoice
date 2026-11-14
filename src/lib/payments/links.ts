@@ -1,7 +1,8 @@
 /**
  * Pay-button deep links. Owner: Yernur.
  * No payment processing — we only open Venmo/PayPal with the amount prefilled.
- * TODO(Yernur): verify both URL formats on a phone and desktop before the demo.
+ * Venmo format follows https://venmo.com/paymentlinks (txn, recipients, amount, note);
+ * PayPal follows the documented paypal.me/<user>/<amount><currency> form.
  */
 
 function dollars(cents: number): string {

@@ -41,6 +41,6 @@ export function createRateLimiter(store: Map<string, Window> = new Map()) {
 /** Per-IP limits for the expensive or spammable endpoints. */
 export const RATE_LIMITS: ReadonlyArray<{ prefix: string; rule: RateLimitRule }> = [
   { prefix: "/api/ai/", rule: { limit: 30, windowMs: 60_000 } },
-  { prefix: "/api/demo", rule: { limit: 10, windowMs: 60_000 } },
+  { prefix: "/api/demo", rule: { limit: 60, windowMs: 60_000 } },
   { prefix: "/api/workspaces", rule: { limit: 10, windowMs: 60_000 } },
 ];
