@@ -23,6 +23,8 @@ export interface SiblingCopy {
     sentTitle: Fn<{ caregiver: string }>;
     sentBody: string;
     sendError: Fn<{ caregiver: string }>;
+    /** A sibling who spent money on the parent tells the caregiver, who logs it. */
+    paidYourself: Fn<{ caregiver: string }>;
   };
   pay: {
     venmo: string;
@@ -86,6 +88,8 @@ const en: SiblingCopy = {
     sentTitle: ({ caregiver }) => `You marked it as sent. ${caregiver} will confirm when it arrives.`,
     sentBody: "Nothing else to do. Thank you.",
     sendError: ({ caregiver }) => `That didn’t go through. Please try again, or just let ${caregiver} know.`,
+    paidYourself: ({ caregiver }) =>
+      `Paid for something for the care yourself? Tell ${caregiver} what it was and how much. Once it’s added, your share goes down in the next update.`,
   },
   pay: {
     venmo: "Pay with Venmo",
@@ -170,6 +174,8 @@ const ru: SiblingCopy = {
     sentTitle: ({ caregiver }) => `Вы отметили перевод. ${caregiver} подтвердит, когда деньги придут.`,
     sentBody: "Больше ничего делать не нужно. Спасибо.",
     sendError: ({ caregiver }) => `Не получилось. Попробуйте ещё раз или просто напишите ${caregiver}.`,
+    paidYourself: ({ caregiver }) =>
+      `Сами что-то оплатили для ухода? Напишите ${caregiver}, что это было и сколько. Когда расход добавят, в следующем обновлении ваша доля уменьшится.`,
   },
   pay: {
     venmo: "Оплатить через Venmo",
@@ -254,6 +260,8 @@ const kk: SiblingCopy = {
     sentTitle: ({ caregiver }) => `Аударғаныңызды белгіледіңіз. Ақша келгенде ${caregiver} растайды.`,
     sentBody: "Басқа ештеңе істеудің қажеті жоқ. Рақмет.",
     sendError: () => "Жіберілмеді. Қайта көріңіз немесе тікелей хабарласыңыз.",
+    paidYourself: ({ caregiver }) =>
+      `Күтімге өзіңіз бірдеңе төледіңіз бе? ${caregiver} атына не екенін және қанша екенін жазыңыз. Шығын қосылғанда, келесі жаңартуда үлесіңіз азаяды.`,
   },
   pay: {
     venmo: "Venmo арқылы төлеу",

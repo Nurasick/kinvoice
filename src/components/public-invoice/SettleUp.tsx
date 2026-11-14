@@ -103,6 +103,11 @@ export function SettleUp({
           }
         />
       )}
+      {me && (
+        <p className="border-t border-accent/20 pt-4 text-sm text-ink-soft">
+          {copy.paidYourself({ caregiver: invoice.caregiverName })}
+        </p>
+      )}
     </Card>
   );
 }
