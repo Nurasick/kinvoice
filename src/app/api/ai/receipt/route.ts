@@ -1,4 +1,5 @@
 import { RECEIPT_MAX_BYTES, RECEIPT_MIME_TYPES } from "@/shared/api";
+import { IsoDate } from "@/shared/domain";
 import { handle, HttpError, ok, requireWorkspace } from "@/server/http";
 import { getAiService } from "@/server/ai";
 
@@ -15,7 +16,8 @@ export const POST = handle(async (req: Request) => {
   if (file.size > RECEIPT_MAX_BYTES) throw new HttpError("payload_too_large", "Receipt must be 5 MB or smaller");
   if (!ALLOWED.includes(file.type)) throw new HttpError("bad_request", "Upload a photo or a PDF");
   const todayField = form.get("today");
-  const today = typeof todayField === "string" ? todayField : new Date().toISOString().slice(0, 10);
+  const parsedToday = IsoDate.safeParse(todayField);
+  const today = parsedToday.success ? parsedToday.data : new Date().toISOString().slice(0, 10);
   const bytes = new Uint8Array(await file.arrayBuffer());
   return ok(await getAiService().extractReceipt({ bytes, mimeType: file.type, today }));
 });

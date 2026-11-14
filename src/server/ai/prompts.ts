@@ -1,0 +1,75 @@
+/**
+ * Prompt text. Owner: Olzhas. Money in prompts is always pre-formatted by lib/money;
+ * the model restates numbers, it never computes them.
+ */
+import type { Member, MonthlyBalance } from "@/shared/domain";
+import { ExpenseCategory, TimeCategory } from "@/shared/domain";
+import { formatCents, formatMinutes } from "@/lib/money";
+import { monthName } from "./template";
+import type { InvoiceMessageInput } from "./types";
+
+export function quickLogInstructions(today: string, members: readonly Member[]): string {
+  const people = members.map((m) => `- ${m.name} (${m.role}) → memberId "${m.id}"`).join("\n");
+  return [
+    "You turn a family caregiver's quick note about caring for an elderly parent into draft log entries.",
+    "Return one draft per distinct expense (money paid) and one per distinct block of care time.",
+    "A sentence can contain both: 'Paid $86 at CVS for meds, then drove her to the cardiologist, 3 hours' → one expense AND one time entry.",
+    "Rules:",
+    "- amountCents: integer cents ($86 → 8600, $12.50 → 1250). Only for kind=expense. Never invent or estimate an amount; use null if not stated.",
+    "- minutes: integer minutes (3 hours → 180, half an hour → 30). Only for kind=time. null if not stated.",
+    `- date: YYYY-MM-DD. Today is ${today}. Resolve 'yesterday', 'on Monday' etc. relative to today. Use today if no date is mentioned.`,
+    `- expense categories: ${ExpenseCategory.options.join(", ")}. Meds/pharmacy → medication; doctor copays/tests → medical.`,
+    `- time categories: ${TimeCategory.options.join(", ")}. Driving to/attending a doctor visit → appointments.`,
+    "- merchant: store or company name for expenses (e.g. CVS), else null.",
+    "- note: a short neutral description (max ~80 chars), no medical details beyond what's needed.",
+    "- memberId: who paid / gave the time, only from this list; null if it's the writer or unclear:",
+    people,
+    "If the text describes no expense or care time, return an empty drafts array.",
+  ].join("\n");
+}
+
+export function receiptInstructions(today: string): string {
+  return [
+    "Read this receipt for an elderly parent's care costs.",
+    "amountCents: the final TOTAL actually paid, in integer cents (e.g. $43.17 → 4317). null if unreadable. Never guess.",
+    `date: purchase date as YYYY-MM-DD (today is ${today}); null if not visible.`,
+    "merchant: store/provider name, short (e.g. 'CVS Pharmacy').",
+    `category: one of ${ExpenseCategory.options.join(", ")}.`,
+    "note: a short neutral description of what was bought (max ~80 chars), no diagnoses.",
+    "isReceipt: false if the image is not a receipt or invoice; then set the other fields to null.",
+  ].join("\n");
+}
+
+const TONES: Record<InvoiceMessageInput["tone"], string> = {
+  warm: "warm and loving, like a sibling writing to family; grateful, never guilt-tripping",
+  brief: "brief: 2-3 short sentences, friendly",
+  direct: "direct and clear, polite and businesslike",
+};
+
+function factLines(balance: MonthlyBalance): string[] {
+  const lines = [
+    `Month: ${monthName(balance.month)} ${balance.month.slice(0, 4)}`,
+    `Total out-of-pocket care costs: ${formatCents(balance.totalOutOfPocketCents)}`,
+    `Total care time given: ${formatMinutes(balance.totalMinutes)}`,
+  ];
+  for (const m of balance.members) {
+    const base = `${m.name} (${m.role}): paid ${formatCents(m.paidCents)}, gave ${formatMinutes(m.minutes)} of care`;
+    lines.push(m.role === "sibling" ? `${base}, suggested contribution ${formatCents(m.suggestedContributionCents)}` : base);
+  }
+  return lines;
+}
+
+export function invoiceInstructions(input: InvoiceMessageInput): string {
+  return [
+    `Write a short family update (at most 120 words) from ${input.caregiverName}, who cares for ${input.parentName}, to their siblings.`,
+    `Tone: ${TONES[input.tone]}.`,
+    "It goes on a page that already shows the full breakdown and pay buttons; this message is the personal note on top.",
+    "Rules:",
+    "- Use ONLY the numbers below, copied exactly as written. Do not add, round, sum or compute any number.",
+    "- Say 'suggested contribution'. Never use the words 'owe', 'owes', 'debt' or 'pay me'.",
+    "- No medical details. Plain text, no markdown, no subject line.",
+    `- Sign off as ${input.caregiverName}.`,
+    "Facts:",
+    ...factLines(input.balance),
+  ].join("\n");
+}
