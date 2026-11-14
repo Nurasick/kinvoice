@@ -42,7 +42,7 @@ npm run dev                  # http://localhost:3000
 
 ## Quality and safety
 
-- **Tests:** 93 Vitest tests. They cover the money math (100% of lines), the API route handlers end to end (auth, validation, the payment-mark rules, delete), AI output validation and fallbacks, and the repository contract. CI runs lint, typecheck, tests and the build on every PR.
+- **Tests:** Vitest suite (`npm test`). They cover the money math (100% of lines), the API route handlers end to end (auth, validation, the payment-mark rules, delete), AI output validation and fallbacks, and the repository contract. CI runs lint, typecheck, tests and the build on every PR.
 - **Privacy:** no accounts and no medical records, only amounts, categories and short notes. The server stores only a SHA-256 hash of each edit key. Deleting a workspace removes everything, and its invoice links stop working.
 - **Hardening:** every request body is validated with Zod (400 with details). AI and sign-up endpoints are rate-limited per IP. Pages that carry secret tokens are sent with `no-store`, `noindex` and `no-referrer`. The OpenAI key exists only on the server.
 

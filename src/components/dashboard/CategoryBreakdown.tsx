@@ -43,12 +43,12 @@ function Bars({ title, rows, kind, empty }: BarsProps) {
                   <Duration minutes={row.value} className="shrink-0 font-medium whitespace-nowrap" />
                 )}
               </div>
-              <div aria-hidden className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-paper-deep">
+              <div aria-hidden className={`mt-1.5 h-1.5 overflow-hidden rounded-full ${kind === "money" ? "bg-chart-money-track" : "bg-chart-time-track"}`}>
                 <div
                   className={
                     kind === "money"
-                      ? "h-full rounded-full bg-accent"
-                      : "h-full rounded-full bg-marigold-deep"
+                      ? "h-full rounded-full bg-chart-money"
+                      : "h-full rounded-full bg-chart-time"
                   }
                   style={{ width: `${Math.max(row.barFraction * 100, 3)}%` }}
                 />

@@ -7,17 +7,23 @@ import type { Invoice, MonthlyBalance } from "@/shared/domain";
 import { Money } from "@/components/ui";
 import { leadPayer, suggestedSiblings } from "./dashboard-view";
 import { monthProgress } from "./month-progress";
+import type { Settlement } from "./settlement";
 
 export interface MonthHeadlineProps {
   balance: MonthlyBalance;
   month: string;
   entries: number;
   invoices: readonly Invoice[];
+  /** Payment status from the invoice sent for this month, if any. */
+  settlement: Settlement | null;
 }
 
-export function MonthHeadline({ balance, month, entries, invoices }: MonthHeadlineProps) {
+export function MonthHeadline({ balance, month, entries, invoices, settlement }: MonthHeadlineProps) {
   const lead = leadPayer(balance);
-  const asks = suggestedSiblings(balance);
+  // Once an invoice is out, only what is still open is "asked"; settled siblings drop off the line.
+  const asks = settlement
+    ? settlement.rows.filter((r) => r.status === "waiting" || r.status === "sent").map((r) => r.member)
+    : suggestedSiblings(balance);
   return (
     <section aria-label="This month in one sentence" className="flex flex-col gap-3">
       <p className="max-w-3xl font-display text-2xl leading-snug font-bold text-balance text-ink sm:text-3xl">
@@ -27,7 +33,7 @@ export function MonthHeadline({ balance, month, entries, invoices }: MonthHeadli
       </p>
       {asks.length > 0 && (
         <p className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-ink-soft">
-          <span>Suggested contributions:</span>
+          <span>{settlement ? "Still to come:" : "Suggested contributions:"}</span>
           {asks.map((m) => (
             <span key={m.memberId} className="whitespace-nowrap">
               {m.name} <Money cents={m.suggestedContributionCents} className="font-semibold text-ink" />
@@ -35,12 +41,12 @@ export function MonthHeadline({ balance, month, entries, invoices }: MonthHeadli
           ))}
         </p>
       )}
-      <InvoiceStatus month={month} entries={entries} invoices={invoices} />
+      <InvoiceStatus month={month} entries={entries} invoices={invoices} settlement={settlement} />
     </section>
   );
 }
 
-function InvoiceStatus({ month, entries, invoices }: Omit<MonthHeadlineProps, "balance">) {
+function InvoiceStatus({ month, entries, invoices, settlement }: Omit<MonthHeadlineProps, "balance">) {
   const p = monthProgress(entries, invoices, month);
   const { settled, total } = p.settled;
   const sentWord = p.sent.invoice ? "Invoice sent" : "Invoice not sent yet";
@@ -65,6 +71,7 @@ function InvoiceStatus({ month, entries, invoices }: Omit<MonthHeadlineProps, "b
         }
       />
       {detail ? `${sentWord} · ${detail}` : sentWord}
+      {settlement?.hasNewCosts && " · new costs logged since you sent it"}
     </p>
   );
 }

@@ -10,13 +10,16 @@ export const POST = handle(
     const repo = getRepository();
     const found = await repo.findInvoiceByToken(token);
     if (!found) throw new HttpError("not_found", "This invoice link is not valid");
-    const isSibling = found.invoice.snapshot.members.some(
+    const member = found.invoice.snapshot.members.find(
       (m) => m.memberId === body.memberId && m.role === "sibling",
     );
-    if (!isSibling) throw new HttpError("bad_request", "Unknown memberId");
+    if (!member) throw new HttpError("bad_request", "Unknown memberId");
     const existing = found.invoice.payments.find((p) => p.memberId === body.memberId);
     // Never downgrade a caregiver-confirmed payment back to "sent".
     if (existing?.status === "received") return ok(existing);
-    return ok(await repo.upsertPayment(found.invoice.id, { ...body, status: "sent" }));
+    // The amount comes from the frozen snapshot, never from the (unauthenticated) request body.
+    const amountCents = member.suggestedContributionCents;
+    if (amountCents === 0) throw new HttpError("bad_request", "Nothing to send for this month");
+    return ok(await repo.upsertPayment(found.invoice.id, { ...body, amountCents, status: "sent" }));
   },
 );

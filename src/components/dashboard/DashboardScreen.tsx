@@ -13,8 +13,10 @@ import { CategoryBreakdown } from "./CategoryBreakdown";
 import { currentMonth, isEmptyMonth } from "./dashboard-view";
 import { MemberBalances } from "./MemberBalances";
 import { MonthHeadline } from "./MonthHeadline";
+import { latestInvoice } from "./month-progress";
 import { MonthProgress } from "./MonthProgress";
 import { RecentEntries } from "./RecentEntries";
+import { settlement } from "./settlement";
 import { useInvoices } from "./use-invoices";
 import { useMonthData, type MonthData } from "./use-month-data";
 
@@ -61,6 +63,7 @@ function MonthBody({ data, month, invoices, onRetry }: MonthBodyProps) {
     );
   }
   const entries = data.entries.length;
+  const status = settlement(latestInvoice(invoices, month), data.balance);
   if (isEmptyMonth(data.balance)) {
     return (
       <>
@@ -74,9 +77,9 @@ function MonthBody({ data, month, invoices, onRetry }: MonthBodyProps) {
   }
   return (
     <>
-      <MonthHeadline balance={data.balance} month={month} entries={entries} invoices={invoices} />
+      <MonthHeadline balance={data.balance} month={month} entries={entries} invoices={invoices} settlement={status} />
       <MonthProgress month={month} entries={entries} invoices={invoices} />
-      <MemberBalances balance={data.balance} />
+      <MemberBalances balance={data.balance} settlement={status} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr]">
         <CategoryBreakdown balance={data.balance} />
         <RecentEntries entries={data.entries} members={view.members} />

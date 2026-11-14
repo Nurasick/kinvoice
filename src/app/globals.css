@@ -32,6 +32,16 @@
   --color-marigold: #ffb81c;
   --color-marigold-deep: #f0a000;
 
+  /*
+   * chart marks: cobalt = money, marigold = time. Brand steps adjusted so the pair passes the
+   * dataviz validator on white (lightness band, CVD ΔE 31, both ≥ 3:1). Tracks are a lighter
+   * step of the same hue. Text never wears these; values stay in ink.
+   */
+  --color-chart-money: #3a63d8;
+  --color-chart-money-track: #e4eafb;
+  --color-chart-time: #c98200;
+  --color-chart-time-track: #fbefd6;
+
   /* status (calm, never alarming) */
   --color-success: #17704f;
   --color-success-soft: #e0f4ea;

@@ -84,15 +84,15 @@ Success → `{ "data": T }`. Error → `{ "error": { "code", "message", "details
 | POST | `/api/ai/receipt` | key | multipart `file` (jpeg/png/webp/heic/pdf ≤ 5 MB), `today` | `{ draft: DraftEntry \| null, fallback }` |
 | POST | `/api/ai/invoice-message` | key | `{ month, tone }` | `{ message, fallback }` |
 | GET | `/api/invoices` | key | – | `Invoice[]` |
-| POST | `/api/invoices` | key | `{ month, tone, message }` | `Invoice` (with `publicToken`, `snapshot`) |
-| POST | `/api/invoices/:id/payments` | key | `{ memberId, amountCents, method }` | `PaymentMark` status `received` |
+| POST | `/api/invoices` | key | `{ month, tone, message }` | `Invoice` (with `publicToken`, `snapshot`; payment marks from an earlier invoice for the same month carry over) |
+| POST | `/api/invoices/:id/payments` | key | `{ memberId, amountCents, method }` | `PaymentMark` status `received` (siblings on the invoice only) |
 | GET | `/api/public/invoices/:token` | token | – | `PublicInvoice` |
-| POST | `/api/public/invoices/:token/payments` | token | `{ memberId, amountCents, method }` | `PaymentMark` status `sent` (never downgrades `received`) |
+| POST | `/api/public/invoices/:token/payments` | token | `{ memberId, amountCents, method }` | `PaymentMark` status `sent`; amount taken from the snapshot, body amount ignored; never downgrades `received` |
 
 `NewEntry` is `{ kind:'expense', date, memberId, amountCents, category, merchant?, note, source }` or `{ kind:'time', date, memberId, minutes, category, note, source }`.
 
 ### Rate limits
-`src/proxy.ts` applies per-IP fixed-window limits to POSTs: `/api/ai/**` 30/min, `/api/demo` and `/api/workspaces` 10/min each → `429 rate_limited` with `retry-after`. The counters live in memory per instance, so this is best-effort protection for the OpenAI budget, not a security boundary.
+`src/proxy.ts` applies per-IP fixed-window limits to POSTs: `/api/ai/**` 30/min, `/api/demo` 60/min (a jury room shares one Wi-Fi IP), `/api/workspaces` 10/min → `429 rate_limited` with `retry-after`. The counters live in memory per instance, so this is best-effort protection for the OpenAI budget, not a security boundary.
 
 ## 5. AI module (`src/server/ai/`)
 

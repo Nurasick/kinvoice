@@ -2,8 +2,8 @@
  * Use-case logic shared by several routes. Owner: Nurali.
  */
 import "server-only";
-import type { CreateWorkspaceRequest, CreateWorkspaceResponse } from "@/shared/api";
-import type { MonthlyBalance, NewEntry, PublicInvoice, WorkspaceView } from "@/shared/domain";
+import type { CreateWorkspaceRequest, CreateWorkspaceResponse, PublishInvoiceRequest } from "@/shared/api";
+import type { Entry, Invoice, MonthlyBalance, NewEntry, PublicInvoice, WorkspaceView } from "@/shared/domain";
 import { computeMonthlyBalance } from "@/lib/money";
 import { HttpError } from "./http";
 import { getRepository } from "./repo";
@@ -65,10 +65,38 @@ export async function getPublicInvoice(token: string): Promise<PublicInvoice | n
     month: invoice.month,
     message: invoice.message,
     snapshot: invoice.snapshot,
-    entries: await repo.listEntries(view.workspace.id, invoice.month),
+    entries: entriesAtPublish(await repo.listEntries(view.workspace.id, invoice.month), invoice.publishedAt),
     payments: invoice.payments,
     publishedAt: invoice.publishedAt,
   };
+}
+
+/**
+ * The breakdown a sibling sees must match the frozen totals: only entries that existed when the
+ * invoice was published. (Edits to those entries after publishing still show; the totals do not move.)
+ */
+export function entriesAtPublish(entries: readonly Entry[], publishedAt: string): Entry[] {
+  const cutoff = Date.parse(publishedAt);
+  return entries.filter((e) => Date.parse(e.createdAt) <= cutoff);
+}
+
+/**
+ * Publishes a new invoice for the month with a frozen balance. Payment marks already recorded on the
+ * previous invoice for the same month carry over, so re-publishing never resets "who has chipped in".
+ */
+export async function publishInvoice(view: WorkspaceView, req: PublishInvoiceRequest): Promise<Invoice> {
+  const repo = getRepository();
+  const snapshot = await getMonthlyBalance(view, req.month);
+  const previous = (await repo.listInvoices(view.workspace.id)).find((i) => i.month === req.month);
+  const invoice = await repo.createInvoice(view.workspace.id, { ...req, snapshot, publicToken: newSecretToken() });
+  const siblings = new Set(snapshot.members.filter((m) => m.role === "sibling").map((m) => m.memberId));
+  const carried = (previous?.payments ?? []).filter((p) => siblings.has(p.memberId));
+  const payments = await Promise.all(
+    carried.map(({ memberId, amountCents, method, status }) =>
+      repo.upsertPayment(invoice.id, { memberId, amountCents, method, status }),
+    ),
+  );
+  return { ...invoice, payments };
 }
 
 /** Reject entries attributed to someone outside this family. */

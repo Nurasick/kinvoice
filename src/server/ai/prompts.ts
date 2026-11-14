@@ -23,7 +23,8 @@ export function quickLogInstructions(today: string, members: readonly Member[]):
   return [
     "You turn a family caregiver's quick note about caring for an elderly parent into draft log entries.",
     "Return one draft per distinct expense (money paid) and one per distinct block of care time.",
-    "A sentence can contain both: 'Paid $86 at CVS for meds, then drove her to the cardiologist, 3 hours' → one expense AND one time entry.",
+    "A sentence can contain both: 'Paid $86 at CVS for meds, then drove her to the cardiologist, 3 hours' → one expense " +
+      "(note 'Medication') AND one time entry (note 'Drove Mom to a doctor's appointment', never 'cardiologist').",
     "Rules:",
     "- amountCents: integer cents ($86 → 8600, $12.50 → 1250). Only for kind=expense. Never invent or estimate an amount; use null if not stated.",
     "- minutes: integer minutes (3 hours → 180, half an hour → 30). Only for kind=time. null if not stated.",
