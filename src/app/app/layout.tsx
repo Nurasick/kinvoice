@@ -1,5 +1,6 @@
 // Owner: Yernur. App shell for the caregiver area: the enamel door as a header band.
 import { AppNav } from "@/components/layout/AppNav";
+import { DemoStrip } from "@/components/layout/DemoStrip";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { Logo } from "@/components/layout/Logo";
 import { WorkspaceProvider } from "@/components/layout/WorkspaceProvider";
@@ -27,7 +28,10 @@ export default async function AppLayout({ children }: LayoutProps<"/app">) {
         tabIndex={-1}
         className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 outline-none sm:px-8 sm:py-10"
       >
-        <WorkspaceProvider>{children}</WorkspaceProvider>
+        <WorkspaceProvider>
+          <DemoStrip line={copy.demo.line} back={copy.demo.back} />
+          {children}
+        </WorkspaceProvider>
       </main>
     </div>
   );

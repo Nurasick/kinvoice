@@ -29,6 +29,8 @@ export interface LandingCopy {
     labelAppointment: string;
     labelSiblingPaid: (p: { sibling: string }) => string;
     labelInvoice: (p: { sibling: string }) => string;
+    /** Handwritten caption on the family snapshot. */
+    photoCaption: string;
     invoiceTitle: (p: { month: string }) => string;
     invoiceGreeting: (p: { sibling: string }) => string;
     invoiceCosts: string;
@@ -125,6 +127,7 @@ const en: LandingCopy = {
     labelAppointment: "Appointments",
     labelSiblingPaid: ({ sibling }) => `${sibling} paid`,
     labelInvoice: ({ sibling }) => `What ${sibling} opens. No account.`,
+    photoCaption: "Mom’s 71st, all of us",
     invoiceTitle: ({ month }) => `${month} care invoice`,
     invoiceGreeting: ({ sibling }) => `Hi ${sibling}, here is Mom’s month.`,
     invoiceCosts: "Care costs this month",
@@ -238,6 +241,7 @@ const ru: LandingCopy = {
     labelAppointment: "Визиты к врачу",
     labelSiblingPaid: ({ sibling }) => `Оплатил ${sibling}`,
     labelInvoice: ({ sibling }) => `Это видит ${sibling}. Без аккаунта.`,
+    photoCaption: "Мамины 71, все вместе",
     invoiceTitle: ({ month }) => `Счёт за уход: ${month}`,
     invoiceGreeting: ({ sibling }) => `Привет, ${sibling}! Вот мамин месяц.`,
     invoiceCosts: "Расходы на уход за месяц",
@@ -351,6 +355,7 @@ const kk: LandingCopy = {
     labelAppointment: "Дәрігерге бару",
     labelSiblingPaid: ({ sibling }) => `${sibling} төледі`,
     labelInvoice: ({ sibling }) => `${sibling} көретіні. Аккаунтсыз.`,
+    photoCaption: "Анамыздың 71 жасы, бәріміз бірге",
     invoiceTitle: ({ month }) => `Күтім шоты: ${month}`,
     invoiceGreeting: ({ sibling }) => `Сәлем, ${sibling}! Анамыздың айы осындай.`,
     invoiceCosts: "Айдағы күтім шығыны",
