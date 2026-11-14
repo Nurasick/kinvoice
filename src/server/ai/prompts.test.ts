@@ -31,6 +31,23 @@ describe("prompts", () => {
     expect(quickLogInstructions("2026-11-14", members)).toMatch(/home_care is ONLY paid caregivers/);
   });
 
+  it("Russian and Kazakh facts use native time units; names stay in Latin letters", () => {
+    const withTime = computeMonthlyBalance({
+      month: "2026-11",
+      members,
+      entries: [...entries, { id: "2", kind: "time", memberId: "m", minutes: 105, date: "2026-11-04", category: "companionship", note: "", source: "manual", createdAt: "2026-11-04T00:00:00.000Z" }],
+      hourlyRateCents: 2500,
+    });
+    const input = { tone: "warm" as const, parentName: "Mom (Linda)", caregiverName: "Sarah", balance: withTime };
+    const ru = invoiceInstructions(input, "ru").split("Facts:")[1];
+    const kk = invoiceInstructions(input, "kk").split("Facts:")[1];
+    expect(ru).toMatch(/gave 1\s?ч\s?45\s?мин of care/);
+    expect(kk).toMatch(/gave 1\s?сағ\s?45\s?мин of care/);
+    expect(ru).not.toMatch(/\d+h|\d+m\b/);
+    expect(invoiceInstructions(input, "ru")).toMatch(/Latin letters \(Mike, not Майк/);
+    expect(invoiceInstructions(input, "en").split("Facts:")[1]).toContain("gave 1h 45m of care");
+  });
+
   it("invoice facts come pre-formatted from lib/money and forbid owe wording", () => {
     const text = invoiceInstructions({ tone: "warm", parentName: "Linda", caregiverName: "Sarah", balance });
     expect(text).toContain("$900.00");
