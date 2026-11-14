@@ -10,6 +10,7 @@ import OpenAI from "openai";
 import type { DraftEntry } from "@/shared/domain";
 import { getAiConfig } from "./config";
 import { isSafeInvoiceMessage } from "./guard";
+import { localeOf } from "./locale";
 import { invoiceInstructions, quickLogInstructions, receiptInstructions } from "./prompts";
 import { parseJsonSafe, salvageDraft, salvageDrafts } from "./salvage";
 import { invoiceMessageSchema, quickLogSchema, receiptSchema, type JsonSchema } from "./schemas";
@@ -130,9 +131,10 @@ export function createOpenAiService(deps?: OpenAiDeps): AiService {
     },
 
     async draftInvoiceMessage(input) {
+      const locale = localeOf(input);
       const raw = await callJson(resolved, {
         name: "invoice_message",
-        instructions: invoiceInstructions(input),
+        instructions: invoiceInstructions(input, locale),
         content: [{ type: "input_text", text: `Write the ${input.tone} message now.` }],
         schema: invoiceMessageSchema,
       });
@@ -140,7 +142,7 @@ export function createOpenAiService(deps?: OpenAiDeps): AiService {
       if (typeof message === "string" && isSafeInvoiceMessage(message, input.balance)) {
         return { message: message.trim(), fallback: false };
       }
-      return { message: templateInvoiceMessage(input), fallback: true };
+      return { message: templateInvoiceMessage(input, locale), fallback: true };
     },
   };
 }

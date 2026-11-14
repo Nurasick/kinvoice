@@ -1,15 +1,22 @@
 /**
  * Deterministic invoice message — the fallback when AI is unavailable. Owner: Olzhas.
- * Uses only numbers from the computed balance.
+ * Uses only numbers from the computed balance, never "$0.00". Wording: template-copy.ts.
  */
 import type { MonthlyBalance } from "@/shared/domain";
 import { formatCents, formatMinutes } from "@/lib/money";
+import { formatDuration, monthName as localMonthName } from "@/lib/i18n/format";
+import type { Locale } from "@/lib/i18n/locales";
+import { TEMPLATE_COPY } from "./template-copy";
 import type { InvoiceMessageInput } from "./types";
 
-/** "2026-11" → "November" */
-export function monthName(month: string): string {
+function firstOfMonth(month: string): Date {
   const [y, m] = month.split("-").map(Number);
-  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+  return new Date(Date.UTC(y, m - 1, 1));
+}
+
+/** "2026-11" → "November" (English; used in prompts). */
+export function monthName(month: string): string {
+  return firstOfMonth(month).toLocaleString("en-US", { month: "long", timeZone: "UTC" });
 }
 
 /** "Mike: $120.00, Emily: $338.40" — only siblings with something to contribute. */
@@ -20,35 +27,24 @@ function contributions(balance: MonthlyBalance): string {
     .join(", ");
 }
 
-function greeting(balance: MonthlyBalance): string {
-  const siblings = balance.members.filter((m) => m.role === "sibling").map((m) => m.name);
-  if (siblings.length === 1) return `Hi ${siblings[0]}`;
-  if (siblings.length === 2) return `Hi ${siblings[0]} and ${siblings[1]}`;
-  return "Hi everyone";
+function duration(minutes: number, locale: Locale): string {
+  return locale === "en" ? formatMinutes(minutes) : formatDuration(minutes, locale);
 }
 
-/** "$1,015.19 out of pocket and 17h 45m of care time" — zero parts left out, never "$0.00". */
-function totals(balance: MonthlyBalance): string | null {
-  const parts = [
-    balance.totalOutOfPocketCents > 0 ? `${formatCents(balance.totalOutOfPocketCents)} out of pocket` : null,
-    balance.totalMinutes > 0 ? `${formatMinutes(balance.totalMinutes)} of care time` : null,
-  ].filter((p): p is string => p !== null);
-  return parts.length > 0 ? parts.join(" and ") : null;
-}
-
-export function templateInvoiceMessage({ tone, parentName, caregiverName, balance }: InvoiceMessageInput): string {
-  const month = monthName(balance.month);
-  const sum = totals(balance);
+export function templateInvoiceMessage(input: InvoiceMessageInput, locale: Locale = "en"): string {
+  const { tone, parentName, caregiverName, balance } = input;
+  const copy = TEMPLATE_COPY[locale];
   const asks = contributions(balance);
-  const askLine = asks ? `Suggested contribution — ${asks}.` : "No contributions are suggested this month.";
-
-  if (tone === "brief") {
-    return `${month} care for ${parentName}${sum ? `: ${sum}` : ""}. ${askLine} Details below. — ${caregiverName}`;
-  }
-  if (tone === "direct") {
-    const summary = sum ? ` This month: ${sum}. Costs are split equally.` : "";
-    return `Here is ${parentName}'s care summary for ${month}.${summary} ${askLine} You can use the buttons below. Thanks, ${caregiverName}`;
-  }
-  const story = sum ? ` Between appointments, groceries and everything in between, this month came to ${sum}.` : "";
-  return `${greeting(balance)}, here's how ${month} went with ${parentName}.${story} ${askLine} Thank you for being part of this. Love, ${caregiverName}`;
+  const siblings = balance.members.filter((m) => m.role === "sibling").map((m) => m.name);
+  return copy.tones[tone]({
+    greeting: copy.hi(siblings),
+    month: locale === "en" ? monthName(balance.month) : localMonthName(firstOfMonth(balance.month), locale),
+    parent: parentName,
+    sum: copy.totals(
+      balance.totalOutOfPocketCents > 0 ? formatCents(balance.totalOutOfPocketCents) : null,
+      balance.totalMinutes > 0 ? duration(balance.totalMinutes, locale) : null,
+    ),
+    ask: asks ? copy.ask(asks) : copy.noAsk,
+    caregiver: caregiverName,
+  });
 }

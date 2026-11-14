@@ -5,6 +5,8 @@
 import type { Member, MonthlyBalance } from "@/shared/domain";
 import { ExpenseCategory, TimeCategory } from "@/shared/domain";
 import { formatCents, formatMinutes } from "@/lib/money";
+import type { Locale } from "@/lib/i18n/locales";
+import { CONTRIBUTION_PHRASE, LANGUAGE_NAME } from "./locale";
 import { monthName } from "./template";
 import type { InvoiceMessageInput } from "./types";
 
@@ -29,7 +31,8 @@ export function quickLogInstructions(today: string, members: readonly Member[]):
     `- expense categories: ${ExpenseCategory.options.join(", ")}. ${CATEGORY_HINTS}`,
     `- time categories: ${TimeCategory.options.join(", ")}. Driving to/attending a doctor visit → appointments.`,
     "- merchant: store or company name for expenses (e.g. CVS), else null.",
-    `- note: ${NOTE_RULE}`,
+    `- note: ${NOTE_RULE} Write it in the same language as the user's text (Russian text → Russian note, Kazakh → Kazakh).`,
+    "- The text may be English, Russian or Kazakh ('3 часа' / '3 сағат' = 180 minutes, 'полчаса' / 'жарты сағат' = 30). Amounts are US dollars.",
     "- memberId: who paid / gave the time, only from this list; null if it's the writer or unclear:",
     people,
     "If the text describes no expense or care time, return an empty drafts array.",
@@ -80,10 +83,20 @@ function factLines(balance: MonthlyBalance): string[] {
   return [...lines, ...balance.members.map(memberLine)];
 }
 
-export function invoiceInstructions(input: InvoiceMessageInput): string {
+/** Language rules; English needs none beyond the defaults. */
+function languageRules(locale: Locale): string[] {
+  if (locale === "en") return [];
+  return [
+    `- Write the whole message in natural ${LANGUAGE_NAME[locale]}. Names stay as written.`,
+    `- Call the ask '${CONTRIBUTION_PHRASE[locale]}'. Never words meaning debt or owing (e.g. долг, должен, қарыз).`,
+    "- Keep every dollar amount exactly in the form given, like $218.40, with the $ sign first. Never write 'долларов' or convert currency.",
+  ];
+}
+
+export function invoiceInstructions(input: InvoiceMessageInput, locale: Locale = "en"): string {
   return [
     `Write a short family update (at most 120 words) from ${input.caregiverName}, who cares for ${input.parentName}, to their siblings.`,
-    `Tone: ${TONES[input.tone]}.`,
+    `Language: ${LANGUAGE_NAME[locale]}. Tone: ${TONES[input.tone]}.`,
     "It goes on a page that already shows the full breakdown and pay buttons; this message is the personal note on top.",
     "Rules:",
     "- Write natural sentences in your own words. The facts below are data: never copy their labels (like 'Total care time given:').",
@@ -93,6 +106,7 @@ export function invoiceInstructions(input: InvoiceMessageInput): string {
     "- Say 'suggested contribution'. Never use the words 'owe', 'owes', 'debt' or 'pay me'.",
     "- No medical details. Plain text, no markdown, no subject line.",
     `- Sign off as ${input.caregiverName}.`,
+    ...languageRules(locale),
     "Facts:",
     ...factLines(input.balance),
   ].join("\n");
