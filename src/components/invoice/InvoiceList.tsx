@@ -169,7 +169,7 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
         </span>
       </div>
       {canMark && (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {failed && <span className="text-xs text-danger">{t.failed}</span>}
           {row.status === "waiting" && (
             <CopyButton

@@ -4,6 +4,7 @@
  */
 import { CreateWorkspaceRequest } from "@/shared/api";
 import { parseDollarsToCents } from "@/lib/money";
+import type { FormErrorCode } from "./copy";
 
 export interface SiblingDraft {
   name: string;
@@ -21,7 +22,8 @@ export interface SetupDraft {
   zelle: string;
 }
 
-export type SetupErrors = Record<string, string>;
+/** Error code per field key; the form words them in the reader's language (copy.ts). */
+export type SetupErrors = Record<string, FormErrorCode>;
 
 export type SetupResult = { ok: true; request: CreateWorkspaceRequest } | { ok: false; errors: SetupErrors };
 
@@ -49,20 +51,19 @@ function siblingErrors(siblings: readonly SiblingDraft[]): SetupErrors {
   const errors: SetupErrors = {};
   siblings.forEach((s, i) => {
     const email = s.email.trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      errors[`sibling.${i}.email`] = "That email doesn't look right.";
-    if (!s.name.trim() && email) errors[`sibling.${i}.name`] = "Add a name for this sibling.";
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors[`sibling.${i}.email`] = "emailInvalid";
+    if (!s.name.trim() && email) errors[`sibling.${i}.name`] = "siblingNameMissing";
   });
   return errors;
 }
 
 function fieldErrors(draft: SetupDraft, named: readonly SiblingDraft[]): SetupErrors {
   const errors: SetupErrors = { ...siblingErrors(draft.siblings) };
-  if (!draft.parentName.trim()) errors.parentName = "Who are you caring for? A first name is enough.";
-  if (!draft.caregiverName.trim()) errors.caregiverName = "Add your name so siblings know who sent it.";
-  if (named.length === 0) errors.siblings = "Add at least one sibling to share the invoice with.";
+  if (!draft.parentName.trim()) errors.parentName = "parentMissing";
+  if (!draft.caregiverName.trim()) errors.caregiverName = "caregiverMissing";
+  if (named.length === 0) errors.siblings = "noSiblings";
   const rate = parseDollarsToCents(draft.hourlyRate);
-  if (rate === null || rate > 100_00) errors.hourlyRate = "Use an amount between $0 and $100 per hour.";
+  if (rate === null || rate > 100_00) errors.hourlyRate = "rateRange";
   return errors;
 }
 
@@ -82,7 +83,6 @@ export function toCreateRequest(draft: SetupDraft): SetupResult {
       zelle: optional(draft.zelle),
     },
   });
-  if (!parsed.success)
-    return { ok: false, errors: { form: "Some details are too long. Please shorten them." } };
+  if (!parsed.success) return { ok: false, errors: { form: "tooLong" } };
   return { ok: true, request: parsed.data };
 }

@@ -4,9 +4,13 @@ import { useState } from "react";
 import { Logo } from "@/components/layout/Logo";
 import { SetupDone } from "@/components/setup/SetupDone";
 import { SetupForm } from "@/components/setup/SetupForm";
+import { setupCopy } from "@/components/setup/copy";
+import { useLocale } from "@/lib/i18n/client";
 
 export default function SetupPage() {
   const [editKey, setEditKey] = useState<string | null>(null);
+  const { locale } = useLocale();
+  const t = setupCopy(locale).setup;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -18,10 +22,8 @@ export default function SetupPage() {
           <SetupDone editKey={editKey} />
         ) : (
           <>
-            <h1 className="font-display text-3xl font-medium sm:text-4xl">Set up your family</h1>
-            <p className="mt-3 mb-8 text-ink-soft">
-              About two minutes. No account, no password. You can change all of this later.
-            </p>
+            <h1 className="font-display text-3xl font-medium sm:text-4xl">{t.title}</h1>
+            <p className="mt-3 mb-8 text-ink-soft">{t.intro}</p>
             <SetupForm onCreated={setEditKey} />
           </>
         )}

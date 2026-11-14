@@ -20,6 +20,22 @@ export interface FrameCopy {
     errorBody: string;
     tryAgain: string;
   };
+  /** 404, error boundaries, loading and the edit-link landing. */
+  states: {
+    notFoundTitle: string;
+    notFoundBody: string;
+    home: string;
+    errorTitle: string;
+    errorBody: string;
+    appErrorTitle: string;
+    appErrorBody: string;
+    backToDashboard: string;
+    globalTitle: string;
+    globalBody: string;
+    tryAgain: string;
+    loading: string;
+    openingSpace: string;
+  };
 }
 
 const en: FrameCopy = {
@@ -39,6 +55,22 @@ const en: FrameCopy = {
     errorTitle: "We couldn't reach your workspace",
     errorBody: "Your data is safe. This is usually a brief connection hiccup.",
     tryAgain: "Try again",
+  },
+  states: {
+    notFoundTitle: "We couldn’t find that page",
+    notFoundBody:
+      "The address may be mistyped. If you were opening your family space, use your private link. If a sibling sent you an invoice, ask them for the link again.",
+    home: "Go to Kinvoice",
+    errorTitle: "Something didn’t load",
+    errorBody: "Nothing you entered was lost. This is usually a brief connection hiccup.",
+    appErrorTitle: "This page hit a snag",
+    appErrorBody: "Your family’s data is safe. Try again, or pick another page from the menu above.",
+    backToDashboard: "Back to dashboard",
+    globalTitle: "Kinvoice didn’t load",
+    globalBody: "Nothing you entered was lost. Please try again in a moment.",
+    tryAgain: "Try again",
+    loading: "Loading",
+    openingSpace: "Opening your family space",
   },
 };
 
@@ -60,6 +92,23 @@ const ru: FrameCopy = {
     errorBody: "Ваши данные в сохранности. Обычно это кратковременный сбой связи.",
     tryAgain: "Попробовать ещё раз",
   },
+  states: {
+    notFoundTitle: "Такой страницы нет",
+    notFoundBody:
+      "Возможно, в адресе опечатка. Если вы открывали своё семейное пространство, воспользуйтесь личной ссылкой. Если счёт прислал кто-то из родных, попросите ссылку ещё раз.",
+    home: "Перейти в Kinvoice",
+    errorTitle: "Что-то не загрузилось",
+    errorBody: "Ничего из введённого не потерялось. Обычно это кратковременный сбой связи.",
+    appErrorTitle: "На этой странице сбой",
+    appErrorBody:
+      "Данные вашей семьи в сохранности. Попробуйте ещё раз или выберите другую страницу в меню выше.",
+    backToDashboard: "Вернуться к обзору",
+    globalTitle: "Kinvoice не загрузился",
+    globalBody: "Ничего из введённого не потерялось. Попробуйте ещё раз чуть позже.",
+    tryAgain: "Попробовать ещё раз",
+    loading: "Загрузка",
+    openingSpace: "Открываем ваше семейное пространство",
+  },
 };
 
 const kk: FrameCopy = {
@@ -79,6 +128,23 @@ const kk: FrameCopy = {
     errorTitle: "Кеңістігіңізді ашу мүмкін болмады",
     errorBody: "Деректеріңіз сақтаулы. Әдетте бұл байланыстың қысқа үзілісі.",
     tryAgain: "Қайта көру",
+  },
+  states: {
+    notFoundTitle: "Мұндай бет жоқ",
+    notFoundBody:
+      "Мекенжайда қате болуы мүмкін. Отбасы кеңістігіңізді ашқыңыз келсе, жеке сілтемеңізді пайдаланыңыз. Шотты бауырыңыз жіберсе, сілтемені қайта сұраңыз.",
+    home: "Kinvoice-қа өту",
+    errorTitle: "Бір нәрсе жүктелмеді",
+    errorBody: "Енгізгеніңіздің ешқайсысы жоғалған жоқ. Әдетте бұл байланыстың қысқа үзілісі.",
+    appErrorTitle: "Бұл бетте ақау шықты",
+    appErrorBody:
+      "Отбасыңыздың деректері сақтаулы. Қайта көріңіз немесе жоғарыдағы мәзірден басқа бетті таңдаңыз.",
+    backToDashboard: "Шолуға оралу",
+    globalTitle: "Kinvoice жүктелмеді",
+    globalBody: "Енгізгеніңіздің ешқайсысы жоғалған жоқ. Сәлден соң қайта көріңіз.",
+    tryAgain: "Қайта көру",
+    loading: "Жүктелуде",
+    openingSpace: "Отбасы кеңістігіңіз ашылуда",
   },
 };
 
