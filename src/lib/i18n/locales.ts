@@ -70,15 +70,31 @@ export interface LocaleDecision {
   shouldPersist: boolean;
 }
 
-/** What the proxy decides for one page request. Same order as resolveLocale. */
+/**
+ * What the proxy decides for one page request. Same order as resolveLocale.
+ * Only a real page load (a person opening a link) may change the remembered language. Router
+ * prefetches and RSC fetches must not: Next prefetches every ?lang= switcher link, and the last
+ * prefetch would otherwise silently switch the visitor's language. Clicks persist client-side.
+ */
 export function decideLocale(input: {
   query?: string | null;
   cookie?: string | null;
   acceptLanguage?: string | null;
+  isPageLoad?: boolean;
 }): LocaleDecision {
   const locale = resolveLocale(input);
   const fromQuery = normalize(input.query);
-  return { locale, shouldPersist: fromQuery !== null && fromQuery !== normalize(input.cookie) };
+  const isNewChoice = fromQuery !== null && fromQuery !== normalize(input.cookie);
+  return { locale, shouldPersist: isNewChoice && input.isPageLoad !== false };
+}
+
+/** True for a browser page load; false for router prefetches and RSC (client navigation) fetches. */
+export function isPageLoad(headers: { get(name: string): string | null }): boolean {
+  if (headers.get("rsc") || headers.get("next-router-prefetch") || headers.get("next-router-state-tree")) return false;
+  const purpose = headers.get("purpose") ?? headers.get("sec-purpose") ?? "";
+  if (purpose.includes("prefetch")) return false;
+  const dest = headers.get("sec-fetch-dest");
+  return dest === null || dest === "document";
 }
 
 /** "/i/abc?for=m1" + "ru" → "/i/abc?for=m1&lang=ru". Keeps every other parameter and the hash. */
