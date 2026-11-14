@@ -6,16 +6,21 @@ import { useWorkspace } from "@/components/layout/WorkspaceProvider";
 import { currentMonth } from "@/components/dashboard/dashboard-view";
 import { useMonthData } from "@/components/dashboard/use-month-data";
 import { monthLabel } from "@/components/log/labels";
+import { dateLabel } from "@/components/dashboard/copy";
+import { useLocale } from "@/lib/i18n/client";
 import type { Invoice } from "@/shared/domain";
 import { Button, EmptyState, LoadingBlock, MonthPicker, buttonClass } from "@/components/ui";
 import { ComposerCard } from "./ComposerCard";
 import { InvoiceList } from "./InvoiceList";
-import { publishedLabel, sortInvoices } from "./invoice-view";
+import { invoiceCopy } from "./copy";
+import { sortInvoices } from "./invoice-view";
 import { PublishedPanel } from "./PublishedPanel";
 import { useComposer } from "./use-composer";
 
 export function InvoiceScreen({ initialMonth }: { initialMonth?: string }) {
   const { api } = useWorkspace();
+  const { locale } = useLocale();
+  const t = invoiceCopy(locale).screen;
   const [thisMonth] = useState(() => currentMonth());
   const [month, setMonth] = useState(() =>
     initialMonth && initialMonth <= thisMonth ? initialMonth : thisMonth,
@@ -24,6 +29,7 @@ export function InvoiceScreen({ initialMonth }: { initialMonth?: string }) {
   const invoices = useInvoices();
   const hasCosts = data.state === "ready" && data.balance.totalOutOfPocketCents > 0;
   const composer = useComposer(api, month, hasCosts, invoices.reload);
+  const monthName = monthLabel(month, locale);
   const sentForMonth =
     invoices.state === "ready" ? invoices.list.find((inv) => inv.month === month) : undefined;
 
@@ -33,27 +39,27 @@ export function InvoiceScreen({ initialMonth }: { initialMonth?: string }) {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 id="compose" className="font-display text-3xl font-medium sm:text-4xl">
-              Care invoice
+              {t.title}
             </h1>
-            <p className="mt-1 text-ink-muted">One calm update your siblings can open without an account.</p>
+            <p className="mt-1 text-ink-muted">{t.subtitle}</p>
           </div>
-          <MonthPicker month={month} onChange={setMonth} max={thisMonth} />
+          <MonthPicker month={month} onChange={setMonth} max={thisMonth} locale={locale} label={monthName} />
         </div>
-        {data.state === "loading" && <LoadingBlock label={`Loading ${monthLabel(month)}`} />}
+        {data.state === "loading" && <LoadingBlock label={t.loading({ month: monthName })} />}
         {data.state === "error" && (
           <EmptyState
-            title="We couldn't load this month"
-            description="Your data is safe. This is usually a brief connection hiccup."
-            action={<Button onClick={reload}>Try again</Button>}
+            title={t.errorTitle}
+            description={t.errorBody}
+            action={<Button onClick={reload}>{t.tryAgain}</Button>}
           />
         )}
         {data.state === "ready" && !hasCosts && (
           <EmptyState
-            title={`No care costs logged for ${monthLabel(month)}`}
-            description="An invoice shares out-of-pocket costs, so log at least one expense first."
+            title={t.noCostsTitle({ month: monthName })}
+            description={t.noCostsBody}
             action={
               <Link href="/app/log" className={buttonClass("primary")}>
-                Log care
+                {t.logCare}
               </Link>
             }
           />
@@ -61,7 +67,7 @@ export function InvoiceScreen({ initialMonth }: { initialMonth?: string }) {
         {data.state === "ready" && hasCosts && composer.published && (
           <PublishedPanel
             invoice={composer.published}
-            monthName={monthLabel(month)}
+            monthName={monthName}
             onStartOver={composer.startOver}
           />
         )}
@@ -69,20 +75,20 @@ export function InvoiceScreen({ initialMonth }: { initialMonth?: string }) {
           <ComposerCard
             composer={composer}
             balance={data.balance}
-            alreadySentOn={sentForMonth ? publishedLabel(sentForMonth.publishedAt) : undefined}
+            alreadySentOn={sentForMonth ? dateLabel(sentForMonth.publishedAt, locale) : undefined}
           />
         )}
       </section>
 
       <section aria-labelledby="sent" className="flex flex-col gap-4">
         <h2 id="sent" className="font-display text-2xl font-medium">
-          Sent invoices
+          {t.sentTitle}
         </h2>
-        {invoices.state === "loading" && <LoadingBlock label="Loading invoices" />}
+        {invoices.state === "loading" && <LoadingBlock label={t.loadingInvoices} />}
         {invoices.state === "error" && (
           <EmptyState
-            title="We couldn't load your invoices"
-            action={<Button onClick={invoices.reload}>Try again</Button>}
+            title={t.invoicesError}
+            action={<Button onClick={invoices.reload}>{t.tryAgain}</Button>}
           />
         )}
         {invoices.state === "ready" && (

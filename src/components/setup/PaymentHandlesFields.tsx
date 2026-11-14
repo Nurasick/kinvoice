@@ -1,5 +1,7 @@
 "use client";
+import { useLocale } from "@/lib/i18n/client";
 import { Field, Input } from "@/components/ui";
+import { setupCopy } from "./copy";
 
 export interface HandleValues {
   venmo: string;
@@ -14,9 +16,11 @@ export interface PaymentHandlesFieldsProps {
 
 /** Venmo / PayPal / Zelle inputs. Used by setup and settings. */
 export function PaymentHandlesFields({ values, onChange }: PaymentHandlesFieldsProps) {
+  const { locale } = useLocale();
+  const f = setupCopy(locale).fields;
   return (
     <div className="grid gap-4 sm:grid-cols-3">
-      <Field label="Venmo username" optional>
+      <Field label={f.venmo} optional optionalLabel={f.optional}>
         {(p) => (
           <Input
             {...p}
@@ -27,7 +31,7 @@ export function PaymentHandlesFields({ values, onChange }: PaymentHandlesFieldsP
           />
         )}
       </Field>
-      <Field label="PayPal.Me name" optional>
+      <Field label={f.paypal} optional optionalLabel={f.optional}>
         {(p) => (
           <Input
             {...p}
@@ -38,7 +42,7 @@ export function PaymentHandlesFields({ values, onChange }: PaymentHandlesFieldsP
           />
         )}
       </Field>
-      <Field label="Zelle email or phone" optional>
+      <Field label={f.zelle} optional optionalLabel={f.optional}>
         {(p) => (
           <Input
             {...p}

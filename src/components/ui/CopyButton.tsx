@@ -6,10 +6,18 @@ export interface CopyButtonProps extends Omit<ButtonProps, "onClick" | "children
   /** Text placed on the clipboard. */
   value: string;
   label?: string;
+  /** Confirmation shown for two seconds after copying. Default English "Copied". */
+  copiedLabel?: string;
 }
 
 /** Copies `value` and confirms with "Copied" for two seconds. Fails soft (button just stays as is). */
-export function CopyButton({ value, label = "Copy", variant = "secondary", ...rest }: CopyButtonProps) {
+export function CopyButton({
+  value,
+  label = "Copy",
+  copiedLabel = "Copied",
+  variant = "secondary",
+  ...rest
+}: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -29,7 +37,7 @@ export function CopyButton({ value, label = "Copy", variant = "secondary", ...re
 
   return (
     <Button variant={variant} onClick={() => void copy()} aria-live="polite" {...rest}>
-      {copied ? "Copied" : label}
+      {copied ? copiedLabel : label}
     </Button>
   );
 }

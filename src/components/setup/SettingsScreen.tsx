@@ -4,18 +4,22 @@ import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { useWorkspace } from "@/components/layout/WorkspaceProvider";
 import { clearWorkspaceKey, editLink } from "@/lib/workspace-key";
+import { useLocale } from "@/lib/i18n/client";
 import { Badge, Button, Card, CopyButton } from "@/components/ui";
+import { setupCopy } from "./copy";
 import { DeleteFamily } from "./DeleteFamily";
 import { FamilyDetailsForm } from "./FamilyDetailsForm";
 
 const noSubscribe = (): (() => void) => () => {};
 
 export function SettingsScreen() {
+  const { locale } = useLocale();
+  const t = setupCopy(locale).settings;
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-3xl font-medium sm:text-4xl">Settings</h1>
-        <p className="mt-1 text-ink-muted">Your family space, your private link, and this device.</p>
+        <h1 className="font-display text-3xl font-medium sm:text-4xl">{t.title}</h1>
+        <p className="mt-1 text-ink-muted">{t.subtitle}</p>
       </div>
       <FamilyDetailsForm />
       <Members />
@@ -27,9 +31,11 @@ export function SettingsScreen() {
 
 function Members() {
   const { view } = useWorkspace();
+  const { locale } = useLocale();
+  const t = setupCopy(locale).settings;
   return (
     <Card>
-      <h2 className="font-display text-lg font-medium">Family members</h2>
+      <h2 className="font-display text-lg font-medium">{t.membersTitle}</h2>
       <ul className="mt-3 flex flex-col divide-y divide-line">
         {view.members.map((m) => (
           <li key={m.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5">
@@ -38,14 +44,12 @@ function Members() {
               {m.email && <span className="ml-2 text-sm font-normal text-ink-muted">{m.email}</span>}
             </span>
             <Badge tone={m.role === "caregiver" ? "accent" : "neutral"}>
-              {m.role === "caregiver" ? "Caregiver" : "Sibling"}
+              {m.role === "caregiver" ? t.caregiver : t.sibling}
             </Badge>
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-xs text-ink-muted">
-        Members can’t be changed yet. To share care with a different group, start a new family space.
-      </p>
+      <p className="mt-3 text-xs text-ink-muted">{t.membersNote}</p>
     </Card>
   );
 }
@@ -53,6 +57,8 @@ function Members() {
 function PrivateLink() {
   const { editKey } = useWorkspace();
   const router = useRouter();
+  const { locale } = useLocale();
+  const t = setupCopy(locale).settings;
   const origin = useSyncExternalStore(
     noSubscribe,
     () => window.location.origin,
@@ -67,23 +73,18 @@ function PrivateLink() {
 
   return (
     <Card>
-      <h2 className="font-display text-lg font-medium">Your private link</h2>
-      <p className="mt-1 text-sm text-ink-muted">
-        This link is your key. Open it on another device to get back in. Keep it to yourself: siblings get
-        their own read-only link with each invoice.
-      </p>
+      <h2 className="font-display text-lg font-medium">{t.linkTitle}</h2>
+      <p className="mt-1 text-sm text-ink-muted">{t.linkBody}</p>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <code className="min-w-0 flex-1 truncate rounded-[var(--radius-control)] border border-line bg-paper px-3 py-2.5 font-mono text-sm text-ink-soft">
           {link}
         </code>
-        <CopyButton value={link} label="Copy link" />
+        <CopyButton value={link} label={t.copyLink} copiedLabel={t.copied} />
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-line pt-4">
-        <p className="min-w-0 flex-1 text-sm text-ink-muted">
-          On a shared computer? Forget this device. Your data stays safe and your private link still works.
-        </p>
+        <p className="min-w-0 flex-1 text-sm text-ink-muted">{t.sharedComputer}</p>
         <Button variant="secondary" onClick={forgetDevice}>
-          Forget this device
+          {t.forget}
         </Button>
       </div>
     </Card>

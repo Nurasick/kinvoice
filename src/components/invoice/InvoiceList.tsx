@@ -3,7 +3,10 @@ import { useRef, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
 import { useLocale } from "@/lib/i18n/client";
 import { monthLabel } from "@/components/log/labels";
+import { dateLabel } from "@/components/dashboard/copy";
+import { formatCents } from "@/lib/money";
 import type { Invoice } from "@/shared/domain";
+import { invoiceCopy, type InvoiceCopy } from "./copy";
 import { personalLink } from "./share-links";
 import {
   Badge,
@@ -17,7 +20,6 @@ import {
 } from "@/components/ui";
 import {
   publicInvoiceUrl,
-  publishedLabel,
   settledCount,
   siblingRows,
   type SiblingRow,
@@ -31,13 +33,10 @@ export interface InvoiceListProps {
 }
 
 export function InvoiceList({ api, invoices, onChanged }: InvoiceListProps) {
+  const { locale } = useLocale();
+  const t = invoiceCopy(locale).list;
   if (invoices.length === 0) {
-    return (
-      <EmptyState
-        title="No invoices sent yet"
-        description="When you publish one, it shows up here so you can see who has chipped in."
-      />
-    );
+    return <EmptyState title={t.emptyTitle} description={t.emptyBody} />;
   }
   return (
     <ul className="flex flex-col gap-4">
@@ -60,17 +59,22 @@ function InvoiceCard({
   onChanged: () => void;
 }) {
   const origin = useOrigin();
+  const { locale } = useLocale();
+  const t = invoiceCopy(locale).list;
   const rows = siblingRows(invoice);
   const settled = settledCount(rows);
   return (
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="font-display text-lg font-medium">{monthLabel(invoice.month)}</h3>
+          <h3 className="font-display text-lg font-medium">{monthLabel(invoice.month, locale)}</h3>
           <p className="text-sm text-ink-muted">
-            Published {publishedLabel(invoice.publishedAt)} ·{" "}
-            <Money cents={invoice.snapshot.totalOutOfPocketCents} /> in care costs · {settled} of{" "}
-            {rows.length} settled
+            {t.meta({
+              date: dateLabel(invoice.publishedAt, locale),
+              total: formatCents(invoice.snapshot.totalOutOfPocketCents),
+              settled,
+              count: rows.length,
+            })}
           </p>
         </div>
         <div className="flex gap-2">
@@ -80,9 +84,14 @@ function InvoiceCard({
             rel="noreferrer"
             className="inline-flex h-8 items-center px-2 text-sm font-medium text-accent hover:text-accent-strong"
           >
-            Open
+            {t.open}
           </a>
-          <CopyButton value={publicInvoiceUrl(origin, invoice.publicToken)} label="Copy link" size="sm" />
+          <CopyButton
+            value={publicInvoiceUrl(origin, invoice.publicToken)}
+            label={t.copyLink}
+            copiedLabel={t.copied}
+            size="sm"
+          />
         </div>
       </div>
       <ul className="mt-4 flex flex-col divide-y divide-line border-t border-line">
@@ -101,11 +110,11 @@ function InvoiceCard({
   );
 }
 
-const STATUS: Record<SiblingStatus, { label: string; tone: BadgeTone }> = {
-  waiting: { label: "Not yet", tone: "neutral" },
-  sent: { label: "Says it’s sent", tone: "warning" },
-  received: { label: "Received", tone: "success" },
-  covered: { label: "Covered their share", tone: "success" },
+const TONE: Record<SiblingStatus, BadgeTone> = {
+  waiting: "neutral",
+  sent: "warning",
+  received: "success",
+  covered: "success",
 };
 
 interface SiblingPaymentProps {
@@ -119,6 +128,7 @@ interface SiblingPaymentProps {
 function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: SiblingPaymentProps) {
   const origin = useOrigin();
   const { locale } = useLocale();
+  const t: InvoiceCopy["list"] = invoiceCopy(locale).list;
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const rowRef = useRef<HTMLLIElement>(null);
@@ -147,7 +157,7 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
     <li
       ref={rowRef}
       tabIndex={-1}
-      aria-label={`${row.member.name}: ${STATUS[row.status].label}`}
+      aria-label={`${row.member.name}: ${t.status[row.status]}`}
       className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-[var(--radius-control)] py-3"
     >
       <div className="flex min-w-0 items-center gap-3">
@@ -155,16 +165,17 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
         <Money cents={row.amountCents} className="text-sm text-ink-muted" />
         {/* Live region: screen readers hear "Received" after Mark as received, or a sibling's update. */}
         <span aria-live="polite">
-          <Badge tone={STATUS[row.status].tone}>{STATUS[row.status].label}</Badge>
+          <Badge tone={TONE[row.status]}>{t.status[row.status]}</Badge>
         </span>
       </div>
       {canMark && (
         <div className="flex items-center gap-2">
-          {failed && <span className="text-xs text-danger">Didn’t save. Try again.</span>}
+          {failed && <span className="text-xs text-danger">{t.failed}</span>}
           {row.status === "waiting" && (
             <CopyButton
               value={personalLink(origin, publicToken, row.member.memberId, locale)}
-              label={`Copy ${row.member.name}’s link`}
+              label={t.copyPersonal({ name: row.member.name })}
+              copiedLabel={t.copied}
               variant="ghost"
               size="sm"
             />
@@ -175,7 +186,7 @@ function SiblingPayment({ api, invoiceId, publicToken, row, onChanged }: Sibling
             onClick={() => void markReceived()}
             isLoading={busy}
           >
-            Mark as received
+            {t.markReceived}
           </Button>
         </div>
       )}

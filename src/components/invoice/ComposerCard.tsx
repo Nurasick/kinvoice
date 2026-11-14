@@ -1,6 +1,8 @@
 "use client";
 import type { MonthlyBalance } from "@/shared/domain";
+import { useLocale } from "@/lib/i18n/client";
 import { Button, Card, Field, Spinner, Textarea } from "@/components/ui";
+import { invoiceCopy } from "./copy";
 import { ContributionPreview } from "./ContributionPreview";
 import { TonePicker } from "./TonePicker";
 import type { Composer } from "./use-composer";
@@ -14,24 +16,18 @@ export interface ComposerCardProps {
 
 /** Tone → AI draft → edit → publish. Nothing leaves until she presses Publish. */
 export function ComposerCard({ composer: c, balance, alreadySentOn }: ComposerCardProps) {
+  const { locale } = useLocale();
+  const t = invoiceCopy(locale).composer;
   return (
     <Card className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
       <div className="flex min-w-0 flex-col gap-5">
         {alreadySentOn && (
           <p className="rounded-[var(--radius-control)] bg-warning-soft px-3 py-2 text-sm text-warning">
-            You already sent an invoice for this month on {alreadySentOn}. Publishing again creates a new
-            link; the old one keeps working.
+            {t.alreadySent({ date: alreadySentOn })}
           </p>
         )}
         <TonePicker value={c.tone} onChange={c.setTone} disabled={c.isDrafting || c.isPublishing} />
-        <Field
-          label="Message to your siblings"
-          hint={
-            c.isTemplate
-              ? "This is our standard wording. Make it your own, or try another tone."
-              : "Drafted from this month’s real numbers. Edit anything before you publish."
-          }
-        >
+        <Field label={t.messageLabel} hint={c.isTemplate ? t.templateHint : t.draftHint}>
           {(p) => (
             <div className="relative">
               <Textarea
@@ -41,11 +37,11 @@ export function ComposerCard({ composer: c, balance, alreadySentOn }: ComposerCa
                 onChange={(e) => c.setMessage(e.target.value)}
                 disabled={c.isDrafting}
                 maxLength={4000}
-                placeholder="A short update for your siblings…"
+                placeholder={t.placeholder}
               />
               {c.isDrafting && (
                 <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-[var(--radius-control)] bg-surface/80 text-sm text-ink-muted">
-                  <Spinner size="sm" label="" /> Writing a draft…
+                  <Spinner size="sm" label="" /> {t.drafting}
                 </div>
               )}
             </div>
@@ -53,7 +49,7 @@ export function ComposerCard({ composer: c, balance, alreadySentOn }: ComposerCa
         </Field>
         {c.error && (
           <p role="alert" className="text-sm text-danger">
-            {c.error}
+            {t.errors[c.error]}
           </p>
         )}
         <div className="flex flex-wrap items-center gap-2">
@@ -63,15 +59,15 @@ export function ComposerCard({ composer: c, balance, alreadySentOn }: ComposerCa
             isLoading={c.isPublishing}
             disabled={c.isDrafting}
           >
-            Publish and get link
+            {t.publish}
           </Button>
           <Button variant="ghost" onClick={c.redraft} disabled={c.isDrafting || c.isPublishing}>
-            Redraft
+            {t.redraft}
           </Button>
         </div>
       </div>
       <div className="rounded-[var(--radius-control)] bg-paper p-5">
-        <ContributionPreview balance={balance} />
+        <ContributionPreview balance={balance} locale={locale} />
       </div>
     </Card>
   );
