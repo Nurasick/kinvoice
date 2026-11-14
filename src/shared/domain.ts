@@ -179,8 +179,8 @@ export const MonthlyBalance = z.object({
   totalTimeValueCents: Cents,
   hourlyRateCents: Cents,
   members: z.array(MemberBalance),
-  byExpenseCategory: z.record(ExpenseCategory, Cents),
-  byTimeCategory: z.record(TimeCategory, z.number().int().nonnegative()),
+  byExpenseCategory: z.partialRecord(ExpenseCategory, Cents),
+  byTimeCategory: z.partialRecord(TimeCategory, z.number().int().nonnegative()),
 });
 export type MonthlyBalance = z.infer<typeof MonthlyBalance>;
 

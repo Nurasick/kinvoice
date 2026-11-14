@@ -14,7 +14,7 @@ Full design: `docs/ARCHITECTURE.md`. Product: `docs/kinvoice-brief.md`.
 | `.env.example`, `package.json`, `package-lock.json`, configs (`next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `vitest.config.ts`, `drizzle.config.ts`) | Nurali |
 | `CLAUDE.md`, `README.md`, `docs/**` | Nurali |
 | **Workstream A — Nurali: platform, data, money, deploy** | |
-| `src/server/db/**`, `src/server/repo/**` (except `types.ts` frozen), `src/server/seed/**`, `src/server/http.ts`, `src/server/tokens.ts` | Nurali |
+| `src/server/db/**`, `src/server/repo/**` (except `types.ts` frozen), `src/server/seed/**`, `src/server/http.ts`, `src/server/tokens.ts`, `src/server/services.ts` | Nurali |
 | `src/lib/money/**` | Nurali |
 | `src/app/api/**` **except** `src/app/api/ai/**` | Nurali |
 | `drizzle/**` (migrations) | Nurali |
