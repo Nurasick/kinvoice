@@ -6,15 +6,22 @@ import { WorkspaceProvider } from "@/components/layout/WorkspaceProvider";
 export default function AppLayout({ children }: LayoutProps<"/app">) {
   return (
     <div className="flex min-h-full flex-1 flex-col">
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <header className="enamel-band sticky top-0 z-20 shadow-[0_10px_24px_-18px_rgb(17_48_127/0.8)]">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-8">
           <Logo href="/app" tone="enamel" />
           <AppNav />
         </div>
       </header>
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-8 sm:py-10">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 outline-none sm:px-8 sm:py-10"
+      >
         <WorkspaceProvider>{children}</WorkspaceProvider>
-      </div>
+      </main>
     </div>
   );
 }

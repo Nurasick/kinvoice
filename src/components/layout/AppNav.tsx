@@ -22,7 +22,7 @@ function isActive(pathname: string, href: string): boolean {
 export function AppNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Main" className="-mx-1 flex gap-1 overflow-x-auto">
+    <nav aria-label="Main" className="-m-1.5 flex gap-1 overflow-x-auto p-1.5">
       {NAV.map((item) => {
         const active = isActive(pathname, item.href);
         return (
