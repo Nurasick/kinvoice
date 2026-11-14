@@ -1,12 +1,16 @@
 "use client";
-import { paypalLink, venmoLink, zelleInstructions } from "@/lib/payments/links";
+import type { Locale } from "@/lib/i18n/locales";
+import { formatCents } from "@/lib/money";
+import { paypalLink, venmoLink } from "@/lib/payments/links";
 import type { PaymentMethod, PublicInvoice } from "@/shared/domain";
 import { Button, CopyButton, buttonClass } from "@/components/ui";
-import { payNote } from "./public-invoice-view";
+import { siblingCopy } from "./copy";
 
 export interface PayOptionsProps {
   invoice: PublicInvoice;
-  monthName: string;
+  /** Invoice month in the reader's language. */
+  month: string;
+  locale: Locale;
   amountCents: number;
   onChoose: (method: PaymentMethod) => void;
   onSent: () => void;
@@ -17,7 +21,8 @@ export interface PayOptionsProps {
 /** Deep links into the caregiver's own payment apps (only the ones the caregiver filled in), then "I've sent it". */
 export function PayOptions({
   invoice,
-  monthName,
+  month,
+  locale,
   amountCents,
   onChoose,
   onSent,
@@ -26,7 +31,8 @@ export function PayOptions({
 }: PayOptionsProps) {
   const { venmo, paypal, zelle } = invoice.caregiverHandles;
   const caregiver = invoice.caregiverName;
-  const note = payNote(invoice.parentName, monthName);
+  const copy = siblingCopy(locale).pay;
+  const note = copy.note({ parent: invoice.parentName, month });
   const hasAny = Boolean(venmo || paypal || zelle);
 
   return (
@@ -41,7 +47,7 @@ export function PayOptions({
               onClick={() => onChoose("venmo")}
               className={buttonClass("primary", "lg")}
             >
-              Pay with Venmo
+              {copy.venmo}
             </a>
           )}
           {paypal && (
@@ -52,20 +58,22 @@ export function PayOptions({
               onClick={() => onChoose("paypal")}
               className={buttonClass(venmo ? "secondary" : "primary", "lg")}
             >
-              Pay with PayPal
+              {copy.paypal}
             </a>
           )}
         </div>
       ) : (
-        <p className="text-sm text-ink-soft">Send it to {caregiver} however you usually do.</p>
+        <p className="text-sm text-ink-soft">{copy.noHandles({ caregiver })}</p>
       )}
       {zelle && (
         <div className="rounded-[var(--radius-control)] bg-surface px-4 py-3">
-          <p className="text-sm font-medium text-ink">Prefer Zelle?</p>
-          <p className="mt-1 text-sm text-ink-soft">{zelleInstructions(zelle, amountCents, caregiver)}</p>
+          <p className="text-sm font-medium text-ink">{copy.zelleTitle}</p>
+          <p className="mt-1 text-sm text-ink-soft">
+            {copy.zelleSteps({ amount: formatCents(amountCents), caregiver, handle: zelle })}
+          </p>
           <CopyButton
             value={zelle}
-            label={`Copy ${caregiver}’s Zelle`}
+            label={copy.copyZelle({ caregiver })}
             size="sm"
             className="mt-2"
             onPointerDown={() => onChoose("zelle")}
@@ -73,10 +81,10 @@ export function PayOptions({
         </div>
       )}
       <div className="flex flex-col gap-2 border-t border-accent/20 pt-4">
-        <p className="text-sm text-ink-soft">Once you’ve sent it, let {caregiver} know with one tap.</p>
+        <p className="text-sm text-ink-soft">{copy.afterSend({ caregiver })}</p>
         <div>
           <Button variant="secondary" size="lg" onClick={onSent} isLoading={isSending}>
-            I’ve sent it
+            {copy.sent}
           </Button>
         </div>
         {error && (
@@ -85,9 +93,7 @@ export function PayOptions({
           </p>
         )}
       </div>
-      <p className="text-xs text-ink-muted">
-        Kinvoice never handles money. Payments go straight to {caregiver} through the app you choose.
-      </p>
+      <p className="text-xs text-ink-muted">{copy.footnote({ caregiver })}</p>
     </div>
   );
 }
