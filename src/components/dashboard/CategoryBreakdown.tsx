@@ -46,7 +46,9 @@ function Bars({ title, rows, kind, empty }: BarsProps) {
               <div aria-hidden className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-paper-deep">
                 <div
                   className={
-                    kind === "money" ? "h-full rounded-full bg-accent" : "h-full rounded-full bg-accent/45"
+                    kind === "money"
+                      ? "h-full rounded-full bg-accent"
+                      : "h-full rounded-full bg-marigold-deep"
                   }
                   style={{ width: `${Math.max(row.barFraction * 100, 3)}%` }}
                 />
