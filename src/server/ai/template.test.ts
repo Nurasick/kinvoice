@@ -36,12 +36,51 @@ describe("templateInvoiceMessage", () => {
   });
 });
 
+// Demo-family shape: Mike paid something, Emily paid nothing but gave time.
+const unevenEntries: Entry[] = [
+  ...entries,
+  { id: "3", kind: "expense", memberId: "m", amountCents: 12000, date: "2026-11-05", category: "household", note: "", source: "manual", createdAt: "2026-11-05T00:00:00.000Z" },
+  { id: "4", kind: "time", memberId: "e", minutes: 60, date: "2026-11-06", category: "companionship", note: "", source: "manual", createdAt: "2026-11-06T00:00:00.000Z" },
+];
+const uneven = computeMonthlyBalance({ month: "2026-11", members, entries: unevenEntries, hourlyRateCents: 2500 });
+const emptyMonth = computeMonthlyBalance({ month: "2026-11", members, entries: [], hourlyRateCents: 2500 });
+
+describe("templateInvoiceMessage never says $0.00", () => {
+  it.each(InvoiceTone.options)("%s tone, sibling who paid nothing", (tone) => {
+    const message = templateInvoiceMessage({ tone, parentName: "Linda", caregiverName: "Sarah", balance: uneven });
+    expect(message).not.toMatch(/\$0(\.00)?\b/);
+    expect(isSafeInvoiceMessage(message, uneven)).toBe(true);
+  });
+
+  it.each(InvoiceTone.options)("%s tone, empty month", (tone) => {
+    const message = templateInvoiceMessage({ tone, parentName: "Linda", caregiverName: "Sarah", balance: emptyMonth });
+    expect(message).not.toMatch(/\$0|0m/);
+    expect(message).toContain("No contributions are suggested this month.");
+  });
+});
+
 describe("isSafeInvoiceMessage", () => {
+  const both = "Mike: $300.00, Emily: $300.00.";
+
   it("rejects empty, too long and unknown amounts", () => {
     expect(isSafeInvoiceMessage("  ", balance)).toBe(false);
     expect(isSafeInvoiceMessage("a".repeat(2000), balance)).toBe(false);
-    expect(isSafeInvoiceMessage("Total was $901.00", balance)).toBe(false);
-    expect(isSafeInvoiceMessage("Total was $900.00, thanks!", balance)).toBe(true);
-    expect(isSafeInvoiceMessage("Total was $900.", balance)).toBe(true);
+    expect(isSafeInvoiceMessage(`Total was $901.00. ${both}`, balance)).toBe(false);
+    expect(isSafeInvoiceMessage(`Total was $900.00, thanks! ${both}`, balance)).toBe(true);
+    expect(isSafeInvoiceMessage(`Total was $900. ${both}`, balance)).toBe(true);
+  });
+
+  it("requires every suggested contribution exactly once", () => {
+    const [mike, emily] = uneven.members.filter((m) => m.role === "sibling").map((m) => m.suggestedContributionCents);
+    const fmt = (c: number) => `$${(c / 100).toFixed(2)}`;
+    expect(isSafeInvoiceMessage(`Mike ${fmt(mike)}, Emily ${fmt(emily)}.`, uneven)).toBe(true);
+    expect(isSafeInvoiceMessage(`Mike ${fmt(mike)}.`, uneven)).toBe(false);
+    expect(isSafeInvoiceMessage(`Mike ${fmt(mike)}, Emily ${fmt(emily)}. Again: ${fmt(mike)}`, uneven)).toBe(false);
+  });
+
+  it("rejects $0.00 even though it is a real number", () => {
+    const [mike, emily] = uneven.members.filter((m) => m.role === "sibling").map((m) => m.suggestedContributionCents);
+    const ok = `Mike $${(mike / 100).toFixed(2)}, Emily $${(emily / 100).toFixed(2)}.`;
+    expect(isSafeInvoiceMessage(`${ok} Emily contributed $0.00.`, uneven)).toBe(false);
   });
 });
