@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Entry, Member } from "@/shared/domain";
 import { computeMonthlyBalance } from "@/lib/money";
-import { createOpenAiService, receiptContent, type ResponsesClient } from "./openai";
+import { createOpenAiService, isAddressLike, receiptContent, type ResponsesClient } from "./openai";
 import { templateInvoiceMessage } from "./template";
 import type { InvoiceMessageInput } from "./types";
 
@@ -114,6 +114,21 @@ describe("extractReceipt", () => {
       fallback: false,
     });
     expect(create.mock.calls[0][0].input[0].content[0]).toMatchObject({ type: "input_image", image_url: "data:image/png;base64,AQID" });
+  });
+
+  it("drops a street address the model returned as the merchant", async () => {
+    const { ai } = serviceReturning(
+      replyWith({ isReceipt: true, amountCents: 4122, merchant: "123 Main Street", date: "2025-11-25", category: "medication", note: "Prescription" }),
+    );
+    const res = await ai.extractReceipt(png);
+    expect(res.fallback).toBe(false);
+    expect(res.draft?.merchant).toBeUndefined();
+    expect(res.draft?.amountCents).toBe(4122);
+  });
+
+  it("tells addresses from store names", () => {
+    for (const a of ["123 Main Street", "730 Oakridge Ave", "456 Medical Plaza", "3535 Olentangy River Rd."]) expect(isAddressLike(a), a).toBe(true);
+    for (const s of ["CVS Pharmacy", "7-Eleven", "99 Ranch Market", "Kroger", "Main Street Pharmacy"]) expect(isAddressLike(s), s).toBe(false);
   });
 
   it("keeps a partial draft but flags fallback when the total is unreadable", async () => {

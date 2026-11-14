@@ -2,6 +2,7 @@ import { RECEIPT_MAX_BYTES, RECEIPT_MIME_TYPES } from "@/shared/api";
 import { IsoDate } from "@/shared/domain";
 import { handle, HttpError, ok, requireWorkspace } from "@/server/http";
 import { getAiService } from "@/server/ai";
+import { requestLocale } from "@/server/ai/locale";
 
 const ALLOWED: readonly string[] = RECEIPT_MIME_TYPES;
 
@@ -19,5 +20,7 @@ export const POST = handle(async (req: Request) => {
   const parsedToday = IsoDate.safeParse(todayField);
   const today = parsedToday.success ? parsedToday.data : new Date().toISOString().slice(0, 10);
   const bytes = new Uint8Array(await file.arrayBuffer());
-  return ok(await getAiService().extractReceipt({ bytes, mimeType: file.type, today }));
+  // The note's language comes from the app's `lang` cookie (the browser sends it with the upload).
+  const input = { bytes, mimeType: file.type, today, locale: requestLocale(req) };
+  return ok(await getAiService().extractReceipt(input));
 });
