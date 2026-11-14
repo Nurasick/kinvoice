@@ -69,7 +69,7 @@ function MonthBody({ data, month, onRetry }: { data: MonthData; month: string; o
     <>
       <MonthSummary balance={data.balance} />
       <MemberBalances balance={data.balance} />
-      <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr]">
         <CategoryBreakdown balance={data.balance} />
         <RecentEntries entries={data.entries} members={view.members} />
       </div>
