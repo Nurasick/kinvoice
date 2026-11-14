@@ -18,3 +18,31 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npm run check
       - run: npm run build
+
+  # Repository contract tests against real Postgres, through the same Neon HTTP driver production
+  # uses. A throwaway database per run (random password, built at runtime); never a Neon project, never prod.
+  postgres-contract:
+    runs-on: ubuntu-latest
+    env:
+      NEON_LOCAL_PROXY: http://localhost:4444/sql
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - name: Start a throwaway Postgres and a Neon HTTP proxy
+        run: |
+          pw="$(openssl rand -hex 16)"
+          db_url() { printf "%s://%s:%s@%s:5432/main" postgres postgres "$pw" "$1"; }
+          docker network create pgnet
+          docker run -d --name pg --network pgnet -e POSTGRES_PASSWORD="$pw" -e POSTGRES_DB=main postgres:17
+          until docker exec pg pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done
+          docker run -d --name neon-proxy --network pgnet -p 4444:4444             -e PG_CONNECTION_STRING="$(db_url pg)" ghcr.io/timowilhelm/local-neon-http-proxy:main
+          for i in $(seq 1 30); do curl -s -o /dev/null http://localhost:4444/ && break; sleep 2; done
+          echo "TEST_DATABASE_URL=$(db_url db.localtest.me)" >> "$GITHUB_ENV"
+      - name: Apply migrations to the throwaway database
+        run: DATABASE_URL="$TEST_DATABASE_URL" npm run db:migrate
+      - name: Repository contract tests (memory + postgres)
+        run: npx vitest run src/server/repo

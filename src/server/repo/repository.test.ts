@@ -1,9 +1,11 @@
 /**
  * Repository contract tests. Always run against the in-memory repo; also against Postgres
- * when TEST_DATABASE_URL points at a disposable database (never prod).
+ * when TEST_DATABASE_URL points at a disposable database (never prod): CI runs them against a
+ * throwaway Postgres behind a Neon HTTP proxy (NEON_LOCAL_PROXY), or point it at a Neon branch.
  */
 import { describe, expect, it } from "vitest";
 import type { NewEntry } from "@/shared/domain";
+import { enableLocalNeonProxy } from "../db/neon-local";
 import { hashKey, newSecretToken } from "../tokens";
 import { memoryRepository } from "./memory";
 import { createPostgresRepository, monthRange } from "./postgres";
@@ -11,6 +13,7 @@ import type { Repository } from "./types";
 
 const targets: Array<[string, () => Repository]> = [["memory", () => memoryRepository]];
 const testDbUrl = process.env.TEST_DATABASE_URL;
+enableLocalNeonProxy();
 if (testDbUrl) targets.push(["postgres", () => createPostgresRepository(testDbUrl)]);
 
 const snapshot = {
