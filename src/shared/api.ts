@@ -33,6 +33,10 @@ import {
 
 export const WORKSPACE_KEY_HEADER = "x-workspace-key";
 
+/** UI language the caregiver is using. Optional on AI requests; servers fall back to cookie / browser / English. */
+export const UiLocale = z.enum(["en", "ru", "kk"]);
+export type UiLocale = z.infer<typeof UiLocale>;
+
 // ---------- envelope ----------
 
 export const ErrorCode = z.enum([
@@ -127,6 +131,7 @@ export const QuickLogRequest = z.object({
   text: z.string().trim().min(3).max(500),
   /** Caregiver's local "today", used to resolve "yesterday", "on Monday", etc. */
   today: IsoDate,
+  locale: UiLocale.optional(),
 });
 export type QuickLogRequest = z.infer<typeof QuickLogRequest>;
 
@@ -156,7 +161,7 @@ export const ReceiptResponse = z.object({
 export type ReceiptResponse = z.infer<typeof ReceiptResponse>;
 
 /** POST /api/ai/invoice-message — server loads the month's real data itself. */
-export const InvoiceMessageRequest = z.object({ month: IsoMonth, tone: InvoiceTone });
+export const InvoiceMessageRequest = z.object({ month: IsoMonth, tone: InvoiceTone, locale: UiLocale.optional() });
 export type InvoiceMessageRequest = z.infer<typeof InvoiceMessageRequest>;
 export const InvoiceMessageResponse = z.object({
   message: z.string(),
