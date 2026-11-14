@@ -32,7 +32,9 @@ export function AppNav() {
             aria-current={active ? "page" : undefined}
             className={cn(
               "rounded-full px-3.5 py-1.5 text-sm font-medium whitespace-nowrap transition-colors",
-              active ? "bg-accent-soft text-accent-strong" : "text-ink-muted hover:bg-paper-deep hover:text-ink",
+              active
+                ? "bg-accent-soft text-accent-strong"
+                : "text-ink-muted hover:bg-paper-deep hover:text-ink",
             )}
           >
             {item.label}
