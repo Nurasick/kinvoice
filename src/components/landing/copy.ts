@@ -86,7 +86,12 @@ export interface LandingCopy {
     siblingsBody: string;
   };
   trust: { title: string; points: { title: string; body: string }[] };
-  close: { title: string; cta: string };
+  close: {
+    title: string;
+    cta: string;
+    /** Mike's handwritten note after he pays (demo story; amount from the seed). */
+    note: (p: { caregiver: string; amount: string }) => string;
+  };
   footer: { line: string };
 }
 
@@ -195,7 +200,11 @@ const en: LandingCopy = {
       { title: "Delete everything", body: "One click removes the family and every link." },
     ],
   },
-  close: { title: "See Sarah’s month in ten seconds.", cta: "Try Sarah’s family" },
+  close: {
+    title: "See Sarah’s month in ten seconds.",
+    cta: "Try Sarah’s family",
+    note: ({ caregiver, amount }) => `Sent my ${amount} for Mom. Thank you for doing all this, ${caregiver}!`,
+  },
   footer: { line: "Kinvoice. Built for Business Cup 2.0, Nazarbayev University." },
 };
 
@@ -304,7 +313,11 @@ const ru: LandingCopy = {
       { title: "Удалить всё", body: "Один клик удаляет семью и все ссылки." },
     ],
   },
-  close: { title: "Посмотрите месяц Сары за десять секунд.", cta: "Посмотреть на семье Сары" },
+  close: {
+    title: "Посмотрите месяц Сары за десять секунд.",
+    cta: "Посмотреть на семье Сары",
+    note: ({ caregiver, amount }) => `Перевёл ${amount} на маму. Спасибо, что всё это тянешь, ${caregiver}!`,
+  },
   footer: { line: "Kinvoice. Сделано для Business Cup 2.0, Назарбаев Университет." },
 };
 
@@ -413,7 +426,11 @@ const kk: LandingCopy = {
       { title: "Бәрін өшіру", body: "Бір рет басу отбасын және барлық сілтемені өшіреді." },
     ],
   },
-  close: { title: "Сараның айын он секундта көріңіз.", cta: "Сараның отбасын көру" },
+  close: {
+    title: "Сараның айын он секундта көріңіз.",
+    cta: "Сараның отбасын көру",
+    note: ({ caregiver, amount }) => `Анамызға ${amount} жібердім. Бәрін көтеріп жүргеніңе рахмет, ${caregiver}!`,
+  },
   footer: { line: "Kinvoice. Business Cup 2.0 үшін жасалды, Назарбаев Университеті." },
 };
 

@@ -2,7 +2,7 @@
  * How it works: three numbered steps, each with the actual artifact at life size
  * (the quick-log box, the filled receipt entry, the sibling's phone).
  */
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { formatCents } from "@/lib/money";
 import { formatDuration } from "@/lib/i18n/format";
 import type { Locale } from "@/lib/i18n/locales";
@@ -112,6 +112,7 @@ function ReceiptEntry({ copy, data }: { copy: LandingCopy; data: LandingData }) 
   return (
     <div className="flex w-full max-w-[30rem] flex-col items-start gap-5 sm:flex-row sm:gap-4" aria-hidden>
       <div className={`${s.receipt} ${s.mono} ${s.paperShadow} w-36 shrink-0 -rotate-3 text-[0.65rem]`}>
+        <span className={s.magnet} style={{ "--m": "var(--tomato)" } as CSSProperties} />
         <p className="text-center font-semibold">CVS PHARMACY</p>
         <div className={`${s.dash} my-1.5`} />
         <p>RX · 3</p>

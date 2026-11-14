@@ -27,7 +27,7 @@ export default async function Home() {
         <Steps copy={copy} data={data} locale={locale} />
         <Pricing copy={copy} />
       </main>
-      <TrustAndClose copy={copy} />
+      <TrustAndClose copy={copy} data={data} />
     </div>
   );
 }

@@ -1,6 +1,9 @@
 /** Pricing, privacy and the closing call to action, back on the fridge enamel. */
 import Link from "next/link";
+import type { CSSProperties } from "react";
+import { formatCents } from "@/lib/money";
 import type { LandingCopy } from "./copy";
+import type { LandingData } from "./landing-data";
 import { DemoCta } from "./DemoCta";
 import s from "./landing.module.css";
 
@@ -54,7 +57,7 @@ export function Pricing({ copy }: { copy: LandingCopy }) {
   );
 }
 
-export function TrustAndClose({ copy }: { copy: LandingCopy }) {
+export function TrustAndClose({ copy, data }: { copy: LandingCopy; data: LandingData }) {
   const t = copy.trust;
   return (
     <>
@@ -84,12 +87,15 @@ export function TrustAndClose({ copy }: { copy: LandingCopy }) {
           >
             {copy.close.title}
           </h2>
-          <DemoCta
-            label={copy.close.cta}
-            loadingLabel={copy.hero.ctaLoading}
-            errorLabel={copy.hero.ctaError}
-            variant="ink"
-          />
+          <div className="flex flex-col items-start gap-10 sm:flex-row sm:items-center sm:gap-12">
+            <ThankYouNote copy={copy} data={data} />
+            <DemoCta
+              label={copy.close.cta}
+              loadingLabel={copy.hero.ctaLoading}
+              errorLabel={copy.hero.ctaError}
+              variant="ink"
+            />
+          </div>
         </div>
       </section>
       <footer className="bg-[var(--enamel-deep)] text-[var(--on-enamel-soft)]">
@@ -111,5 +117,20 @@ function Tick() {
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+/** The end of the story: the sibling's note back to the caregiver, pinned like everything else. */
+function ThankYouNote({ copy, data }: { copy: LandingCopy; data: LandingData }) {
+  const text = copy.close.note({
+    caregiver: data.caregiver.name,
+    amount: formatCents(data.sibling.suggestedContributionCents),
+  });
+  return (
+    <figure className={`${s.sticky} ${s.hand} ${s.paperShadow} mt-3 max-w-[15rem] rotate-2 sm:mt-0`}>
+      <span aria-hidden className={s.magnet} style={{ "--m": "var(--marigold)" } as CSSProperties} />
+      <p>{text}</p>
+      <figcaption className="mt-1 text-right">— {data.sibling.name}</figcaption>
+    </figure>
   );
 }

@@ -23,9 +23,9 @@ interface HeroProps {
 export function FridgeHero({ copy, data, locale }: HeroProps) {
   const { hero, fridge } = copy;
   return (
-    <section className={`${s.enamel} lg:min-h-[min(54rem,100svh)]`} aria-labelledby="hero-title">
-      <div aria-hidden className={`${s.handle} hidden lg:block`} />
-      <div className="relative mx-auto max-w-[84rem] px-4 sm:px-8 lg:pr-20">
+    <section className={`${s.enamel} xl:min-h-[min(54rem,100svh)]`} aria-labelledby="hero-title">
+      <div aria-hidden className={`${s.handle} hidden xl:block`} />
+      <div className="relative mx-auto max-w-[84rem] px-4 sm:px-8 xl:pr-20">
         <header className="flex items-center justify-between gap-3 py-5">
           <MagnetLogo label={copy.nav.home} />
           <div className="flex items-center gap-3">
@@ -39,7 +39,7 @@ export function FridgeHero({ copy, data, locale }: HeroProps) {
           </div>
         </header>
 
-        <div className="relative pt-6 pb-10 lg:min-h-[37rem] lg:pt-12 lg:pb-12">
+        <div className="relative pt-6 pb-10 xl:min-h-[37rem] xl:pt-12 xl:pb-12">
           <div className="relative z-10 max-w-[36rem]">
             <h1
               id="hero-title"
@@ -54,13 +54,13 @@ export function FridgeHero({ copy, data, locale }: HeroProps) {
                 {hero.secondary}
               </Link>
             </div>
-            <p className={`${s.onEnamelSoft} mt-3 text-sm`}>{hero.note}</p>
+            <p className={`${s.onEnamelSoft} mt-3 max-w-[31rem] text-sm`}>{hero.note}</p>
             <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-[rgb(8_20_60/0.28)] px-4 py-2 text-sm font-medium">
               {hero.price}
             </p>
           </div>
 
-          <div className="mt-14 lg:mt-0">
+          <div className="mt-14 xl:mt-0">
             <FridgeParallax
               className={s.scene}
               label={fridge.sceneLabel({
@@ -205,7 +205,7 @@ function InvoiceSheet({ copy, data, locale }: { copy: LandingCopy; data: Landing
   const { caregiver, sibling } = data;
   return (
     <Pinned pos={s.posInvoice} magnet="var(--marigold)">
-      <Tag className="-bottom-4 right-4">{f.labelInvoice({ sibling: sibling.name })}</Tag>
+      <Tag className={`-bottom-4 right-4 ${s.tagEnd}`}>{f.labelInvoice({ sibling: sibling.name })}</Tag>
       <article className={`${s.invoice} ${s.paperShadow}`}>
         <header className="flex items-baseline justify-between gap-3 border-b border-[var(--line)] pb-3">
           <p className={`${s.display} text-[0.95rem] font-bold`}>
