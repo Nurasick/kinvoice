@@ -8,7 +8,7 @@ export interface MoneyProps {
 
 /** Formatted USD amount in tabular numerals. The way UI prints money. */
 export function Money({ cents, className }: MoneyProps) {
-  return <span className={cn("tabular-nums", className)}>{formatCents(cents)}</span>;
+  return <span className={cn("tabular-nums whitespace-nowrap", className)}>{formatCents(cents)}</span>;
 }
 
 export interface DurationProps {
@@ -18,5 +18,5 @@ export interface DurationProps {
 
 /** Formatted care time ("2h 30m") in tabular numerals. */
 export function Duration({ minutes, className }: DurationProps) {
-  return <span className={cn("tabular-nums", className)}>{formatMinutes(minutes)}</span>;
+  return <span className={cn("tabular-nums whitespace-nowrap", className)}>{formatMinutes(minutes)}</span>;
 }
