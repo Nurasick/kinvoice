@@ -306,6 +306,16 @@
   z-index: 3;
 }
 
+.posPhoto {
+  right: 1%;
+  top: 214px;
+  width: 42%;
+  --d: 6;
+  --rot: 5deg;
+  --i: 2;
+  z-index: 2;
+}
+
 .posInvoice {
   position: relative;
   margin: 0 2% 28px;
@@ -345,8 +355,16 @@
   .posSticky {
     left: 3%;
     right: auto;
-    top: 62%;
+    top: 72%;
     width: 196px;
+  }
+
+  .posPhoto {
+    left: 3%;
+    right: auto;
+    top: 45%;
+    width: 150px;
+    --rot: 5deg;
   }
 
   .posInvoice {
@@ -449,6 +467,13 @@
   z-index: -1;
   transform: skew(6deg) rotate(4deg);
   box-shadow: 0 14px 14px rgb(8 18 48 / 0.45);
+}
+
+/* A Polaroid: crisp white border, deeper at the bottom for the handwritten caption. */
+.photo {
+  background: var(--paper);
+  border-radius: 3px;
+  padding: 7px 7px 6px;
 }
 
 .invoice {

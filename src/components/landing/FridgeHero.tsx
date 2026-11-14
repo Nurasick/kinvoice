@@ -12,6 +12,7 @@ import { DemoCta } from "./DemoCta";
 import { FridgeParallax } from "./FridgeParallax";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import type { LandingData } from "./landing-data";
+import { FamilyPhoto } from "./FamilyPhoto";
 import s from "./landing.module.css";
 
 interface HeroProps {
@@ -71,6 +72,9 @@ export function FridgeHero({ copy, data, locale }: HeroProps) {
             >
               <Receipt copy={copy} data={data} />
               <AppointmentCard copy={copy} data={data} locale={locale} />
+              <Pinned pos={s.posPhoto} magnet="var(--tomato)">
+                <FamilyPhoto caption={fridge.photoCaption} />
+              </Pinned>
               <StickyNote copy={copy} data={data} />
               <InvoiceSheet copy={copy} data={data} locale={locale} />
             </FridgeParallax>
