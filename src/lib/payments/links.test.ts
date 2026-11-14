@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { paypalLink, venmoLink, zelleInstructions } from "./links";
+import { paypalLink, venmoLink } from "./links";
 
 describe("payment links", () => {
   it("prefills Venmo recipient, amount and note, dropping a leading @", () => {
@@ -17,11 +17,5 @@ describe("payment links", () => {
 
   it("encodes odd PayPal names safely", () => {
     expect(paypalLink("a b/c", 100)).toBe("https://www.paypal.me/a%20b%2Fc/1.00USD");
-  });
-
-  it("writes Zelle instructions with the exact amount", () => {
-    expect(zelleInstructions("sarah@example.com", 21840, "Sarah")).toContain(
-      "$218.40 to Sarah at sarah@example.com",
-    );
   });
 });

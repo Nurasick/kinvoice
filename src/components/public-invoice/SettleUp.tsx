@@ -5,8 +5,10 @@
  */
 import { useEffect, useState } from "react";
 import { publicApi } from "@/lib/api/client";
+import type { Locale } from "@/lib/i18n/locales";
 import type { PaymentMark, PaymentMethod, PublicInvoice } from "@/shared/domain";
 import { Card, Money, cn } from "@/components/ui";
+import { siblingCopy } from "./copy";
 import { initialSibling, paymentFor, siblings } from "./public-invoice-view";
 import { PayOptions } from "./PayOptions";
 
@@ -31,16 +33,20 @@ function remember(token: string, memberId: string): void {
 export function SettleUp({
   token,
   invoice,
-  monthName,
+  month,
   preselect = null,
+  locale,
 }: {
   token: string;
   invoice: PublicInvoice;
-  monthName: string;
+  /** Invoice month, already in the reader's language. */
+  month: string;
+  locale: Locale;
   /** Member id from a personal link (?for=…); opens straight on that sibling's amount. */
   preselect?: string | null;
 }) {
   const list = siblings(invoice);
+  const copy = siblingCopy(locale).settle;
   const [memberId, setMemberId] = useState<string | null>(() => initialSibling(invoice, preselect));
   const [payments, setPayments] = useState<PaymentMark[]>(invoice.payments);
 
@@ -61,11 +67,9 @@ export function SettleUp({
   return (
     <Card tone="accent" className="flex flex-col gap-5">
       <div>
-        <h2 className="font-display text-xl font-medium">Your part this month</h2>
-        <p className="mt-1 text-sm text-ink-soft">
-          {me ? "Not you? Tap your name." : "Tap your name to see your suggested contribution."}
-        </p>
-        <div role="radiogroup" aria-label="Who is reading" className="mt-3 flex flex-wrap gap-2">
+        <h2 className="font-display text-xl font-medium">{copy.title}</h2>
+        <p className="mt-1 text-sm text-ink-soft">{me ? copy.notYou : copy.pick}</p>
+        <div role="radiogroup" aria-label={copy.whoIsReading} className="mt-3 flex flex-wrap gap-2">
           {list.map((m) => (
             <button
               key={m.memberId}
@@ -90,7 +94,8 @@ export function SettleUp({
           key={me.memberId}
           token={token}
           invoice={invoice}
-          monthName={monthName}
+          month={month}
+          locale={locale}
           member={{ id: me.memberId, name: me.name, cents: me.suggestedContributionCents }}
           payment={payment}
           onMarked={(mark) =>
@@ -105,25 +110,25 @@ export function SettleUp({
 interface MyContributionProps {
   token: string;
   invoice: PublicInvoice;
-  monthName: string;
+  month: string;
+  locale: Locale;
   member: { id: string; name: string; cents: number };
   payment: PaymentMark | undefined;
   onMarked: (mark: PaymentMark) => void;
 }
 
-function MyContribution({ token, invoice, monthName, member, payment, onMarked }: MyContributionProps) {
+function MyContribution({ token, invoice, month, locale, member, payment, onMarked }: MyContributionProps) {
   const [method, setMethod] = useState<PaymentMethod>("other");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const caregiver = invoice.caregiverName;
+  const copy = siblingCopy(locale).settle;
 
   if (member.cents === 0) {
-    return (
-      <Status title="You’ve already covered your share this month." body={`Thank you, ${member.name}.`} />
-    );
+    return <Status title={copy.coveredTitle} body={copy.coveredBody({ name: member.name })} />;
   }
   if (payment?.status === "received") {
-    return <Status title={`${caregiver} confirmed it arrived.`} body="Thank you for chipping in." />;
+    return <Status title={copy.receivedTitle({ caregiver })} body={copy.receivedBody} />;
   }
 
   async function markSent(): Promise<void> {
@@ -132,7 +137,7 @@ function MyContribution({ token, invoice, monthName, member, payment, onMarked }
     try {
       onMarked(await publicApi.markSent(token, { memberId: member.id, amountCents: member.cents, method }));
     } catch {
-      setError(`That didn’t go through. Please try again, or just let ${caregiver} know.`);
+      setError(copy.sendError({ caregiver }));
     } finally {
       setBusy(false);
     }
@@ -141,18 +146,16 @@ function MyContribution({ token, invoice, monthName, member, payment, onMarked }
   return (
     <div className="flex flex-col gap-5 border-t border-accent/20 pt-5">
       <div>
-        <p className="text-sm text-ink-soft">{member.name}, your suggested contribution</p>
+        <p className="text-sm text-ink-soft">{copy.yourSuggested({ name: member.name })}</p>
         <Money cents={member.cents} className="font-display text-5xl font-medium tracking-tight" />
       </div>
       {payment?.status === "sent" ? (
-        <Status
-          title={`You marked it as sent. ${caregiver} will confirm when it arrives.`}
-          body="Nothing else to do. Thank you."
-        />
+        <Status title={copy.sentTitle({ caregiver })} body={copy.sentBody} />
       ) : (
         <PayOptions
           invoice={invoice}
-          monthName={monthName}
+          month={month}
+          locale={locale}
           amountCents={member.cents}
           onChoose={setMethod}
           onSent={() => void markSent()}

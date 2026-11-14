@@ -10,6 +10,8 @@ import type {
   PublicInvoice,
   TimeEntry,
 } from "@/shared/domain";
+import { monthName } from "@/lib/i18n/format";
+import type { Locale } from "@/lib/i18n/locales";
 
 export interface ExpenseGroup {
   category: string;
@@ -59,7 +61,21 @@ export function initialSibling(invoice: PublicInvoice, remembered: string | null
   return list.length === 1 ? list[0].memberId : null;
 }
 
-/** "Mom (Linda)" stays as is; used in "care for …" sentences. */
-export function payNote(parentName: string, monthName: string): string {
-  return `${parentName}'s care, ${monthName}`;
+const INTL_TAG: Record<Locale, string> = { en: "en-US", ru: "ru-RU", kk: "kk-KZ" };
+
+/** "2026-11" → "November 2026" / "Ноябрь 2026" / "Қараша 2026". */
+export function monthYear(month: string, locale: Locale): string {
+  const [y, m] = month.split("-").map(Number);
+  return `${monthName(new Date(Date.UTC(y, m - 1, 1)), locale)} ${y}`;
+}
+
+/** "2026-11-14" → "Sat, Nov 14" / "сб, 14 нояб." in the reader's language (no timezone shift). */
+export function dayLabel(date: string, locale: Locale): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(INTL_TAG[locale], {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
 }

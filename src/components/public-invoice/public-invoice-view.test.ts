@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Entry, MemberBalance, PublicInvoice } from "@/shared/domain";
-import { groupExpenses, initialSibling, paymentFor, payNote, timeEntries } from "./public-invoice-view";
+import { groupExpenses, initialSibling, paymentFor, timeEntries } from "./public-invoice-view";
 
 const base = { memberId: "s", note: "", source: "manual" as const, createdAt: "2026-11-01T00:00:00.000Z" };
 
@@ -88,9 +88,8 @@ describe("sibling selection", () => {
     );
   });
 
-  it("finds a sibling's payment and builds the pay note", () => {
+  it("finds a sibling's payment", () => {
     expect(paymentFor(two, "mike")?.status).toBe("sent");
     expect(paymentFor(two, "emily")).toBeUndefined();
-    expect(payNote("Mom", "November 2026")).toBe("Mom's care, November 2026");
   });
 });

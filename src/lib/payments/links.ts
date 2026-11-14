@@ -23,8 +23,3 @@ export function venmoLink(username: string, amountCents: number, note: string): 
 export function paypalLink(username: string, amountCents: number): string {
   return `https://www.paypal.me/${encodeURIComponent(username)}/${dollars(amountCents)}USD`;
 }
-
-/** Zelle has no public deep link; show copyable instructions instead. */
-export function zelleInstructions(handle: string, amountCents: number, payeeName: string): string {
-  return `Open your bank app → Zelle → send $${dollars(amountCents)} to ${payeeName} at ${handle}.`;
-}
