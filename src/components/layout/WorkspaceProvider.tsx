@@ -30,6 +30,8 @@ export function useWorkspace(): WorkspaceContextValue {
 type State =
   | { status: "loading" }
   | { status: "missing" }
+  /** A stored key the server no longer knows: a mistyped link or a deleted family space. */
+  | { status: "rejected" }
   | { status: "error" }
   | { status: "ready"; editKey: string; view: WorkspaceView };
 
@@ -45,7 +47,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         clearWorkspaceKey();
-        return setState({ status: "missing" });
+        return setState({ status: "rejected" });
       }
       setState({ status: "error" });
     }
@@ -71,16 +73,21 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   if (state.status === "loading") return <LoadingBlock label="Opening your family workspace" />;
   if (state.status === "missing") return <NoWorkspace />;
+  if (state.status === "rejected") return <NoWorkspace rejected />;
   if (state.status === "error" || !value) return <LoadError onRetry={load} />;
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }
 
-function NoWorkspace() {
+function NoWorkspace({ rejected = false }: { rejected?: boolean }) {
   return (
     <EmptyState
       className="mx-auto mt-10 max-w-lg"
-      title="No family workspace on this device yet"
-      description="Open your private edit link to get back in, or start fresh. You can also look around Sarah's demo family."
+      title={rejected ? "That private link didn’t work" : "No family workspace on this device yet"}
+      description={
+        rejected
+          ? "Check that you copied the whole link. If the family space was deleted, you can start a new one or look around Sarah's demo family."
+          : "Open your private edit link to get back in, or start fresh. You can also look around Sarah's demo family."
+      }
       action={
         <div className="flex flex-wrap justify-center gap-2">
           <Link href="/" className={buttonClass("primary")}>
