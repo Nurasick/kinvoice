@@ -8,6 +8,8 @@ export interface FrameCopy {
   nav: { label: string; dashboard: string; log: string; invoice: string; settings: string };
   skip: string;
   language: string;
+  /** Strip shown only inside a demo copy of Sarah's family, with a way back to the landing. */
+  demo: { line: string; back: string };
   workspace: {
     opening: string;
     missingTitle: string;
@@ -42,6 +44,7 @@ const en: FrameCopy = {
   nav: { label: "Main", dashboard: "Dashboard", log: "Log", invoice: "Invoice", settings: "Settings" },
   skip: "Skip to content",
   language: "Language",
+  demo: { line: "You're exploring Sarah's demo family. Change anything; it's your own copy.", back: "Back to the start" },
   workspace: {
     opening: "Opening your family workspace",
     missingTitle: "No family workspace on this device yet",
@@ -78,6 +81,7 @@ const ru: FrameCopy = {
   nav: { label: "Основное меню", dashboard: "Обзор", log: "Учёт", invoice: "Счёт", settings: "Настройки" },
   skip: "Перейти к содержимому",
   language: "Язык",
+  demo: { line: "Это демо-семья Сары. Меняйте что угодно: это ваша личная копия.", back: "Вернуться на главную" },
   workspace: {
     opening: "Открываем ваше семейное пространство",
     missingTitle: "На этом устройстве пока нет семейного пространства",
@@ -115,6 +119,7 @@ const kk: FrameCopy = {
   nav: { label: "Негізгі мәзір", dashboard: "Шолу", log: "Жазбалар", invoice: "Шот", settings: "Баптаулар" },
   skip: "Мазмұнға өту",
   language: "Тіл",
+  demo: { line: "Бұл Сараның демо-отбасы. Кез келгенін өзгертіңіз: бұл сіздің жеке көшірмеңіз.", back: "Басты бетке оралу" },
   workspace: {
     opening: "Отбасы кеңістігіңіз ашылуда",
     missingTitle: "Бұл құрылғыда әлі отбасы кеңістігі жоқ",
