@@ -62,7 +62,7 @@ function MemberMeter({ m, copy, locale, maxPaid, maxMin }: MeterProps) {
   return (
     <div className="min-w-0">
       <p className={`${s.display} text-lg font-bold sm:text-2xl`}>{m.name}</p>
-      <p className="mt-1 min-h-[2.5rem] text-xs leading-snug text-[var(--ink-faint)] sm:text-sm">
+      <p className="mt-1 min-h-[3.75rem] text-xs leading-snug sm:min-h-[2.5rem] text-[var(--ink-faint)] sm:text-sm">
         {isCaregiver ? p.caregiver : p.sibling}
       </p>
       <Meter
@@ -94,7 +94,7 @@ function Meter({
 }) {
   return (
     <div className="mt-5">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+      <div className="flex flex-col items-start sm:flex-row sm:items-baseline sm:justify-between sm:gap-x-2">
         <span className="text-xs font-medium text-[var(--ink-faint)]">{label}</span>
         <span className="text-sm font-semibold sm:text-base">{value}</span>
       </div>

@@ -56,7 +56,6 @@ export function FridgeHero({ copy, data, locale }: HeroProps) {
             </div>
             <p className={`${s.onEnamelSoft} mt-3 text-sm`}>{hero.note}</p>
             <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-[rgb(8_20_60/0.28)] px-4 py-2 text-sm font-medium">
-              <span aria-hidden className="size-2 rounded-full bg-[var(--mint)]" />
               {hero.price}
             </p>
           </div>
@@ -87,10 +86,7 @@ function MagnetLogo({ label }: { label: string }) {
     <Link href="/" aria-label={label} className="inline-flex items-center gap-2.5">
       <span
         aria-hidden
-        className="grid size-9 place-items-center rounded-full text-[0.95rem] font-bold text-[var(--ink)] shadow-[0_6px_10px_-3px_rgb(8_18_48/0.5),inset_0_-3px_4px_rgb(0_0_0/0.18)]"
-        style={{
-          background: "radial-gradient(circle at 34% 30%, #fff8 0 12%, transparent 13%), var(--marigold)",
-        }}
+        className="grid size-9 place-items-center rounded-full bg-[var(--marigold)] text-[0.95rem] font-bold text-[var(--ink)] shadow-[0_5px_8px_-3px_rgb(8_18_48/0.5)]"
       >
         <span className={s.display}>K</span>
       </span>
@@ -111,11 +107,34 @@ function Pinned({ pos, magnet, children }: { pos: string; magnet: string; childr
 }
 
 function Tag({ children, className }: { children: ReactNode; className: string }) {
+  return <span className={`${s.tag} ${className}`}>{children}</span>;
+}
+
+/** Thermal-receipt barcode: bars of varying width, drawn rather than typed. */
+const WIDTHS = [2, 1, 1, 3, 1, 2, 1, 1, 2, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2];
+/** Alternating bar/gap widths → bar rects with their x offsets, computed once. */
+const BARS = WIDTHS.map((w, i) => ({
+  w,
+  x: WIDTHS.slice(0, i).reduce((a, b) => a + b, 0),
+  isBar: i % 2 === 0,
+})).filter((b) => b.isBar);
+const BARCODE_WIDTH = WIDTHS.reduce((a, b) => a + b, 0);
+
+function Barcode() {
   return (
-    <span className={`${s.tag} ${className}`}>
-      <span aria-hidden className={s.tagDot} />
-      {children}
-    </span>
+    <svg
+      className="mx-auto mt-3 block"
+      width={BARCODE_WIDTH * 3}
+      height={22}
+      viewBox={`0 0 ${BARCODE_WIDTH} 22`}
+      preserveAspectRatio="none"
+      fill="#3a3f4c"
+      aria-hidden
+    >
+      {BARS.map((b) => (
+        <rect key={b.x} x={b.x} y={0} width={b.w} height={22} />
+      ))}
+    </svg>
   );
 }
 
@@ -140,7 +159,7 @@ function Receipt({ copy, data }: { copy: LandingCopy; data: LandingData }) {
           <span>{copy.fridge.receiptTotal}</span>
           <span>{amount}</span>
         </p>
-        <p className="mt-2 text-center text-[0.6rem] tracking-[0.3em] text-[#8a8f9c]">||| || ||| | ||| ||</p>
+        <Barcode />
       </div>
       <Tag className="-bottom-5 -left-3">
         {copy.fridge.labelMedication} · <b>{amount}</b>
@@ -154,7 +173,7 @@ function AppointmentCard({ copy, data, locale }: { copy: LandingCopy; data: Land
     <Pinned pos={s.posCard} magnet="var(--mint)">
       <div className={`${s.card} ${s.paperShadow}`}>
         <p className="text-[0.7rem] font-semibold tracking-[0.12em] text-[#8a3a2a] uppercase">OhioHealth</p>
-        <p className={`${s.display} mt-1 text-sm font-bold [overflow-wrap:anywhere] sm:text-base`}>
+        <p className={`${s.display} mt-1 text-[0.78rem] font-bold sm:text-base`}>
           {copy.fridge.cardTitle}
         </p>
         <p className="mt-2 text-sm">{copy.fridge.cardWho}</p>

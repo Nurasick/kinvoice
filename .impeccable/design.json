@@ -1,0 +1,557 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-14T00:00:00Z",
+  "title": "Design System: Kinvoice",
+  "extensions": {
+    "colorMeta": {
+      "enamel": {
+        "role": "primary",
+        "displayName": "Cobalt Enamel",
+        "canonical": "oklch(42.5% 0.152 265)",
+        "tonalRamp": [
+          "#01062a",
+          "#0d2053",
+          "#223d80",
+          "#395cb0",
+          "#587ed6",
+          "#80a3f0",
+          "#aac9ff",
+          "#d6efff"
+        ]
+      },
+      "enamel-deep": {
+        "role": "primary",
+        "displayName": "Deep Enamel",
+        "canonical": "oklch(33.3% 0.121 266)",
+        "tonalRamp": [
+          "#020824",
+          "#13224a",
+          "#2a3f74",
+          "#435ea1",
+          "#6280c6",
+          "#89a4e1",
+          "#b2c9fc",
+          "#dcefff"
+        ]
+      },
+      "enamel-hi": {
+        "role": "primary",
+        "displayName": "Enamel Highlight",
+        "canonical": "oklch(52.6% 0.164 265)",
+        "tonalRamp": [
+          "#01052c",
+          "#0b1f57",
+          "#1f3c85",
+          "#355ab6",
+          "#547ddd",
+          "#7da3f5",
+          "#a8c8ff",
+          "#d4efff"
+        ]
+      },
+      "on-enamel": {
+        "role": "neutral",
+        "displayName": "On Enamel",
+        "canonical": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "on-enamel-soft": {
+        "role": "neutral",
+        "displayName": "Soft on Enamel",
+        "canonical": "oklch(91.2% 0.042 272)",
+        "tonalRamp": [
+          "#080b14",
+          "#202432",
+          "#3c4154",
+          "#596078",
+          "#7a819a",
+          "#9ea4ba",
+          "#c3c9db",
+          "#e9eefd"
+        ]
+      },
+      "marigold": {
+        "role": "secondary",
+        "displayName": "Marigold Magnet",
+        "canonical": "oklch(82.8% 0.167 80)",
+        "tonalRamp": [
+          "#1c0300",
+          "#3f1a00",
+          "#653500",
+          "#8e5200",
+          "#b27400",
+          "#d09b35",
+          "#eec177",
+          "#ffe9b0"
+        ]
+      },
+      "marigold-deep": {
+        "role": "secondary",
+        "displayName": "Marigold Lip",
+        "canonical": "oklch(76.6% 0.163 73)",
+        "tonalRamp": [
+          "#1d0200",
+          "#411800",
+          "#683200",
+          "#924e00",
+          "#b77000",
+          "#d5973e",
+          "#f2bf7b",
+          "#ffe7b3"
+        ]
+      },
+      "tomato": {
+        "role": "tertiary",
+        "displayName": "Tomato Magnet",
+        "canonical": "oklch(63.1% 0.187 31)",
+        "tonalRamp": [
+          "#270000",
+          "#500000",
+          "#7e0e01",
+          "#ae2815",
+          "#d6503b",
+          "#f27f6b",
+          "#ffac99",
+          "#ffd8c9"
+        ]
+      },
+      "mint": {
+        "role": "tertiary",
+        "displayName": "Mint Magnet",
+        "canonical": "oklch(74.6% 0.120 169)",
+        "tonalRamp": [
+          "#001207",
+          "#00301e",
+          "#005139",
+          "#007556",
+          "#249776",
+          "#64b89a",
+          "#97dac0",
+          "#c9fce7"
+        ]
+      },
+      "manila": {
+        "role": "tertiary",
+        "displayName": "Manila Card",
+        "canonical": "oklch(91.4% 0.063 91)",
+        "tonalRamp": [
+          "#100a00",
+          "#2c240c",
+          "#4c4122",
+          "#6d6039",
+          "#8f8259",
+          "#b0a582",
+          "#d3c9ac",
+          "#f6eed7"
+        ]
+      },
+      "manila-rule": {
+        "role": "tertiary",
+        "displayName": "Appointment Red Rule",
+        "canonical": "oklch(56.8% 0.173 31)",
+        "tonalRamp": [
+          "#250000",
+          "#4e0000",
+          "#7a1709",
+          "#a9301f",
+          "#d05542",
+          "#ed826f",
+          "#ffae9d",
+          "#ffdacc"
+        ]
+      },
+      "sticky": {
+        "role": "tertiary",
+        "displayName": "Canary Sticky",
+        "canonical": "oklch(90.7% 0.150 95)",
+        "tonalRamp": [
+          "#150800",
+          "#342200",
+          "#553f00",
+          "#7a5e00",
+          "#9c8000",
+          "#bca446",
+          "#dcc980",
+          "#fdefb7"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Invoice White",
+        "canonical": "oklch(100.0% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "thermal": {
+        "role": "neutral",
+        "displayName": "Thermal Paper",
+        "canonical": "oklch(97.2% 0.005 106)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252523",
+          "#424240",
+          "#61615e",
+          "#82827f",
+          "#a5a5a2",
+          "#c9c9c7",
+          "#eeeeed"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Kitchen Ink",
+        "canonical": "oklch(23.1% 0.031 265)",
+        "tonalRamp": [
+          "#080b12",
+          "#20252f",
+          "#3c424f",
+          "#596172",
+          "#7a8294",
+          "#9ea5b5",
+          "#c3c9d6",
+          "#e9eff9"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "oklch(43.1% 0.039 266)",
+        "tonalRamp": [
+          "#070b13",
+          "#1f2531",
+          "#3a4253",
+          "#576176",
+          "#788299",
+          "#9ca5b9",
+          "#c1c9da",
+          "#e8effc"
+        ]
+      },
+      "ink-faint": {
+        "role": "neutral",
+        "displayName": "Faint Ink",
+        "canonical": "oklch(55.9% 0.034 267)",
+        "tonalRamp": [
+          "#080b12",
+          "#202530",
+          "#3b4251",
+          "#596174",
+          "#7a8296",
+          "#9da5b7",
+          "#c3c9d8",
+          "#e9eefa"
+        ]
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Kitchen Mist",
+        "canonical": "oklch(96.1% 0.014 268)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#23252a",
+          "#3f4248",
+          "#5e6169",
+          "#7f828a",
+          "#a2a5ac",
+          "#c7c9cf",
+          "#eceef3"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(91.9% 0.017 268)",
+        "tonalRamp": [
+          "#0a0b0f",
+          "#23252b",
+          "#3f4249",
+          "#5d616b",
+          "#7e828c",
+          "#a1a5ae",
+          "#c6c9d0",
+          "#eceef4"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline in white on enamel."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Step titles and pricing sub-heads."
+      },
+      "numeral": {
+        "displayName": "Step Numeral",
+        "purpose": "Big cobalt step numbers in how-it-works."
+      },
+      "figure": {
+        "displayName": "Money Figure",
+        "purpose": "Suggested contribution, price, drafted amounts."
+      },
+      "body-lede": {
+        "displayName": "Lede",
+        "purpose": "Sub-headline and section intros."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Read-labels and invoice metadata."
+      },
+      "hand": {
+        "displayName": "Handwriting",
+        "purpose": "Sticky notes and hand-written card entries only."
+      },
+      "receipt": {
+        "displayName": "Receipt Mono",
+        "purpose": "Thermal receipts only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "paper-lift",
+        "value": "0 1px 1px rgb(8 18 48 / 0.18), 0 18px 30px -14px rgb(8 18 48 / 0.6), 0 34px 60px -30px rgb(8 18 48 / 0.55)",
+        "purpose": "Every paper object."
+      },
+      {
+        "name": "magnet",
+        "value": "0 6px 8px -2px rgb(8 18 48 / 0.45), inset 0 -3px 4px rgb(0 0 0 / 0.22), inset 0 2px 2px rgb(255 255 255 / 0.35)",
+        "purpose": "Magnets and the logo magnet."
+      },
+      {
+        "name": "read-label",
+        "value": "0 8px 16px -8px rgb(8 18 48 / 0.6)",
+        "purpose": "Printed labels."
+      },
+      {
+        "name": "marigold-press",
+        "value": "0 2px 0 #f0a000, 0 14px 28px -10px rgb(10 20 60 / 0.55)",
+        "purpose": "Primary button at rest; 4px lip on hover, 1px on active."
+      },
+      {
+        "name": "ink-button",
+        "value": "0 12px 24px -12px rgb(24 47 115 / 0.7)",
+        "purpose": "Ink button."
+      },
+      {
+        "name": "artifact-panel",
+        "value": "0 24px 48px -28px rgb(24 47 115 / 0.45)",
+        "purpose": "Life-size artifact panels on light sections."
+      },
+      {
+        "name": "device",
+        "value": "0 30px 60px -28px rgb(8 18 48 / 0.6)",
+        "purpose": "Sibling phone illustration."
+      },
+      {
+        "name": "enamel-well",
+        "value": "inset 0 1px 2px rgb(0 0 0 / 0.25)",
+        "purpose": "Recessed language switch on an rgb(8 20 60 / 0.28) fill."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "All entrances and state transitions."
+      },
+      {
+        "name": "snap",
+        "value": "760ms; stagger 160ms; base delay 120ms",
+        "purpose": "Scraps snapping onto the door."
+      },
+      {
+        "name": "clack",
+        "value": "420ms; 400ms after its object",
+        "purpose": "Magnet landing."
+      },
+      {
+        "name": "tag-in",
+        "value": "520ms; 780ms after its object",
+        "purpose": "Read-labels rising in."
+      },
+      {
+        "name": "rise",
+        "value": "1100ms; view timeline entry 10% to cover 40%",
+        "purpose": "Meter fill on scroll."
+      },
+      {
+        "name": "parallax",
+        "value": "500ms; depth 3 to 9",
+        "purpose": "Pointer parallax; off on touch and reduced motion."
+      },
+      {
+        "name": "press",
+        "value": "180ms",
+        "purpose": "Button lift and press."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "40rem"
+      },
+      {
+        "name": "lg",
+        "value": "64rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single marigold action on an enamel field.",
+      "html": "<div class=\"ds-door\"><button class=\"ds-btn-primary\">Try Sarah's family <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; } .ds-btn-primary { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; gap:0.6rem; min-height:3.5rem; padding:0 1.6rem; border:0; border-radius:14px; background:var(--marigold); color:var(--ink); font-weight:600; font-size:1.0625rem; cursor:pointer; box-shadow:0 2px 0 var(--marigold-deep), 0 14px 28px -10px rgb(10 20 60 / 0.55); transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1), background-color 180ms; } .ds-btn-primary:hover { background:#ffc540; transform:translateY(-2px); box-shadow:0 4px 0 var(--marigold-deep), 0 20px 34px -12px rgb(10 20 60 / 0.6); } .ds-btn-primary:active { transform:translateY(1px); box-shadow:0 1px 0 var(--marigold-deep), 0 8px 16px -8px rgb(10 20 60 / 0.5); } .ds-btn-primary:focus-visible { outline:3px solid var(--marigold); outline-offset:3px; }"
+    },
+    {
+      "name": "Ink Button",
+      "kind": "button",
+      "refersTo": "button-ink",
+      "description": "Cobalt action for light sections and inside the pricing sheet.",
+      "html": "<button class=\"ds-btn-ink\">Start your own</button>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-btn-ink { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; justify-content:center; min-height:3.25rem; padding:0 1.5rem; border:0; border-radius:14px; background:var(--enamel); color:#fff; font-weight:600; font-size:1rem; cursor:pointer; box-shadow:0 12px 24px -12px rgb(24 47 115 / 0.7); transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), background-color 180ms; } .ds-btn-ink:hover { background:var(--enamel-deep); transform:translateY(-2px); } .ds-btn-ink:focus-visible { outline:3px solid var(--marigold); outline-offset:3px; }"
+    },
+    {
+      "name": "Ghost Link (on enamel)",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action on the door: underlined white text.",
+      "html": "<div class=\"ds-door\"><a href=\"#\" class=\"ds-btn-ghost\">Start your own</a></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; } .ds-btn-ghost { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; min-height:3.5rem; padding:0 1.25rem; border-radius:14px; color:#fff; font-weight:500; text-decoration:underline; text-decoration-color:rgb(255 255 255 / 0.45); text-underline-offset:6px; transition: text-decoration-color 160ms; } .ds-btn-ghost:hover { text-decoration-color:var(--marigold); } .ds-btn-ghost:focus-visible { outline:3px solid var(--marigold); outline-offset:3px; }"
+    },
+    {
+      "name": "Language Switch",
+      "kind": "nav",
+      "refersTo": "lang-item",
+      "description": "EN / RU / KZ pill set recessed into the enamel.",
+      "html": "<div class=\"ds-door\"><nav class=\"ds-lang\" aria-label=\"Language\"><a href=\"#\" class=\"ds-lang-item\" aria-current=\"true\">EN</a><a href=\"#\" class=\"ds-lang-item\">RU</a><a href=\"#\" class=\"ds-lang-item\">KZ</a></nav></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; } .ds-lang { display:inline-flex; padding:3px; border-radius:999px; background:rgb(8 20 60 / 0.28); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.25); } .ds-lang-item { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; min-width:2.5rem; padding:0.35rem 0.6rem; border-radius:999px; font-size:0.8125rem; font-weight:600; letter-spacing:0.04em; text-align:center; text-decoration:none; color:var(--on-enamel-soft); transition: background-color 160ms, color 160ms; } .ds-lang-item:hover { color:#fff; } .ds-lang-item[aria-current='true'] { background:#fff; color:var(--enamel-deep); } .ds-lang-item:focus-visible { outline:3px solid var(--marigold); outline-offset:3px; }"
+    },
+    {
+      "name": "Invoice Sheet",
+      "kind": "card",
+      "refersTo": "invoice-sheet",
+      "description": "The signature object: the invoice the sibling opens, magneted to the door.",
+      "html": "<div class=\"ds-door\"><div class=\"ds-pin\"><span class=\"ds-magnet\"></span><article class=\"ds-invoice\"><header class=\"ds-inv-head\"><p class=\"ds-inv-title\">October care</p><p class=\"ds-inv-mark\">Kinvoice</p></header><p class=\"ds-soft\">Hi Mike, here is Mom's month.</p><div class=\"ds-well\"><p class=\"ds-soft\">Your suggested contribution</p><p class=\"ds-figure\">$218.40</p></div><span class=\"ds-pay\">Pay with Venmo</span></article></div></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; padding:48px 32px; } .ds-pin { position:relative; max-width:360px; transform:rotate(-1deg); } .ds-magnet { position:absolute; top:-13px; left:50%; margin-left:-13px; width:26px; height:26px; border-radius:50%; z-index:2; background: radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.75) 0 12%, transparent 13%), var(--marigold); box-shadow:0 6px 8px -2px rgb(8 18 48 / 0.45), inset 0 -3px 4px rgb(0 0 0 / 0.22), inset 0 2px 2px rgb(255 255 255 / 0.35); } .ds-invoice { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; background:#fff; color:var(--ink); border-radius:6px; padding:1.5rem 1.5rem 1.25rem; box-shadow:0 1px 1px rgb(8 18 48 / 0.18), 0 18px 30px -14px rgb(8 18 48 / 0.6), 0 34px 60px -30px rgb(8 18 48 / 0.55); } .ds-inv-head { display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid var(--line); padding-bottom:0.75rem; } .ds-inv-head p { margin:0; } .ds-inv-title { font-family: Unbounded, ui-sans-serif, system-ui, sans-serif; font-weight:700; font-size:0.95rem; } .ds-inv-mark { font-size:0.75rem; font-weight:600; color:var(--enamel); } .ds-soft { font-size:0.875rem; color:var(--ink-soft); margin:0.75rem 0 0; } .ds-well { margin-top:1rem; border-radius:12px; background:var(--mist); padding:0.75rem 1rem; } .ds-well .ds-soft { margin:0; font-weight:500; } .ds-figure { font-family: Unbounded, ui-sans-serif, system-ui, sans-serif; font-weight:700; font-size:2.6rem; line-height:1; letter-spacing:-0.025em; margin:0.125rem 0 0; } .ds-pay { display:flex; align-items:center; justify-content:center; height:3rem; margin-top:1rem; border-radius:12px; background:var(--enamel); color:#fff; font-weight:600; font-size:0.95rem; }"
+    },
+    {
+      "name": "Read-Label",
+      "kind": "chip",
+      "refersTo": "read-label",
+      "description": "Printed white label naming what Kinvoice reads from a scrap.",
+      "html": "<div class=\"ds-door\"><span class=\"ds-tag\"><span class=\"ds-dot\"></span>Medication · <b>$86.00</b></span></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; } .ds-tag { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.6rem; border-radius:6px; background:#fff; color:var(--ink); font-size:0.75rem; font-weight:600; white-space:nowrap; box-shadow:0 8px 16px -8px rgb(8 18 48 / 0.6); } .ds-tag b { font-weight:600; color:var(--enamel); } .ds-dot { width:7px; height:7px; border-radius:50%; background:var(--mint); }"
+    },
+    {
+      "name": "Thermal Receipt",
+      "kind": "custom",
+      "description": "Pinned pharmacy receipt: thermal paper, mono print, dashed rules, torn zigzag edge.",
+      "html": "<div class=\"ds-door\"><div class=\"ds-pin\"><span class=\"ds-magnet\"></span><div class=\"ds-receipt\"><p class=\"ds-c ds-b\">CVS PHARMACY</p><div class=\"ds-dash\"></div><p class=\"ds-row\"><span>Prescriptions</span><span>86.00</span></p><div class=\"ds-dash\"></div><p class=\"ds-row ds-b\"><span>TOTAL</span><span>$86.00</span></p></div></div></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; padding:48px 32px; } .ds-pin { position:relative; width:220px; transform:rotate(-4deg); } .ds-magnet { position:absolute; top:-13px; left:50%; margin-left:-13px; width:26px; height:26px; border-radius:50%; z-index:2; background: radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.75) 0 12%, transparent 13%), var(--tomato); box-shadow:0 6px 8px -2px rgb(8 18 48 / 0.45), inset 0 -3px 4px rgb(0 0 0 / 0.22), inset 0 2px 2px rgb(255 255 255 / 0.35); } .ds-receipt { position:relative; font-family:'JetBrains Mono', ui-monospace, monospace; background:var(--thermal); color:#2b3140; padding:1.1rem 1rem 1.6rem; font-size:0.75rem; line-height:1.5; box-shadow:0 1px 1px rgb(8 18 48 / 0.18), 0 18px 30px -14px rgb(8 18 48 / 0.6), 0 34px 60px -30px rgb(8 18 48 / 0.55); } .ds-receipt p { margin:0; } .ds-receipt::after { content:''; position:absolute; left:0; right:0; bottom:-9px; height:10px; background: linear-gradient(-45deg, transparent 6px, var(--thermal) 0) 0 0 / 12px 12px repeat-x, linear-gradient(45deg, transparent 6px, var(--thermal) 0) 0 0 / 12px 12px repeat-x; } .ds-c { text-align:center; } .ds-b { font-weight:600; } .ds-row { display:flex; justify-content:space-between; gap:0.5rem; } .ds-dash { border-top:1px dashed #9aa1b1; margin:0.5rem 0; }"
+    },
+    {
+      "name": "Sticky Note",
+      "kind": "custom",
+      "description": "Canary sticky in handwriting, held by an enamel-highlight magnet.",
+      "html": "<div class=\"ds-door\"><div class=\"ds-pin\"><span class=\"ds-magnet\"></span><div class=\"ds-sticky\">Mike sent $40 for groceries</div></div></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-door { background: radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%), linear-gradient(180deg, #3a63c8 0%, #2446a0 38%, #2446a0 72%, #182f73 100%); padding: 32px; color:#fff; padding:48px 32px; } .ds-pin { position:relative; width:200px; transform:rotate(3deg); } .ds-magnet { position:absolute; top:-13px; left:50%; margin-left:-13px; width:26px; height:26px; border-radius:50%; z-index:2; background: radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.75) 0 12%, transparent 13%), var(--enamel-hi); box-shadow:0 6px 8px -2px rgb(8 18 48 / 0.45), inset 0 -3px 4px rgb(0 0 0 / 0.22), inset 0 2px 2px rgb(255 255 255 / 0.35); } .ds-sticky { position:relative; font-family:Caveat, cursive; font-weight:600; background:var(--sticky); color:#2a2410; padding:1.3rem 1.1rem 1.2rem; font-size:1.45rem; line-height:1.1; box-shadow: 0 14px 18px -10px rgb(8 18 48 / 0.45); }"
+    },
+    {
+      "name": "Artifact Panel",
+      "kind": "card",
+      "refersTo": "artifact-panel",
+      "description": "Life-size product artifact on light sections (quick log, confirmed entry).",
+      "html": "<div class=\"ds-mist\"><div class=\"ds-panel\"><p class=\"ds-input\">Paid $86 at CVS for Mom's meds, 2h at OhioHealth</p><span class=\"ds-pay\">Confirm</span></div></div>",
+      "css": ":host, .ds-root { --enamel:#2446a0; --enamel-deep:#182f73; --enamel-hi:#3a63c8; --on-enamel:#fff; --on-enamel-soft:#d8e1ff; --paper:#fff; --thermal:#f6f6f2; --ink:#161d2c; --ink-soft:#465066; --ink-faint:#6b7489; --manila:#f2e2b3; --manila-rule:#c8432f; --sticky:#ffdf5e; --tomato:#e4513b; --marigold:#ffb81c; --marigold-deep:#f0a000; --mint:#4fc59f; --mist:#eef2fc; --line:#dfe4f0; } .ds-mist { background:var(--mist); padding:32px; } .ds-panel { font-family: 'Golos Text', ui-sans-serif, system-ui, sans-serif; max-width:28rem; border-radius:16px; background:#fff; padding:1.25rem; color:var(--ink); box-shadow:0 24px 48px -28px rgb(24 47 115 / 0.45); } .ds-input { margin:0; border-radius:12px; border:1px solid var(--line); background:var(--mist); padding:0.75rem 1rem; font-size:0.95rem; line-height:1.6; } .ds-pay { display:flex; align-items:center; justify-content:center; height:3rem; margin-top:1rem; border-radius:12px; background:var(--enamel); color:#fff; font-weight:600; font-size:0.95rem; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Family Fridge Door",
+    "overview": "The evidence of care already lives on the fridge: a pharmacy receipt, an appointment card, a sticky note from a sibling. Kinvoice's brand world is that door. Deep cobalt appliance enamel is the page itself, with a soft vertical sheen and a fine painted speckle. Real paper objects sit on it, each held by a round enamel magnet, each tilted a few degrees the way a hand pins things up. The white invoice sheet is the largest object and the one everything resolves into.\n\nBetween the enamel bands, the page drops to calm paper surfaces (white and cool mist) where the product's artifacts are shown at life size: the quick-log box, the confirmed receipt entry, the sibling's phone. The register stays warm and plain. The world is physical and specific, but the numbers on it are real, set in a heavy rounded display face that makes a dollar figure read at a glance.\n\n**Scope.** This world is built and shipped on the landing page (`/`). It is the new brand direction. The app screens (`/app`, `/setup`, `/i`) still run an older system, recorded under \"App surfaces (current)\" in each section below; the app may adopt the fridge-door world later. Do not mix the two systems on one surface.",
+    "keyCharacteristics": [
+      "Full-bleed cobalt enamel fields alternate with white and mist paper sections.",
+      "Paper objects are real-object materials (thermal, manila, canary, crisp white), magneted and slightly rotated.",
+      "One marigold action per enamel field.",
+      "Every object Kinvoice reads carries a small printed white label naming what it reads.",
+      "Heavy rounded display type for headings and money; a Cyrillic-first sans for everything else.",
+      "All four faces carry Kazakh Cyrillic; layouts never depend on English string length."
+    ],
+    "rules": [
+      {
+        "name": "The One Marigold Rule",
+        "body": "A filled marigold button appears once per enamel field, and only for the primary action. Light sections close with the cobalt ink button instead.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cobalt Shadow Rule",
+        "body": "Every shadow is tinted deep door-navy (`rgb(8 18 48 / …)` or `rgb(24 47 115 / …)`), never neutral black. Objects sit on blue enamel, so their shadows are blue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Real Object Type Rule",
+        "body": "Caveat appears only where a hand wrote, and JetBrains Mono only where a thermal printer printed. Neither ever sets UI, headings or body copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Heavy Money Rule",
+        "body": "Every dollar figure that matters (the suggested contribution, the price, a drafted amount) is set in Unbounded bold. Ledger rows inside a sheet use Golos 600.",
+        "section": "typography"
+      },
+      {
+        "name": "The Same Scale Rule",
+        "body": "When siblings are compared, every person gets an identical meter on one shared scale (180px track, 36px gridlines). The imbalance has to read in one sweep, never from a legend.",
+        "section": "layout"
+      },
+      {
+        "name": "The Magnet Holds It Rule",
+        "body": "A paper object on enamel is always held by a round magnet (26px, centered on its top edge). Paper never floats on the door unpinned.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** make enamel a full-bleed section ground with its sheen and speckle; the door is the page, never a card.",
+      "**Do** hold every paper object on enamel with a magnet and tilt it a few degrees (-4deg to 4deg).",
+      "**Do** keep to one marigold button per enamel field; use the cobalt ink button on light sections.",
+      "**Do** tint shadows door-navy (`rgb(8 18 48 / …)`).",
+      "**Do** set money figures in Unbounded bold, using the real numbers from the demo seed.",
+      "**Do** label what Kinvoice reads from an object with a white read-label, mint dot and bold cobalt value.",
+      "**Do** load all four faces with Cyrillic and Cyrillic-ext subsets and test RU and KZ string lengths."
+    ],
+    "donts": [
+      "**Don't** use Caveat or JetBrains Mono for UI, headings or body; they belong to handwriting and receipts.",
+      "**Don't** put Faint Ink (`ink-faint`) text on mist; keep it on white paper.",
+      "**Don't** use neutral black shadows or flat grey drop shadows in this world.",
+      "**Don't** set uppercase tracked eyebrows above headings. Uppercase tracking is only for print on a paper object (letterhead, receipt header).",
+      "**Don't** bring the app's sage accent, Inter or Fraunces onto fridge-door surfaces, or fridge-door enamel and marigold onto current app screens, until the app adopts this world."
+    ]
+  }
+}

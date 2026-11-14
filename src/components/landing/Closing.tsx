@@ -28,7 +28,7 @@ export function Pricing({ copy }: { copy: LandingCopy }) {
             className={s.magnet}
             style={{ ["--m" as string]: "var(--tomato)", animation: "none" }}
           />
-          <p className="text-sm font-semibold text-[var(--enamel)]">{pr.plan}</p>
+          <h3 className={`${s.display} text-lg font-bold`}>{pr.plan}</h3>
           <p className="mt-3 flex items-baseline gap-2">
             <span className={`${s.display} text-6xl font-bold tracking-tight`}>$5.99</span>
             <span className="text-[var(--ink-soft)]">{pr.perMonth}</span>

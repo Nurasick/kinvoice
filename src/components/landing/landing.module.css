@@ -5,9 +5,9 @@
  */
 
 .root {
-  --enamel: #2446a0;
-  --enamel-deep: #182f73;
-  --enamel-hi: #3a63c8;
+  --enamel: #1c43a8;
+  --enamel-deep: #11307f;
+  --enamel-hi: #2550c0;
   --on-enamel: #ffffff;
   --on-enamel-soft: #d8e1ff;
   --paper: #ffffff;
@@ -63,12 +63,18 @@
   position: relative;
   color: var(--on-enamel);
   background:
-    radial-gradient(120% 70% at 20% -10%, rgb(255 255 255 / 0.16), transparent 60%),
+    linear-gradient(
+      90deg,
+      transparent 50%,
+      rgb(255 255 255 / 0.07) 60%,
+      rgb(255 255 255 / 0.02) 66%,
+      transparent 74%
+    ),
     linear-gradient(
       180deg,
       var(--enamel-hi) 0%,
-      var(--enamel) 38%,
-      var(--enamel) 72%,
+      var(--enamel) 30%,
+      var(--enamel) 78%,
       var(--enamel-deep) 100%
     );
   overflow: clip;
@@ -97,10 +103,8 @@
   width: 14px;
   height: 46%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #8d97ad 0%, #f4f6fb 35%, #c5ccdb 60%, #7d879e 100%);
-  box-shadow:
-    -6px 10px 18px rgb(8 18 48 / 0.35),
-    inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  background: #dfe4ee;
+  box-shadow: -5px 8px 14px rgb(8 18 48 / 0.35);
 }
 
 .handle::before,
@@ -111,7 +115,7 @@
   width: 22px;
   height: 18px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #6f7a92, #cfd5e2);
+  background: #b9c1d2;
 }
 
 .handle::before {
@@ -241,7 +245,8 @@
 
 .scene {
   position: relative;
-  height: 780px;
+  height: auto;
+  padding-top: 440px;
   max-width: 440px;
   margin-inline: auto;
 }
@@ -302,9 +307,8 @@
 }
 
 .posInvoice {
-  left: 2%;
-  right: 2%;
-  top: 410px;
+  position: relative;
+  margin: 0 2% 28px;
   --d: 3;
   --rot: -1deg;
   --i: 3;
@@ -321,6 +325,7 @@
     max-width: none;
     height: auto;
     margin: 0;
+    padding: 0;
   }
 
   .posReceipt {
@@ -344,10 +349,16 @@
   }
 
   .posInvoice {
+    position: absolute;
+    margin: 0;
     left: auto;
     right: 5%;
-    top: 30%;
+    top: 34%;
     width: min(400px, 58%);
+  }
+
+  .posReceipt {
+    z-index: 5;
   }
 }
 
@@ -362,13 +373,8 @@
   margin-left: -13px;
   border-radius: 50%;
   z-index: 2;
-  background:
-    radial-gradient(circle at 34% 30%, rgb(255 255 255 / 0.75) 0 12%, transparent 13%),
-    var(--m, var(--tomato));
-  box-shadow:
-    0 6px 8px -2px rgb(8 18 48 / 0.45),
-    inset 0 -3px 4px rgb(0 0 0 / 0.22),
-    inset 0 2px 2px rgb(255 255 255 / 0.35);
+  background: var(--m, var(--tomato));
+  box-shadow: 0 5px 7px -2px rgb(8 18 48 / 0.5);
   animation: clack 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(var(--i, 0) * 160ms + 520ms);
 }
@@ -472,7 +478,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.3rem 0.6rem;
-  border-radius: 6px;
+  border-radius: 2px;
   background: #fff;
   color: var(--ink);
   font-size: 0.75rem;
@@ -486,13 +492,6 @@
 .tag b {
   font-weight: 600;
   color: var(--enamel);
-}
-
-.tagDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--mint);
 }
 
 @keyframes tagIn {
@@ -532,18 +531,6 @@
 
 /* ---------- small shared bits ---------- */
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.65rem;
-  border-radius: 999px;
-  background: var(--mist);
-  border: 1px solid var(--line);
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
 .stepNum {
   font-family: var(--font-kv-display), ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
@@ -568,6 +555,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .drop,
+  .magnet,
+  .tag {
+    animation: none;
+  }
   .item {
     transform: none;
     transition: none;

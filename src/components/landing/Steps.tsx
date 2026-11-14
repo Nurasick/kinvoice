@@ -128,7 +128,7 @@ function ReceiptEntry({ copy, data }: { copy: LandingCopy; data: LandingData }) 
             className="flex items-center justify-between gap-3 border-b border-[var(--line)] pb-2 last:border-0 last:pb-0"
           >
             <dt className="text-sm text-[var(--ink-faint)]">{k}</dt>
-            <dd className="flex items-center gap-2 text-sm font-semibold">
+            <dd className="flex items-center gap-2 text-sm font-semibold whitespace-nowrap">
               {v}
               <Check />
             </dd>
