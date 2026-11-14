@@ -52,13 +52,20 @@ interface JsonCall {
   schema: JsonSchema;
 }
 
-function logFailure(op: string, err: unknown): void {
+function logFailure(op: string, err: unknown, ms: number): void {
   const name = err instanceof Error ? err.name : "UnknownError";
-  console.warn(`[ai] ${op} failed: ${name}`);
+  console.warn(`[ai] ${op} failed: ${name} after ${ms}ms`);
+}
+
+/** One line per call for p50/p95 in the Vercel logs. Op name and duration only, never user text. */
+function logTiming(op: string, ms: number): void {
+  console.info(`[ai] ${op} ok ${ms}ms`);
 }
 
 /** Calls the model and returns parsed JSON, or null on any error/timeout/invalid JSON. */
 async function callJson(deps: OpenAiDeps, call: JsonCall): Promise<unknown> {
+  const started = Date.now();
+  const elapsed = () => Date.now() - started;
   try {
     const res = await deps.client.responses.create(
       {
@@ -72,10 +79,11 @@ async function callJson(deps: OpenAiDeps, call: JsonCall): Promise<unknown> {
       { signal: AbortSignal.timeout(deps.timeoutMs), maxRetries: 0, timeout: deps.timeoutMs },
     );
     const parsed = parseJsonSafe(res.output_text);
-    if (parsed === null) logFailure(call.name, new SyntaxError("invalid JSON"));
+    if (parsed === null) logFailure(call.name, new SyntaxError("invalid JSON"), elapsed());
+    else logTiming(call.name, elapsed());
     return parsed;
   } catch (err: unknown) {
-    logFailure(call.name, err);
+    logFailure(call.name, err, elapsed());
     return null;
   }
 }
