@@ -1,5 +1,7 @@
 # Kickoff prompts
 
+> Round 2 tasks and kickoff prompts: [TASKS.md](TASKS.md). Pre-submission review prompt: [REVIEW.md](REVIEW.md).
+
 Each member: clone, install, then open Claude Code in the repo and paste your prompt.
 
 ```bash
