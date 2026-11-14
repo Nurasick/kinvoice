@@ -35,7 +35,15 @@ function balance(over: Partial<MonthlyBalance> = {}): MonthlyBalance {
 }
 
 function mark(memberId: string, status: PaymentMark["status"], amountCents: number): PaymentMark {
-  return { id: `p-${memberId}`, invoiceId: "inv", memberId, amountCents, method: "venmo", status, updatedAt: "2026-11-14T10:00:00.000Z" };
+  return {
+    id: `p-${memberId}`,
+    invoiceId: "inv",
+    memberId,
+    amountCents,
+    method: "venmo",
+    status,
+    updatedAt: "2026-11-14T10:00:00.000Z",
+  };
 }
 
 function invoice(payments: PaymentMark[], snapshot: MonthlyBalance = balance()): Invoice {
@@ -58,13 +66,21 @@ describe("settlement", () => {
 
   it("counts what is still to come and what has arrived, from the invoice snapshot", () => {
     const s = settlement(invoice([mark("Mike", "received", 21840), mark("Emily", "sent", 33839)]), balance());
-    expect(s).toMatchObject({ stillToComeCents: 33839, receivedCents: 21840, isAllSettled: false, hasNewCosts: false });
+    expect(s).toMatchObject({
+      stillToComeCents: 33839,
+      receivedCents: 21840,
+      isAllSettled: false,
+      hasNewCosts: false,
+    });
     expect(rowFor(s, "Mike")?.status).toBe("received");
     expect(rowFor(s, "Sarah")).toBeUndefined();
   });
 
   it("is all settled once every sibling is received, so nothing reads as still owed", () => {
-    const s = settlement(invoice([mark("Mike", "received", 21840), mark("Emily", "received", 33839)]), balance());
+    const s = settlement(
+      invoice([mark("Mike", "received", 21840), mark("Emily", "received", 33839)]),
+      balance(),
+    );
     expect(s).toMatchObject({ stillToComeCents: 0, receivedCents: 55679, isAllSettled: true });
   });
 

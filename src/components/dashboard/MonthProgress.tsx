@@ -6,48 +6,52 @@
 import Link from "next/link";
 import type { Invoice } from "@/shared/domain";
 import type { SiblingStatus } from "@/components/invoice/invoice-view";
-import { publishedLabel } from "@/components/invoice/invoice-view";
 import { Badge, Money, buttonClass, cn, type BadgeTone } from "@/components/ui";
+import type { Locale } from "@/lib/i18n/locales";
+import { dashboardCopy, dateLabel, type PaymentLabel } from "./copy";
 import { monthProgress, type StepState } from "./month-progress";
 
-const STATUS: Record<SiblingStatus, { label: string; tone: BadgeTone }> = {
-  waiting: { label: "Not yet", tone: "neutral" },
-  sent: { label: "Says sent", tone: "warning" },
-  received: { label: "Received", tone: "success" },
-  covered: { label: "Covered", tone: "success" },
+const STATUS: Record<SiblingStatus, { label: PaymentLabel; tone: BadgeTone }> = {
+  waiting: { label: "notYet", tone: "neutral" },
+  sent: { label: "saysSent", tone: "warning" },
+  received: { label: "received", tone: "success" },
+  covered: { label: "covered", tone: "success" },
 };
 
 export function MonthProgress({
   month,
   entries,
   invoices,
+  locale,
 }: {
   month: string;
   entries: number;
+  locale: Locale;
   /** Published invoices (all months); the strip picks this month's latest. */
   invoices: readonly Invoice[];
 }) {
   const p = monthProgress(entries, invoices, month);
   const invoiceHref = `/app/invoice?month=${month}`;
+  const t = dashboardCopy(locale).progress;
 
   return (
     <section
-      aria-label="This month's progress"
+      aria-label={t.label}
       className="rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]"
     >
       <ol className="grid grid-cols-1 divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
-        <Step n={1} state={p.logged.state} title="Log care">
-          {p.logged.entries > 0
-            ? `${p.logged.entries} ${p.logged.entries === 1 ? "entry" : "entries"} this month`
-            : "Nothing logged yet"}
-          {p.next === "log" && <Action href="/app/log">Log the first one</Action>}
+        <Step n={1} state={p.logged.state} title={t.logTitle}>
+          {p.logged.entries > 0 ? t.entries({ n: p.logged.entries }) : t.nothingLogged}
+          {p.next === "log" && <Action href="/app/log">{t.logFirst}</Action>}
         </Step>
-        <Step n={2} state={p.sent.state} title="Send the invoice">
-          {p.sent.invoice ? `Sent ${publishedLabel(p.sent.invoice.publishedAt)}` : "One link per sibling"}
-          {p.next === "send" && <Action href={invoiceHref}>Create invoice</Action>}
+        <Step n={2} state={p.sent.state} title={t.sendTitle}>
+          {p.sent.invoice ? t.sentOn({ date: dateLabel(p.sent.invoice.publishedAt, locale) }) : t.oneLink}
+          {p.next === "send" && <Action href={invoiceHref}>{t.createInvoice}</Action>}
         </Step>
-        <Step n={3} state={p.settled.state} title="Siblings chip in">
-          {p.settled.total > 0 ? `${p.settled.settled} of ${p.settled.total} settled` : "After you send it"}
+        <Step n={3} state={p.settled.state} title={t.settleTitle}>
+          {p.settled.total > 0
+            ? t.settledOf({ settled: p.settled.settled, total: p.settled.total })
+            : t.afterSend}
           {p.settled.rows.length > 0 && (
             <ul className="mt-2 flex flex-col gap-1.5">
               {p.settled.rows.map((r) => (
@@ -55,19 +59,17 @@ export function MonthProgress({
                   <span className="text-ink">
                     {r.member.name} · <Money cents={r.member.suggestedContributionCents} />
                   </span>
-                  <Badge tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Badge>
+                  <Badge tone={STATUS[r.status].tone}>{t.status[STATUS[r.status].label]}</Badge>
                 </li>
               ))}
             </ul>
           )}
           {p.next === "follow-up" && (
             <Action href={invoiceHref} quiet>
-              Review payments
+              {t.review}
             </Action>
           )}
-          {p.next === "done" && (
-            <p className="mt-2 text-sm font-medium text-success">Everyone’s settled. Thank you.</p>
-          )}
+          {p.next === "done" && <p className="mt-2 text-sm font-medium text-success">{t.allSettled}</p>}
         </Step>
       </ol>
     </section>
