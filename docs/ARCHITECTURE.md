@@ -104,7 +104,7 @@ The interface is in `types.ts` (frozen). `index.ts#getAiService()` returns `mock
 | `extractReceipt` | image/PDF bytes, `today` | `{ draft: DraftEntry \| null }` | "Read this receipt: total paid (cents), merchant, date, best expense category." | `draft:null, fallback:true` → empty manual form |
 | `draftInvoiceMessage` | `tone`, names, computed `MonthlyBalance` | `{ message: string }` | "Write a short (≤120 words) family update in a {warm\|brief\|direct} tone. Use ONLY the numbers given, formatted as provided. Say 'suggested contribution', never 'owe'." | Deterministic `template.ts` text, `fallback:true` |
 
-The implementation uses OpenAI structured outputs (JSON schema) and validates again with Zod (`DraftEntry`). There's a 12 s `AbortSignal` timeout, no retries during a request, and errors are logged server-side without user text. The AI never sees or returns balances it computed itself: the numbers come in from `lib/money`.
+The implementation uses OpenAI structured outputs (JSON schema) and validates again with Zod (`DraftEntry`). Calls use `reasoning.effort: "minimal"` (default effort took 9–14 s on gpt-5-mini; minimal answers in ~3.5 s). There's a 12 s `AbortSignal` timeout, no retries during a request, and errors are logged server-side without user text. The AI never sees or returns balances it computed itself: the numbers come in from `lib/money`.
 
 ## 6. Money math (`src/lib/money/`)
 
