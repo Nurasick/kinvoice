@@ -6,6 +6,7 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { migrate } from "drizzle-orm/neon-http/migrator";
+import { enableLocalNeonProxy } from "../src/server/db/neon-local";
 
 async function main(): Promise<void> {
   const url = process.env.DATABASE_URL?.trim();
@@ -13,6 +14,7 @@ async function main(): Promise<void> {
     console.info("[migrate] DATABASE_URL not set, skipping migrations");
     return;
   }
+  enableLocalNeonProxy();
   await migrate(drizzle({ client: neon(url) }), { migrationsFolder: "./drizzle" });
   console.info("[migrate] migrations applied");
 }
