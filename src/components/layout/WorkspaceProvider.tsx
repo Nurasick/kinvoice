@@ -9,6 +9,8 @@ import { ApiError, workspaceApi, type WorkspaceApi } from "@/lib/api/client";
 import { clearWorkspaceKey, loadWorkspaceKey } from "@/lib/workspace-key";
 import type { Member, WorkspaceView } from "@/shared/domain";
 import { Button, EmptyState, LoadingBlock, buttonClass } from "@/components/ui";
+import { useLocale } from "@/lib/i18n/client";
+import { frameCopy } from "./copy";
 
 export interface WorkspaceContextValue {
   editKey: string;
@@ -37,6 +39,7 @@ type State =
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>({ status: "loading" });
+  const { locale } = useLocale();
 
   const load = useCallback(async (): Promise<void> => {
     const editKey = loadWorkspaceKey();
@@ -71,7 +74,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     };
   }, [state, load]);
 
-  if (state.status === "loading") return <LoadingBlock label="Opening your family workspace" />;
+  if (state.status === "loading") return <LoadingBlock label={frameCopy(locale).workspace.opening} />;
   if (state.status === "missing") return <NoWorkspace />;
   if (state.status === "rejected") return <NoWorkspace rejected />;
   if (state.status === "error" || !value) return <LoadError onRetry={load} />;
@@ -79,22 +82,20 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 }
 
 function NoWorkspace({ rejected = false }: { rejected?: boolean }) {
+  const { locale } = useLocale();
+  const copy = frameCopy(locale).workspace;
   return (
     <EmptyState
       className="mx-auto mt-10 max-w-lg"
-      title={rejected ? "That private link didn’t work" : "No family workspace on this device yet"}
-      description={
-        rejected
-          ? "Check that you copied the whole link. If the family space was deleted, you can start a new one or look around Sarah's demo family."
-          : "Open your private edit link to get back in, or start fresh. You can also look around Sarah's demo family."
-      }
+      title={rejected ? copy.rejectedTitle : copy.missingTitle}
+      description={rejected ? copy.rejectedBody : copy.missingBody}
       action={
         <div className="flex flex-wrap justify-center gap-2">
           <Link href="/" className={buttonClass("primary")}>
-            Try the demo
+            {copy.tryDemo}
           </Link>
           <Link href="/setup" className={buttonClass("secondary")}>
-            Start your own
+            {copy.startOwn}
           </Link>
         </div>
       }
@@ -103,12 +104,14 @@ function NoWorkspace({ rejected = false }: { rejected?: boolean }) {
 }
 
 function LoadError({ onRetry }: { onRetry: () => Promise<void> }) {
+  const { locale } = useLocale();
+  const copy = frameCopy(locale).workspace;
   return (
     <EmptyState
       className="mx-auto mt-10 max-w-lg"
-      title="We couldn't reach your workspace"
-      description="Your data is safe. This is usually a brief connection hiccup."
-      action={<Button onClick={() => void onRetry()}>Try again</Button>}
+      title={copy.errorTitle}
+      description={copy.errorBody}
+      action={<Button onClick={() => void onRetry()}>{copy.tryAgain}</Button>}
     />
   );
 }

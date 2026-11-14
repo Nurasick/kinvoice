@@ -1,18 +1,20 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "@/lib/i18n/client";
 import { cn } from "@/components/ui";
+import { frameCopy, type FrameCopy } from "./copy";
 
 interface NavItem {
   href: string;
-  label: string;
+  key: keyof Omit<FrameCopy["nav"], "label">;
 }
 
 const NAV: readonly NavItem[] = [
-  { href: "/app", label: "Dashboard" },
-  { href: "/app/log", label: "Log" },
-  { href: "/app/invoice", label: "Invoice" },
-  { href: "/app/settings", label: "Settings" },
+  { href: "/app", key: "dashboard" },
+  { href: "/app/log", key: "log" },
+  { href: "/app/invoice", key: "invoice" },
+  { href: "/app/settings", key: "settings" },
 ];
 
 function isActive(pathname: string, href: string): boolean {
@@ -21,8 +23,10 @@ function isActive(pathname: string, href: string): boolean {
 
 export function AppNav() {
   const pathname = usePathname();
+  const { locale } = useLocale();
+  const copy = frameCopy(locale).nav;
   return (
-    <nav aria-label="Main" className="-m-1.5 flex gap-1 overflow-x-auto p-1.5">
+    <nav aria-label={copy.label} className="-m-1.5 flex gap-1 overflow-x-auto p-1.5">
       {NAV.map((item) => {
         const active = isActive(pathname, item.href);
         return (
@@ -35,7 +39,7 @@ export function AppNav() {
               active ? "bg-white text-enamel-deep" : "text-on-enamel-soft hover:bg-white/10 hover:text-white",
             )}
           >
-            {item.label}
+            {copy[item.key]}
           </Link>
         );
       })}

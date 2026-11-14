@@ -7,6 +7,9 @@
 import { useState } from "react";
 import { useWorkspace } from "@/components/layout/WorkspaceProvider";
 import { monthLabel } from "@/components/log/labels";
+import { useLocale } from "@/lib/i18n/client";
+import type { Locale } from "@/lib/i18n/locales";
+import { dashboardCopy } from "./copy";
 import type { Invoice } from "@/shared/domain";
 import { Button, EmptyState, LoadingBlock, MonthPicker } from "@/components/ui";
 import { CategoryBreakdown } from "./CategoryBreakdown";
@@ -26,17 +29,25 @@ export function DashboardScreen() {
   const [month, setMonth] = useState(thisMonth);
   const { data, reload } = useMonthData(api, month);
   const invoices = useInvoices(api);
+  const { locale } = useLocale();
+  const t = dashboardCopy(locale).screen;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-medium sm:text-4xl">{monthLabel(month)}</h1>
-          <p className="mt-1 text-sm text-ink-muted">Caring for {view.workspace.parentName}</p>
+          <h1 className="font-display text-3xl font-medium sm:text-4xl">{monthLabel(month, locale)}</h1>
+          <p className="mt-1 text-sm text-ink-muted">{t.caringFor({ parent: view.workspace.parentName })}</p>
         </div>
-        <MonthPicker month={month} onChange={setMonth} max={thisMonth} />
+        <MonthPicker
+          month={month}
+          onChange={setMonth}
+          max={thisMonth}
+          locale={locale}
+          label={monthLabel(month, locale)}
+        />
       </div>
-      <MonthBody data={data} month={month} invoices={invoices} onRetry={reload} />
+      <MonthBody data={data} month={month} invoices={invoices} onRetry={reload} locale={locale} />
     </div>
   );
 }
@@ -46,19 +57,22 @@ interface MonthBodyProps {
   month: string;
   invoices: Invoice[] | null;
   onRetry: () => void;
+  locale: Locale;
 }
 
-function MonthBody({ data, month, invoices, onRetry }: MonthBodyProps) {
+function MonthBody({ data, month, invoices, onRetry, locale }: MonthBodyProps) {
   const { view } = useWorkspace();
+  const t = dashboardCopy(locale).screen;
+  const monthName = monthLabel(month, locale);
   if (data.state === "loading" || invoices === null) {
-    return <LoadingBlock label={`Loading ${monthLabel(month)}`} />;
+    return <LoadingBlock label={t.loading({ month: monthName })} />;
   }
   if (data.state === "error") {
     return (
       <EmptyState
-        title="We couldn't load this month"
-        description="Your data is safe. This is usually a brief connection hiccup."
-        action={<Button onClick={onRetry}>Try again</Button>}
+        title={t.errorTitle}
+        description={t.errorBody}
+        action={<Button onClick={onRetry}>{t.tryAgain}</Button>}
       />
     );
   }
@@ -67,22 +81,26 @@ function MonthBody({ data, month, invoices, onRetry }: MonthBodyProps) {
   if (isEmptyMonth(data.balance)) {
     return (
       <>
-        <MonthProgress month={month} entries={entries} invoices={invoices} />
-        <EmptyState
-          title={`Nothing logged for ${monthLabel(month)} yet`}
-          description="Type one sentence like “Paid $86 at CVS for Mom’s meds, then drove her to the cardiologist, 3 hours.” and Kinvoice does the rest."
-        />
+        <MonthProgress month={month} entries={entries} invoices={invoices} locale={locale} />
+        <EmptyState title={t.emptyTitle({ month: monthName })} description={t.emptyBody} />
       </>
     );
   }
   return (
     <>
-      <MonthHeadline balance={data.balance} month={month} entries={entries} invoices={invoices} settlement={status} />
-      <MonthProgress month={month} entries={entries} invoices={invoices} />
-      <MemberBalances balance={data.balance} settlement={status} />
+      <MonthHeadline
+        balance={data.balance}
+        month={month}
+        entries={entries}
+        invoices={invoices}
+        settlement={status}
+        locale={locale}
+      />
+      <MonthProgress month={month} entries={entries} invoices={invoices} locale={locale} />
+      <MemberBalances balance={data.balance} settlement={status} locale={locale} />
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.2fr_1fr]">
-        <CategoryBreakdown balance={data.balance} />
-        <RecentEntries entries={data.entries} members={view.members} />
+        <CategoryBreakdown balance={data.balance} locale={locale} />
+        <RecentEntries entries={data.entries} members={view.members} locale={locale} />
       </div>
     </>
   );
