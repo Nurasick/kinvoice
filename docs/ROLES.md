@@ -11,10 +11,10 @@ Full design: `docs/ARCHITECTURE.md`. Product: `docs/kinvoice-brief.md`.
 | `src/lib/api/client.ts` (typed fetch client) — **FROZEN** | Nurali |
 | `src/server/repo/types.ts` (repository interface) — **FROZEN** | Nurali |
 | `src/server/ai/types.ts` (AI service interface) — **FROZEN** | Nurali (Olzhas implements it) |
-| `.env.example`, `package.json`, `package-lock.json`, configs (`next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `vitest.config.ts`, `drizzle.config.ts`) | Nurali |
+| `.env.example`, `package.json`, `package-lock.json`, configs (`next.config.ts`, `tsconfig.json`, `eslint.config.mjs`, `vitest.config.mts`, `drizzle.config.ts`) | Nurali |
 | `CLAUDE.md`, `README.md`, `docs/**` | Nurali |
 | **Workstream A — Nurali: platform, data, money, deploy** | |
-| `src/server/db/**`, `src/server/repo/**` (except `types.ts` frozen), `src/server/seed/**`, `src/server/http.ts`, `src/server/tokens.ts`, `src/server/services.ts` | Nurali |
+| `src/server/db/**`, `src/server/repo/**` (except `types.ts` frozen), `src/server/seed/**`, `src/server/http.ts`, `src/server/tokens.ts`, `src/server/services.ts`, `src/server/rate-limit.ts`, `src/proxy.ts`, `test/**` | Nurali |
 | `src/lib/money/**` | Nurali |
 | `src/app/api/**` **except** `src/app/api/ai/**` | Nurali |
 | `drizzle/**` (migrations) | Nurali |
