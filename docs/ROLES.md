@@ -24,7 +24,9 @@ Full design: `docs/ARCHITECTURE.md`. Product: `docs/kinvoice-brief.md`.
 | `src/app/app/log/**` (Log page: quick log, receipt upload, manual form, entry list/edit) | Olzhas |
 | `src/components/log/**` | Olzhas |
 | **Workstream C — Yernur: caregiver + sibling UX** | |
-| `src/app/layout.tsx`, `src/app/globals.css`, `src/app/page.tsx` (landing + "Try demo" / "Start your own") | Yernur |
+| `src/app/layout.tsx`, `src/app/globals.css` | Yernur |
+| `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx`, `src/app/app/error.tsx`, `src/app/app/loading.tsx` (UX states) | Yernur |
+| `src/app/page.tsx`, `src/components/landing/**` (landing, taken over 2026-11-14), `src/lib/i18n/**` (EN/RU/KZ) | Nurali |
 | `src/app/setup/**`, `src/app/w/**` (edit-link landing) | Yernur |
 | `src/app/app/layout.tsx`, `src/app/app/page.tsx` (dashboard), `src/app/app/invoice/**`, `src/app/app/settings/**` | Yernur |
 | `src/app/i/**` (public invoice page for siblings) | Yernur |
