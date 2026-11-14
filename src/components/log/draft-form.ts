@@ -11,6 +11,7 @@ import {
   type EntrySource,
 } from "@/shared/domain";
 import { parseDollarsToCents } from "@/lib/money";
+import { logCopy, type ErrorCopy } from "./copy";
 
 export type EntryKind = "expense" | "time";
 
@@ -110,23 +111,24 @@ export function parseDuration(hours: string, mins: string): number | null {
   return total > 0 && total <= 24 * 60 ? total : null;
 }
 
-function validate(form: DraftForm): FormErrors {
+function validate(form: DraftForm, msg: ErrorCopy): FormErrors {
   const errors: FormErrors = {};
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(form.date)) errors.date = "Pick a date";
-  if (!form.memberId) errors.memberId = "Choose who";
-  if (!categoriesFor(form.kind).includes(form.category)) errors.category = "Pick a category";
-  if (form.note.trim().length > 280) errors.note = "Keep the note under 280 characters";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(form.date)) errors.date = msg.date;
+  if (!form.memberId) errors.memberId = msg.memberId;
+  if (!categoriesFor(form.kind).includes(form.category)) errors.category = msg.category;
+  if (form.note.trim().length > 280) errors.note = msg.note;
   if (form.kind === "expense") {
     const cents = parseDollarsToCents(form.amount);
-    if (cents === null || cents <= 0) errors.amount = "Enter an amount, like 86 or 12.50";
+    if (cents === null || cents <= 0) errors.amount = msg.amount;
   } else if (parseDuration(form.hours, form.mins) === null) {
-    errors.duration = "Enter how long, up to 24 hours";
+    errors.duration = msg.duration;
   }
   return errors;
 }
 
-export function formToNewEntry(form: DraftForm): FormResult {
-  const errors = validate(form);
+/** Validates and converts a card. Error messages come from the screen's dictionary (English by default). */
+export function formToNewEntry(form: DraftForm, msg: ErrorCopy = logCopy("en").errors): FormResult {
+  const errors = validate(form, msg);
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   const base = { date: form.date, memberId: form.memberId, note: form.note.trim(), source: form.source };
   const candidate =
@@ -134,5 +136,5 @@ export function formToNewEntry(form: DraftForm): FormResult {
       ? { ...base, kind: "expense" as const, amountCents: parseDollarsToCents(form.amount), category: form.category, merchant: form.merchant.trim() || undefined }
       : { ...base, kind: "time" as const, minutes: parseDuration(form.hours, form.mins), category: form.category };
   const parsed = NewEntry.safeParse(candidate);
-  return parsed.success ? { ok: true, entry: parsed.data } : { ok: false, errors: { note: "Please check this entry" } };
+  return parsed.success ? { ok: true, entry: parsed.data } : { ok: false, errors: { note: msg.generic } };
 }

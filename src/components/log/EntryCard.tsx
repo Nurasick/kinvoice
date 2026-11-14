@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import type { Member } from "@/shared/domain";
 import { Badge, Card, Field, Input, Select, cn } from "@/components/ui";
 import { categoriesFor, changeKind, type DraftForm, type EntryKind, type FormErrors } from "./draft-form";
+import { useLogCopy } from "./copy-context";
 import { categoryLabel } from "./labels";
 
 interface Props {
@@ -22,7 +23,19 @@ interface Props {
 
 type Setter = (patch: Partial<DraftForm>) => void;
 
+/** Label with a translated "(optional)" — the shared Field only knows the English word. */
+function OptionalLabel({ text }: { text: string }) {
+  const { t } = useLogCopy();
+  return (
+    <>
+      {text}
+      <span className="ml-1.5 font-normal text-ink-muted">{t.optional}</span>
+    </>
+  );
+}
+
 function KindToggle({ kind, onPick }: { kind: EntryKind; onPick: (k: EntryKind) => void }) {
+  const { t } = useLogCopy();
   const option = (value: EntryKind, label: string) => (
     <button
       type="button"
@@ -37,36 +50,38 @@ function KindToggle({ kind, onPick }: { kind: EntryKind; onPick: (k: EntryKind) 
     </button>
   );
   return (
-    <div className="inline-flex rounded-[var(--radius-control)] bg-paper-deep p-1" role="group" aria-label="Entry type">
-      {option("expense", "Money spent")}
-      {option("time", "Time given")}
+    <div className="inline-flex rounded-[var(--radius-control)] bg-paper-deep p-1" role="group" aria-label={t.card.kind}>
+      {option("expense", t.card.expense)}
+      {option("time", t.card.time)}
     </div>
   );
 }
 
 function ExpenseFields({ form, errors, set }: { form: DraftForm; errors: FormErrors; set: Setter }) {
+  const { t } = useLogCopy();
   return (
     <>
-      <Field label="Amount ($)" error={errors.amount}>
+      <Field label={t.card.amount} error={errors.amount}>
         {(p) => <Input {...p} inputMode="decimal" placeholder="0.00" className="tabular-nums" value={form.amount} onChange={(e) => set({ amount: e.target.value })} />}
       </Field>
-      <Field label="Where" optional>
-        {(p) => <Input {...p} maxLength={80} placeholder="e.g. CVS" value={form.merchant} onChange={(e) => set({ merchant: e.target.value })} />}
+      <Field label={<OptionalLabel text={t.card.where} />}>
+        {(p) => <Input {...p} maxLength={80} placeholder={t.card.wherePlaceholder} value={form.merchant} onChange={(e) => set({ merchant: e.target.value })} />}
       </Field>
     </>
   );
 }
 
 function DurationFields({ form, errors, set }: { form: DraftForm; errors: FormErrors; set: Setter }) {
+  const { t } = useLogCopy();
   return (
     <div className="sm:col-span-2">
-      <Field label="How long" error={errors.duration} hint="Hours can be decimal, e.g. 1.5">
+      <Field label={t.card.howLong} error={errors.duration} hint={t.card.hoursHint}>
         {(p) => (
           <div className="flex items-center gap-2">
-            <Input {...p} inputMode="decimal" placeholder="0" aria-label="Hours" className="tabular-nums" value={form.hours} onChange={(e) => set({ hours: e.target.value })} />
-            <span className="text-sm text-ink-muted">h</span>
-            <Input inputMode="numeric" placeholder="0" aria-label="Minutes" aria-invalid={p["aria-invalid"]} className="tabular-nums" value={form.mins} onChange={(e) => set({ mins: e.target.value })} />
-            <span className="text-sm text-ink-muted">min</span>
+            <Input {...p} inputMode="decimal" placeholder="0" aria-label={t.card.hours} className="tabular-nums" value={form.hours} onChange={(e) => set({ hours: e.target.value })} />
+            <span className="text-sm text-ink-muted">{t.card.h}</span>
+            <Input inputMode="numeric" placeholder="0" aria-label={t.card.minutes} aria-invalid={p["aria-invalid"]} className="tabular-nums" value={form.mins} onChange={(e) => set({ mins: e.target.value })} />
+            <span className="text-sm text-ink-muted">{t.card.min}</span>
           </div>
         )}
       </Field>
@@ -75,9 +90,10 @@ function DurationFields({ form, errors, set }: { form: DraftForm; errors: FormEr
 }
 
 export function EntryCard({ form, members, errors = {}, onChange, actions, badge, flat = false }: Props) {
+  const { t, locale } = useLogCopy();
   const set: Setter = (patch) => onChange({ ...form, ...patch });
-  const memberOptions = members.map((m) => ({ value: m.id, label: m.role === "caregiver" ? `${m.name} (you)` : m.name }));
-  const categoryOptions = categoriesFor(form.kind).map((c) => ({ value: c, label: categoryLabel(c) }));
+  const memberOptions = members.map((m) => ({ value: m.id, label: m.role === "caregiver" ? `${m.name} ${t.card.you}` : m.name }));
+  const categoryOptions = categoriesFor(form.kind).map((c) => ({ value: c, label: categoryLabel(c, locale) }));
   return (
     <Card tone={flat ? "flat" : "raised"}>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
@@ -86,17 +102,17 @@ export function EntryCard({ form, members, errors = {}, onChange, actions, badge
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {form.kind === "expense" ? <ExpenseFields form={form} errors={errors} set={set} /> : <DurationFields form={form} errors={errors} set={set} />}
-        <Field label="Category" error={errors.category}>
+        <Field label={t.card.category} error={errors.category}>
           {(p) => <Select {...p} options={categoryOptions} value={form.category} onChange={(e) => set({ category: e.target.value })} />}
         </Field>
-        <Field label="Date" error={errors.date}>
+        <Field label={t.card.date} error={errors.date}>
           {(p) => <Input {...p} type="date" value={form.date} onChange={(e) => set({ date: e.target.value })} />}
         </Field>
-        <Field label={form.kind === "expense" ? "Paid by" : "Given by"} error={errors.memberId}>
+        <Field label={form.kind === "expense" ? t.card.paidBy : t.card.givenBy} error={errors.memberId}>
           {(p) => <Select {...p} options={memberOptions} value={form.memberId} onChange={(e) => set({ memberId: e.target.value })} />}
         </Field>
-        <Field label="Note" optional error={errors.note}>
-          {(p) => <Input {...p} maxLength={280} placeholder="Short note — no medical records" value={form.note} onChange={(e) => set({ note: e.target.value })} />}
+        <Field label={<OptionalLabel text={t.card.note} />} error={errors.note}>
+          {(p) => <Input {...p} maxLength={280} placeholder={t.card.notePlaceholder} value={form.note} onChange={(e) => set({ note: e.target.value })} />}
         </Field>
       </div>
       <div className="mt-5 flex flex-wrap justify-end gap-2">{actions}</div>

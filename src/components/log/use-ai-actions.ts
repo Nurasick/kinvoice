@@ -5,16 +5,13 @@
  */
 import { useCallback } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
+import { logCopy, type LogCopy } from "./copy";
 import { localToday } from "./draft-form";
 import type { DraftsState } from "./use-drafts";
 
-const QUICK_FALLBACK = "I couldn't read all of that — I filled in what I could. Please check the card below.";
-const AI_DOWN = "The assistant is taking a break — you can enter it here instead.";
-const RECEIPT_PARTIAL = "Some of the receipt was hard to read — please check the amount.";
-const RECEIPT_FAILED = "I couldn't read that receipt — you can enter it here.";
-
-export function useAiActions(api: WorkspaceApi, drafts: DraftsState) {
+export function useAiActions(api: WorkspaceApi, drafts: DraftsState, t: LogCopy = logCopy("en")) {
   const { addDrafts, addEmpty, setNotice } = drafts;
+  const n = t.notice;
 
   /** Returns true when the text box can be cleared. */
   const quickLog = useCallback(
@@ -24,14 +21,14 @@ export function useAiActions(api: WorkspaceApi, drafts: DraftsState) {
         const res = await api.quickLog({ text, today: localToday() });
         if (res.drafts.length > 0) addDrafts(res.drafts, "quick_log");
         else addEmpty("expense", text);
-        if (res.fallback) setNotice({ tone: "info", text: QUICK_FALLBACK });
+        if (res.fallback) setNotice({ tone: "info", text: n.quickFallback });
       } catch {
         addEmpty("expense", text);
-        setNotice({ tone: "info", text: AI_DOWN });
+        setNotice({ tone: "info", text: n.aiDown });
       }
       return true;
     },
-    [api, addDrafts, addEmpty, setNotice],
+    [api, addDrafts, addEmpty, setNotice, n],
   );
 
   const receipt = useCallback(
@@ -41,13 +38,13 @@ export function useAiActions(api: WorkspaceApi, drafts: DraftsState) {
         const res = await api.readReceipt(file, localToday());
         if (res.draft) addDrafts([res.draft], "receipt");
         else addEmpty("expense");
-        if (res.fallback) setNotice({ tone: "info", text: res.draft ? RECEIPT_PARTIAL : RECEIPT_FAILED });
+        if (res.fallback) setNotice({ tone: "info", text: res.draft ? n.receiptPartial : n.receiptFailed });
       } catch {
         addEmpty("expense");
-        setNotice({ tone: "info", text: RECEIPT_FAILED });
+        setNotice({ tone: "info", text: n.receiptFailed });
       }
     },
-    [api, addDrafts, addEmpty, setNotice],
+    [api, addDrafts, addEmpty, setNotice, n],
   );
 
   return { quickLog, receipt };
