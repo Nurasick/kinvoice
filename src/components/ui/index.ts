@@ -11,3 +11,4 @@ export { Spinner, LoadingBlock, type SpinnerProps } from "./Spinner";
 export { EmptyState, type EmptyStateProps } from "./EmptyState";
 export { CopyButton, type CopyButtonProps } from "./CopyButton";
 export { MonthPicker, type MonthPickerProps } from "./MonthPicker";
+export { useOrigin } from "./use-origin";

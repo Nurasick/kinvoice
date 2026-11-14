@@ -45,6 +45,17 @@
 
 html {
   color-scheme: light;
+  scrollbar-color: var(--color-line-strong) var(--color-paper);
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea {
+  caret-color: var(--color-accent);
+}
+
+a {
+  text-underline-offset: 0.2em;
 }
 
 body {
