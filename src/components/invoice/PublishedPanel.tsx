@@ -8,6 +8,7 @@ import { useWorkspace } from "@/components/layout/WorkspaceProvider";
 import { monthYear } from "@/components/public-invoice/public-invoice-view";
 import { useLocale } from "@/lib/i18n/client";
 import { Button, Card, CopyButton, Money, buttonClass, useOrigin } from "@/components/ui";
+import { invoiceCopy } from "./copy";
 import { publicInvoiceUrl } from "./invoice-view";
 import { shareLinks } from "./share-links";
 
@@ -19,14 +20,14 @@ export interface PublishedPanelProps {
 
 export function PublishedPanel({ invoice, monthName, onStartOver }: PublishedPanelProps) {
   const origin = useOrigin();
+  const { locale } = useLocale();
+  const t = invoiceCopy(locale).published;
   const siblings = invoice.snapshot.members.filter((m) => m.role === "sibling");
   return (
     <Card tone="accent" className="flex flex-col gap-5">
       <div>
-        <h2 className="font-display text-2xl font-bold">Your {monthName} invoice is ready to send</h2>
-        <p className="mt-1 text-sm text-ink-soft">
-          Each sibling gets their own link that opens on their part. They don’t need an account or an app.
-        </p>
+        <h2 className="font-display text-2xl font-bold">{t.title({ month: monthName })}</h2>
+        <p className="mt-1 text-sm text-ink-soft">{t.body}</p>
       </div>
       <ul className="flex flex-col gap-3">
         {siblings.map((m) => (
@@ -36,7 +37,8 @@ export function PublishedPanel({ invoice, monthName, onStartOver }: PublishedPan
       <div className="flex flex-wrap items-center gap-2 border-t border-accent/15 pt-4">
         <CopyButton
           value={publicInvoiceUrl(origin, invoice.publicToken)}
-          label="Copy family link"
+          label={t.copyFamily}
+          copiedLabel={invoiceCopy(locale).list.copied}
           variant="secondary"
         />
         <a
@@ -45,10 +47,10 @@ export function PublishedPanel({ invoice, monthName, onStartOver }: PublishedPan
           rel="noreferrer"
           className={buttonClass("ghost")}
         >
-          Preview as a sibling
+          {t.preview}
         </a>
         <Button variant="ghost" onClick={onStartOver}>
-          Write another
+          {t.another}
         </Button>
       </div>
     </Card>
@@ -65,6 +67,7 @@ interface SiblingShareProps {
 function SiblingShare({ member, invoice, origin }: SiblingShareProps) {
   const { view } = useWorkspace();
   const { locale } = useLocale();
+  const t = invoiceCopy(locale);
   const caregiver = view.members.find((m) => m.role === "caregiver")?.name ?? "";
   const email = view.members.find((m) => m.id === member.memberId)?.email;
   const links = shareLinks({
@@ -84,13 +87,17 @@ function SiblingShare({ member, invoice, origin }: SiblingShareProps) {
       <div>
         <p className="font-medium text-ink">{member.name}</p>
         <p className="text-sm text-ink-muted">
-          Suggested contribution{" "}
+          {t.published.suggested}{" "}
           <Money cents={member.suggestedContributionCents} className="font-semibold text-ink" />
         </p>
       </div>
-      <div className="flex flex-wrap gap-2" aria-label={`Send ${member.name} their link`} role="group">
+      <div
+        className="flex flex-wrap gap-2"
+        aria-label={t.published.sendTo({ name: member.name })}
+        role="group"
+      >
         <a href={links.sms} className={buttonClass("primary", "sm")}>
-          Text
+          {t.published.text}
         </a>
         <a href={links.whatsapp} target="_blank" rel="noreferrer" className={buttonClass("secondary", "sm")}>
           WhatsApp
@@ -98,7 +105,13 @@ function SiblingShare({ member, invoice, origin }: SiblingShareProps) {
         <a href={links.email} className={buttonClass("secondary", "sm")}>
           Email
         </a>
-        <CopyButton value={links.message} label="Copy" variant="secondary" size="sm" />
+        <CopyButton
+          value={links.message}
+          label={t.published.copy}
+          copiedLabel={t.list.copied}
+          variant="secondary"
+          size="sm"
+        />
       </div>
     </li>
   );

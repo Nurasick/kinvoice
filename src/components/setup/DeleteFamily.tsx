@@ -3,7 +3,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useWorkspace } from "@/components/layout/WorkspaceProvider";
 import { clearWorkspaceKey } from "@/lib/workspace-key";
+import { useLocale } from "@/lib/i18n/client";
 import { Button, Card, Field, Input } from "@/components/ui";
+import { setupCopy } from "./copy";
 import { confirmsDelete } from "./settings-draft";
 
 /** Permanent delete, confirmed in-page by typing the parent's name (no browser dialog). */
@@ -13,36 +15,35 @@ export function DeleteFamily() {
   const [isOpen, setIsOpen] = useState(false);
   const [typed, setTyped] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
   const parentName = view.workspace.parentName;
+  const { locale } = useLocale();
+  const t = setupCopy(locale).settings;
 
   async function remove(): Promise<void> {
     setIsDeleting(true);
-    setError(null);
+    setFailed(false);
     try {
       await api.deleteWorkspace();
       clearWorkspaceKey();
       router.replace("/");
     } catch {
-      setError("We couldn't delete it just now. Nothing was removed. Please try again.");
+      setFailed(true);
       setIsDeleting(false);
     }
   }
 
   return (
     <Card tone="flat" className="border-danger/30">
-      <h2 className="font-display text-lg font-medium">Delete this family space</h2>
-      <p className="mt-1 text-sm text-ink-muted">
-        Permanently removes every entry, invoice and payment note for {parentName}. Links you sent to siblings
-        stop working. This can’t be undone.
-      </p>
+      <h2 className="font-display text-lg font-medium">{t.deleteTitle}</h2>
+      <p className="mt-1 text-sm text-ink-muted">{t.deleteBody({ parent: parentName })}</p>
       {!isOpen ? (
         <Button variant="secondary" className="mt-4 text-danger" onClick={() => setIsOpen(true)}>
-          Delete family space…
+          {t.deleteOpen}
         </Button>
       ) : (
         <div className="mt-4 flex flex-col gap-3 rounded-[var(--radius-control)] bg-danger-soft p-4">
-          <Field label={`Type “${parentName}” to confirm`}>
+          <Field label={t.deleteConfirm({ parent: parentName })}>
             {(p) => (
               <Input
                 {...p}
@@ -53,9 +54,9 @@ export function DeleteFamily() {
               />
             )}
           </Field>
-          {error && (
+          {failed && (
             <p role="alert" className="text-sm text-danger">
-              {error}
+              {t.deleteFailed}
             </p>
           )}
           <div className="flex flex-wrap gap-2">
@@ -65,7 +66,7 @@ export function DeleteFamily() {
               isLoading={isDeleting}
               disabled={!confirmsDelete(typed, parentName)}
             >
-              Delete everything
+              {t.deleteAll}
             </Button>
             <Button
               variant="ghost"
@@ -74,7 +75,7 @@ export function DeleteFamily() {
                 setTyped("");
               }}
             >
-              Keep it
+              {t.keep}
             </Button>
           </div>
         </div>

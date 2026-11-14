@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { WorkspaceApi } from "@/lib/api/client";
 import { useLocale } from "@/lib/i18n/client";
 import type { Invoice, InvoiceTone } from "@/shared/domain";
+import type { ComposerError } from "./copy";
 
 export interface Composer {
   tone: InvoiceTone;
@@ -15,7 +16,8 @@ export interface Composer {
   /** true when the text is the standard template rather than AI-written */
   isTemplate: boolean;
   isPublishing: boolean;
-  error: string | null;
+  /** Which message to show; the screen words it in the reader's language. */
+  error: ComposerError | null;
   published: Invoice | null;
   setTone: (tone: InvoiceTone) => void;
   setMessage: (message: string) => void;
@@ -35,7 +37,7 @@ export function useComposer(
   const [isDrafting, setIsDrafting] = useState(false);
   const [isTemplate, setIsTemplate] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ComposerError | null>(null);
   const [published, setPublished] = useState<Invoice | null>(null);
   const request = useRef(0);
   const { locale } = useLocale();
@@ -51,8 +53,7 @@ export function useComposer(
         setMessage(res.message);
         setIsTemplate(res.fallback);
       } catch {
-        if (id === request.current)
-          setError("We couldn't write a draft just now. You can type your own message.");
+        if (id === request.current) setError("draft");
       } finally {
         if (id === request.current) setIsDrafting(false);
       }
@@ -70,14 +71,14 @@ export function useComposer(
   }, [draft, enabled]);
 
   const publish = useCallback(async (): Promise<void> => {
-    if (!message.trim()) return setError("Add a short message before publishing.");
+    if (!message.trim()) return setError("empty");
     setIsPublishing(true);
     setError(null);
     try {
       setPublished(await api.publishInvoice({ month, tone, message: message.trim() }));
       onPublished();
     } catch {
-      setError("We couldn't publish just now. Your message is still here, so please try again.");
+      setError("publish");
     } finally {
       setIsPublishing(false);
     }

@@ -7,10 +7,12 @@ export interface DollarInputProps {
   onChange: (value: string) => void;
   "aria-describedby"?: string;
   "aria-invalid"?: boolean;
+  /** Unit after the amount: "/hr", "/ч", "/сағ". Default English. */
+  suffix?: string;
 }
 
 /** "$ 25 /hr" input for the hourly value of care time. */
-export function DollarInput({ value, onChange, ...aria }: DollarInputProps) {
+export function DollarInput({ value, onChange, suffix = "/hr", ...aria }: DollarInputProps) {
   return (
     <div className="relative">
       <span
@@ -30,7 +32,7 @@ export function DollarInput({ value, onChange, ...aria }: DollarInputProps) {
         aria-hidden
         className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm text-ink-muted"
       >
-        /hr
+        {suffix}
       </span>
     </div>
   );

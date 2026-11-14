@@ -50,8 +50,3 @@ export function sortInvoices(invoices: readonly Invoice[]): Invoice[] {
     (a, b) => b.month.localeCompare(a.month) || b.publishedAt.localeCompare(a.publishedAt),
   );
 }
-
-/** "Nov 14, 2026" from an ISO datetime, in the viewer's locale timezone. */
-export function publishedLabel(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}

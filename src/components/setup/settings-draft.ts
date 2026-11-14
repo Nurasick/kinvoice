@@ -5,6 +5,7 @@
 import { UpdateWorkspaceRequest } from "@/shared/api";
 import type { Workspace } from "@/shared/domain";
 import { parseDollarsToCents } from "@/lib/money";
+import type { FormErrorCode } from "./copy";
 
 export interface SettingsDraft {
   parentName: string;
@@ -15,7 +16,8 @@ export interface SettingsDraft {
   zelle: string;
 }
 
-export type SettingsErrors = Partial<Record<"parentName" | "hourlyRate" | "form", string>>;
+/** Error codes per field; the screen words them in the reader's language (copy.ts). */
+export type SettingsErrors = Partial<Record<"parentName" | "hourlyRate" | "form", FormErrorCode>>;
 
 export type SettingsResult =
   { ok: true; patch: UpdateWorkspaceRequest } | { ok: false; errors: SettingsErrors };
@@ -37,9 +39,9 @@ function optional(value: string): string | undefined {
 
 export function toUpdateRequest(draft: SettingsDraft): SettingsResult {
   const errors: SettingsErrors = {};
-  if (!draft.parentName.trim()) errors.parentName = "Add a name, even just “Mom”.";
+  if (!draft.parentName.trim()) errors.parentName = "parentMissingShort";
   const rate = parseDollarsToCents(draft.hourlyRate);
-  if (rate === null || rate > 100_00) errors.hourlyRate = "Use an amount between $0 and $100 per hour.";
+  if (rate === null || rate > 100_00) errors.hourlyRate = "rateRange";
   if (Object.keys(errors).length > 0) return { ok: false, errors };
 
   const parsed = UpdateWorkspaceRequest.safeParse({
@@ -52,8 +54,7 @@ export function toUpdateRequest(draft: SettingsDraft): SettingsResult {
       zelle: optional(draft.zelle),
     },
   });
-  if (!parsed.success)
-    return { ok: false, errors: { form: "Some details are too long. Please shorten them." } };
+  if (!parsed.success) return { ok: false, errors: { form: "tooLong" } };
   return { ok: true, patch: parsed.data };
 }
 
