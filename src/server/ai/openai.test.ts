@@ -23,6 +23,22 @@ const replyWith = (value: unknown): Create => async () => ({ output_text: typeof
 
 beforeEach(() => {
   vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  vi.spyOn(console, "info").mockImplementation(() => undefined);
+});
+
+describe("timing logs", () => {
+  it("log op name and duration only, never the caregiver's text", async () => {
+    const info = vi.mocked(console.info);
+    const warn = vi.mocked(console.warn);
+    const ok = serviceReturning(replyWith({ drafts: [] }));
+    await ok.ai.parseQuickLog({ text: DEMO, today, members });
+    const bad = serviceReturning(replyWith("not json"));
+    await bad.ai.parseQuickLog({ text: DEMO, today, members });
+    const lines = [...info.mock.calls, ...warn.mock.calls].map((c) => String(c[0]));
+    expect(lines[0]).toMatch(/^\[ai\] quick_log ok \d+ms$/);
+    expect(lines[1]).toMatch(/^\[ai\] quick_log failed: SyntaxError after \d+ms$/);
+    expect(lines.join(" ")).not.toMatch(/CVS|\$86|cardiologist/);
+  });
 });
 afterEach(() => {
   vi.restoreAllMocks();
