@@ -29,4 +29,4 @@ Read before doing anything: `docs/kinvoice-brief.md` (product), `docs/ROLES.md` 
 - Tests: Vitest, colocated `*.test.ts`. Money math and AI validation must be tested.
 
 ## Commands
-`npm run dev` · `npm test` · `npm run check` · `npm run db:push` (Nurali)
+`npm run dev` · `npm test` · `npm run check` · `npm run db:generate` (Nurali, after schema changes; migrations apply on deploy)

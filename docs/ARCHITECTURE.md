@@ -51,6 +51,8 @@ Defined in `src/shared/domain.ts` (types) and `src/server/db/schema.ts` (tables)
 | `invoices` | `id uuid`, `workspace_id`, `month 'YYYY-MM'`, `public_token text unique`, `tone 'warm'\|'brief'\|'direct'`, `message text`, `snapshot jsonb MonthlyBalance`, `published_at` |
 | `payment_marks` | `id uuid`, `invoice_id`, `member_id`, `amount_cents`, `method 'venmo'\|'paypal'\|'zelle'\|'other'`, `status 'sent'\|'received'`, `updated_at`; unique `(invoice_id, member_id)` |
 
+Migrations: change `schema.ts`, run `npm run db:generate`, and commit the SQL in `drizzle/`. `npm run build` runs `scripts/migrate.ts` first, which applies pending migrations when `DATABASE_URL` is set and skips otherwise. Every Vercel deploy therefore migrates the Neon DB (`kinvoice-db`, connected through the Vercel Neon integration) without anyone handling the connection string.
+
 The parent is a field on the workspace (`parent_name`): one workspace = one parent, so a separate table would add a join and no value. Everything cascades from `workspaces`, so "delete workspace" removes all data.
 
 Categories: expense `medication, medical, groceries, transport, household, home_care, insurance, other`; time `appointments, errands, personal_care, companionship, household, admin, other`.

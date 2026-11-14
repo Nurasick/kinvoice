@@ -4,7 +4,7 @@ Kinvoice turns the unpaid care one sibling gives an aging parent into a clear mo
 
 Built for Business Cup 2.0 (Nazarbayev University, Nov 14–15, 2026).
 
-- **Live:** _coming soon_
+- **Live:** https://kinvoice-taupe.vercel.app
 - **Architecture:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Product brief:** [docs/kinvoice-brief.md](docs/kinvoice-brief.md)
 
@@ -22,7 +22,8 @@ npm run dev                  # http://localhost:3000
 | `npm test` | Unit tests (Vitest) |
 | `npm run check` | Lint + typecheck + tests (run before every commit) |
 | `npm run build` | Production build |
-| `npm run db:push` | Push the Drizzle schema to `DATABASE_URL` |
+| `npm run db:generate` | Create a SQL migration in `drizzle/` after editing `src/server/db/schema.ts` |
+| `npm run db:migrate` | Apply migrations to `DATABASE_URL` (runs automatically before every Vercel build) |
 
 ## How it works
 

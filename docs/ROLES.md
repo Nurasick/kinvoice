@@ -17,7 +17,7 @@ Full design: `docs/ARCHITECTURE.md`. Product: `docs/kinvoice-brief.md`.
 | `src/server/db/**`, `src/server/repo/**` (except `types.ts` frozen), `src/server/seed/**`, `src/server/http.ts`, `src/server/tokens.ts`, `src/server/services.ts`, `src/server/rate-limit.ts`, `src/proxy.ts`, `test/**` | Nurali |
 | `src/lib/money/**` | Nurali |
 | `src/app/api/**` **except** `src/app/api/ai/**` | Nurali |
-| `drizzle/**` (migrations) | Nurali |
+| `drizzle/**` (migrations), `scripts/**` | Nurali |
 | **Workstream B — Olzhas: AI + logging** | |
 | `src/server/ai/**` (except `types.ts` frozen) | Olzhas |
 | `src/app/api/ai/**` (quick-log, receipt, invoice-message routes) | Olzhas |
