@@ -89,6 +89,9 @@ Success → `{ "data": T }`. Error → `{ "error": { "code", "message", "details
 
 `NewEntry` is `{ kind:'expense', date, memberId, amountCents, category, merchant?, note, source }` or `{ kind:'time', date, memberId, minutes, category, note, source }`.
 
+### Rate limits
+`src/proxy.ts` applies per-IP fixed-window limits to POSTs: `/api/ai/**` 30/min, `/api/demo` and `/api/workspaces` 10/min each → `429 rate_limited` with `retry-after`. The counters live in memory per instance, so this is best-effort protection for the OpenAI budget, not a security boundary.
+
 ## 5. AI module (`src/server/ai/`)
 
 The interface is in `types.ts` (frozen). `index.ts#getAiService()` returns `mock.ts` when `OPENAI_API_KEY` is empty or `AI_MOCK=1`, and `openai.ts` otherwise. `config.ts` is the only reader of AI env vars. **The service never throws.** Every result carries `fallback: boolean`.

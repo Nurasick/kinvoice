@@ -40,7 +40,8 @@ function addTo<K extends string>(map: Partial<Record<K, number>>, key: K, value:
 export function computeMonthlyBalance(input: BalanceInput): MonthlyBalance {
   const { month, hourlyRateCents } = input;
   const members = orderMembers(input.members);
-  const entries = input.entries.filter((e) => isInMonth(e.date, month));
+  const known = new Set(members.map((m) => m.id));
+  const entries = input.entries.filter((e) => isInMonth(e.date, month) && known.has(e.memberId));
 
   const paid: Partial<Record<string, number>> = {};
   const minutes: Partial<Record<string, number>> = {};
