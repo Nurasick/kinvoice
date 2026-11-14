@@ -55,6 +55,8 @@ export function ComposerCard({ composer: c, balance, alreadySentOn }: ComposerCa
         <div className="flex flex-wrap items-center gap-2">
           <Button
             size="lg"
+            // Long RU/KZ labels: full width and wrapping on phones, natural size from sm up.
+            className="h-auto! min-h-12 w-full py-2.5 text-center whitespace-normal! sm:w-auto"
             onClick={() => void c.publish()}
             isLoading={c.isPublishing}
             disabled={c.isDrafting}
