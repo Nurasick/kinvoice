@@ -107,3 +107,25 @@ falls back. Then O4, O5. npm run check before each commit. Small PRs to main; Nu
 ### Reviewer (anyone, at 08:00)
 
 See [REVIEW.md](REVIEW.md).
+
+---
+
+## Review run, Nov 14 evening (N6)
+
+Ran `docs/REVIEW.md` (focus ALL) against production after every round 2 PR merged (#12–#34). Rerun at 08:00 Nov 15 and add new rows here.
+
+**Demo path on production:** landing → Try Sarah's family → Log (the demo sentence) → Confirm all 2 → Invoice → publish → personal link → sibling page → Pay with Venmo → I've sent it → Mark as received ×2 → "everyone has settled". Passes at 1440px and 375px; every step under 5 s (AI quick log ~3 s, AI invoice draft ~3 s); no page errors; no sideways scroll. Every app screen, `/setup`, 404 and `/i` checked in RU and KZ: no English left, never "owe".
+
+| #   | Severity | Finding                                                                                                                              | Owner                                    | Status                                      |
+| --- | -------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------- | ------------------------------------------- |
+| R1  | BLOCKER  | Viewing the landing switched the visitor to Kazakh: Next prefetched the `?lang=` switcher links and the proxy saved each as a choice | Nurali                                   | Fixed in #34, verified on prod              |
+| R2  | HIGH     | Dashboard said "everyone settled" while still listing suggested contributions                                                        | Nurali, Yernur                           | Fixed in #20 + #26                          |
+| R3  | HIGH     | Sibling page listed entries added after publishing, so they didn't sum to the frozen total                                           | Nurali                                   | Fixed in #20                                |
+| R4  | HIGH     | AI and demo seed stored a medical specialty ("cardiology")                                                                           | Olzhas, Nurali                           | Fixed in #20                                |
+| R5  | HIGH     | Hero copy covered by the receipt and sticky at 1024–1279px (worse in RU)                                                             | Nurali                                   | Fixed in #32                                |
+| R6  | MEDIUM   | Non-UUID ids returned 500; sibling could set the "sent" amount; re-publishing reset payments; `<html lang>` always "en"              | Nurali                                   | Fixed in #20, #23                           |
+| R7  | MEDIUM   | App English-only after the landing                                                                                                   | Nurali (N2/N3), Yernur (Y3), Olzhas (O4) | Fixed in #23–#30                            |
+| R8  | LOW      | Pay links follow Venmo's documented format but were never tapped on a real phone                                                     | Yernur                                   | Open: try once on a phone before 10:00      |
+| R9  | LOW      | Repository contract tests only ran in memory                                                                                         | Nurali                                   | Fixed in #31: CI runs them on real Postgres |
+
+Still to do: rerun this at 08:00 (N6), make the repo public at 11:00 (N8).
