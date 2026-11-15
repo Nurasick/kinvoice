@@ -21,11 +21,15 @@ export interface LogCopy {
     discardAll: string;
     confirmOne: string;
     confirmAll: (n: number) => string;
+    /** What one note turned into, and that only money is split. */
+    summary: (expenses: number, times?: number) => string;
   };
   card: {
     kind: string; expense: string; time: string; amount: string; where: string; wherePlaceholder: string;
     howLong: string; hoursHint: string; hours: string; minutes: string; h: string; min: string;
     category: string; date: string; paidBy: string; givenBy: string; you: string; note: string; notePlaceholder: string;
+    /** The rare fix when the AI picked the wrong type. */
+    toTime: string; toExpense: string;
   };
   errors: ErrorCopy;
   notice: {
@@ -39,6 +43,15 @@ export interface LogCopy {
     saveError: string; deleteError: string; someone: string;
   };
   categories: Record<string, string>;
+}
+
+/** Russian noun form for a count: 1 расход, 2 расхода, 5 расходов. */
+export function ruPlural(n: number, one: string, few: string, many: string): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
 }
 
 const en: LogCopy = {
@@ -70,12 +83,20 @@ const en: LogCopy = {
     discardAll: "Discard all",
     confirmOne: "Confirm entry",
     confirmAll: (n) => `Confirm all ${n}`,
+    summary: (e, t = 0) => {
+      const parts = [
+        e > 0 ? `${e} ${e === 1 ? "expense" : "expenses"}` : "",
+        t > 0 ? `${t} ${t === 1 ? "block" : "blocks"} of time` : "",
+      ].filter(Boolean);
+      return `We found ${parts.join(" and ")}. Money is split; time is shown but never added to anyone’s share.`;
+    },
   },
   card: {
     kind: "Entry type", expense: "Money spent", time: "Time given", amount: "Amount ($)", where: "Where",
     wherePlaceholder: "e.g. CVS", howLong: "How long", hoursHint: "Hours can be decimal, e.g. 1.5", hours: "Hours",
     minutes: "Minutes", h: "h", min: "min", category: "Category", date: "Date", paidBy: "Paid by", givenBy: "Given by",
     you: "(you)", note: "Note", notePlaceholder: "Short note — no medical records",
+    toTime: "Change to time given", toExpense: "Change to money spent",
   },
   errors: {
     date: "Pick a date", memberId: "Choose who", category: "Pick a category", note: "Keep the note under 280 characters",
@@ -136,12 +157,20 @@ const ru: LogCopy = {
     discardAll: "Убрать все",
     confirmOne: "Подтвердить запись",
     confirmAll: (n) => `Подтвердить все (${n})`,
+    summary: (e, t = 0) => {
+      const parts = [
+        e > 0 ? `${e} ${ruPlural(e, "расход", "расхода", "расходов")}` : "",
+        t > 0 ? `${t} ${ruPlural(t, "запись времени", "записи времени", "записей времени")}` : "",
+      ].filter(Boolean);
+      return `Нашли: ${parts.join(" и ")}. Расходы делятся поровну, время показывается, но в долю не входит.`;
+    },
   },
   card: {
     kind: "Тип записи", expense: "Потрачено", time: "Уделённое время", amount: "Сумма ($)", where: "Где",
     wherePlaceholder: "например, CVS", howLong: "Сколько времени", hoursHint: "Часы можно дробью, например 1.5",
     hours: "Часы", minutes: "Минуты", h: "ч", min: "мин", category: "Категория", date: "Дата", paidBy: "Кто платил",
     givenBy: "Кто помогал", you: "(вы)", note: "Заметка", notePlaceholder: "Коротко — без медицинских данных",
+    toTime: "Сменить на «Уделённое время»", toExpense: "Сменить на «Потрачено»",
   },
   errors: {
     date: "Выберите дату", memberId: "Выберите, кто", category: "Выберите категорию", note: "Заметка — до 280 символов",
@@ -204,12 +233,17 @@ const kk: LogCopy = {
     discardAll: "Барлығын алып тастау",
     confirmOne: "Жазбаны растау",
     confirmAll: (n) => `Барлығын растау (${n})`,
+    summary: (e, t = 0) => {
+      const parts = [e > 0 ? `${e} шығын` : "", t > 0 ? `${t} уақыт жазбасы` : ""].filter(Boolean);
+      return `Табылды: ${parts.join(" және ")}. Шығын тең бөлінеді, уақыт көрсетіледі, бірақ үлеске қосылмайды.`;
+    },
   },
   card: {
     kind: "Жазба түрі", expense: "Жұмсалған ақша", time: "Берілген уақыт", amount: "Сома ($)", where: "Қай жерде",
     wherePlaceholder: "мысалы, CVS", howLong: "Қанша уақыт", hoursHint: "Сағатты бөлшекпен жазуға болады, мысалы 1.5",
     hours: "Сағат", minutes: "Минут", h: "сағ", min: "мин", category: "Санат", date: "Күні", paidBy: "Кім төледі",
     givenBy: "Кім көмектесті", you: "(сіз)", note: "Ескертпе", notePlaceholder: "Қысқаша — медициналық деректерсіз",
+    toTime: "«Берілген уақытқа» ауыстыру", toExpense: "«Жұмсалған ақшаға» ауыстыру",
   },
   errors: {
     date: "Күнін таңдаңыз", memberId: "Кім екенін таңдаңыз", category: "Санатты таңдаңыз", note: "Ескертпе 280 таңбадан аспасын",
