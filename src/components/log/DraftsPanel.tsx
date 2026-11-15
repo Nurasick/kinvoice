@@ -11,11 +11,15 @@ export function DraftsPanel({ drafts, members }: { drafts: DraftsState; members:
   const { forms, errors, saving } = drafts;
   if (forms.length === 0) return null;
   const count = forms.length;
+  const expenses = forms.filter((f) => f.kind === "expense").length;
   return (
     <section aria-labelledby="drafts-title" className="flex flex-col gap-4">
       <div>
         <h2 id="drafts-title" className="font-display text-xl font-medium text-ink">{t.drafts.title}</h2>
         <p className="text-sm text-ink-muted">{t.drafts.hint}</p>
+        <p className="mt-2 text-sm text-ink-soft" aria-live="polite">
+          {t.drafts.summary(expenses, count - expenses)}
+        </p>
       </div>
       {forms.map((form) => (
         <EntryCard

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ExpenseCategory, TimeCategory } from "@/shared/domain";
 import { LOCALES } from "@/lib/i18n/locales";
-import { logCopy } from "./copy";
+import { logCopy, ruPlural } from "./copy";
 import { formToNewEntry, emptyForm } from "./draft-form";
 import { categoryLabel, monthLabel, shortDate } from "./labels";
 
@@ -59,5 +59,30 @@ describe("log copy", () => {
     expect(shortDate("2026-11-16", "kk")).toBe("Дс, 16 қараша");
     expect(categoryLabel("medication", "ru")).toBe("Лекарства");
     expect(categoryLabel("unknown_thing", "kk")).toBe("unknown_thing");
+  });
+});
+
+describe("drafts summary", () => {
+  it("says what one note became and that only money is split", () => {
+    expect(logCopy("en").drafts.summary(1, 1)).toBe(
+      "We found 1 expense and 1 block of time. Money is split; time is shown but never added to anyone’s share.",
+    );
+    expect(logCopy("en").drafts.summary(2, 0)).toMatch(/^We found 2 expenses\. /);
+    expect(logCopy("en").drafts.summary(0, 3)).toMatch(/^We found 3 blocks of time\. /);
+  });
+
+  it("uses Russian plural forms", () => {
+    expect(logCopy("ru").drafts.summary(1, 2)).toMatch(/^Нашли: 1 расход и 2 записи времени\. /);
+    expect(logCopy("ru").drafts.summary(5, 1)).toMatch(/^Нашли: 5 расходов и 1 запись времени\. /);
+    expect(logCopy("kk").drafts.summary(1, 1)).toMatch(/^Табылды: 1 шығын және 1 уақыт жазбасы\. /);
+  });
+});
+
+describe("ruPlural", () => {
+  it.each([
+    [1, "расход"], [2, "расхода"], [4, "расхода"], [5, "расходов"], [11, "расходов"],
+    [12, "расходов"], [21, "расход"], [22, "расхода"], [111, "расходов"],
+  ])("%i → %s", (n, word) => {
+    expect(ruPlural(n as number, "расход", "расхода", "расходов")).toBe(word);
   });
 });

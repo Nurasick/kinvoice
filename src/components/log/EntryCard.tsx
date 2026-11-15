@@ -34,25 +34,28 @@ function OptionalLabel({ text }: { text: string }) {
   );
 }
 
-function KindToggle({ kind, onPick }: { kind: EntryKind; onPick: (k: EntryKind) => void }) {
+/**
+ * The card is one thing: money spent OR time given. A fixed label says which (cobalt = money,
+ * marigold = time), with a small link for the rare case the AI picked the wrong type.
+ * A two-option toggle here read as "fill in both", so it was replaced.
+ */
+function KindLabel({ kind, onSwitch }: { kind: EntryKind; onSwitch: () => void }) {
   const { t } = useLogCopy();
-  const option = (value: EntryKind, label: string) => (
-    <button
-      type="button"
-      aria-pressed={kind === value}
-      onClick={() => onPick(value)}
-      className={cn(
-        "rounded-[calc(var(--radius-control)-2px)] px-3 py-1 text-sm font-medium transition-colors",
-        kind === value ? "bg-surface text-ink shadow-sm" : "text-ink-muted hover:text-ink",
-      )}
-    >
-      {label}
-    </button>
-  );
+  const isExpense = kind === "expense";
   return (
-    <div className="inline-flex rounded-[var(--radius-control)] bg-paper-deep p-1" role="group" aria-label={t.card.kind}>
-      {option("expense", t.card.expense)}
-      {option("time", t.card.time)}
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <p className="flex items-center gap-2 font-display text-base font-medium text-ink">
+        <span aria-hidden className={cn("size-2.5 rounded-full", isExpense ? "bg-accent" : "bg-marigold")} />
+        <span className="sr-only">{t.card.kind}: </span>
+        {isExpense ? t.card.expense : t.card.time}
+      </p>
+      <button
+        type="button"
+        onClick={onSwitch}
+        className="text-sm text-ink-muted underline decoration-line-strong underline-offset-4 hover:text-ink"
+      >
+        {isExpense ? t.card.toTime : t.card.toExpense}
+      </button>
     </div>
   );
 }
@@ -97,7 +100,7 @@ export function EntryCard({ form, members, errors = {}, onChange, actions, badge
   return (
     <Card tone={flat ? "flat" : "raised"}>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
-        <KindToggle kind={form.kind} onPick={(k) => onChange(changeKind(form, k))} />
+        <KindLabel kind={form.kind} onSwitch={() => onChange(changeKind(form, form.kind === "expense" ? "time" : "expense"))} />
         {badge ? <Badge tone="accent">{badge}</Badge> : null}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
