@@ -15,6 +15,8 @@ export interface LandingCopy {
     ctaError: string;
     secondary: string;
     note: string;
+    /** One line telling a juror which screens to open, in order (two roles: caregiver, sibling). */
+    judges: string;
     price: string;
   };
   fridge: {
@@ -112,6 +114,7 @@ const en: LandingCopy = {
     ctaError: "We couldn’t open the demo just now. Please try again in a moment.",
     secondary: "Start your own",
     note: "No sign-up. Opens a private copy of a real month.",
+    judges: "For judges: Try Sarah’s family → Log one sentence → Invoice → Publish → Preview as a sibling → I’ve sent it → back on Invoice, Mark as received.",
     price: "Free for your siblings. $5.99 a month for you, first month free.",
   },
   fridge: {
@@ -226,6 +229,7 @@ const ru: LandingCopy = {
     ctaError: "Не получилось открыть демо. Попробуйте ещё раз через минуту.",
     secondary: "Создать свою семью",
     note: "Без регистрации. Откроется ваша личная копия реального месяца.",
+    judges: "Для жюри: «Посмотреть на семье Сары» → «Учёт»: одна фраза → «Счёт» → опубликовать → «Посмотреть глазами родственника» → «Перевод отправлен» → в «Счёте» отметить как полученное.",
     price: "Для братьев и сестёр бесплатно. Для вас $5.99 в месяц, первый месяц бесплатно.",
   },
   fridge: {
@@ -340,6 +344,7 @@ const kk: LandingCopy = {
     ctaError: "Демо қазір ашылмады. Бір минуттан соң қайта көріңіз.",
     secondary: "Өз отбасыңызды құру",
     note: "Тіркелусіз. Нақты айдың жеке көшірмесі ашылады.",
+    judges: "Қазылар үшін: «Сараның отбасын көру» → «Жазбалар»: бір сөйлем → «Шот» → жариялау → «Бауыр ретінде қарау» → «Жібердім» → «Шот» бөлімінде алынды деп белгілеу.",
     price: "Бауырларыңызға тегін. Сізге айына $5.99, алғашқы ай тегін.",
   },
   fridge: {

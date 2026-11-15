@@ -56,6 +56,7 @@ export function FridgeHero({ copy, data, locale }: HeroProps) {
               </Link>
             </div>
             <p className={`${s.onEnamelSoft} mt-3 max-w-[31rem] text-sm`}>{hero.note}</p>
+            <p className={`${s.onEnamelSoft} mt-2 max-w-[31rem] text-sm`}>{hero.judges}</p>
             <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-[rgb(8_20_60/0.28)] px-4 py-2 text-sm font-medium">
               {hero.price}
             </p>

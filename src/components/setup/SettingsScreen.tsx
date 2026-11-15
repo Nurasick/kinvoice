@@ -9,6 +9,7 @@ import { Badge, Button, Card, CopyButton } from "@/components/ui";
 import { setupCopy } from "./copy";
 import { DeleteFamily } from "./DeleteFamily";
 import { FamilyDetailsForm } from "./FamilyDetailsForm";
+import { PlanCard } from "@/components/plan/PlanCard";
 
 const noSubscribe = (): (() => void) => () => {};
 
@@ -21,6 +22,7 @@ export function SettingsScreen() {
         <h1 className="font-display text-3xl font-medium sm:text-4xl">{t.title}</h1>
         <p className="mt-1 text-ink-muted">{t.subtitle}</p>
       </div>
+      <PlanCard />
       <FamilyDetailsForm />
       <Members />
       <PrivateLink />
