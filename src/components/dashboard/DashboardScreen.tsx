@@ -18,6 +18,7 @@ import { MemberBalances } from "./MemberBalances";
 import { MonthHeadline } from "./MonthHeadline";
 import { latestInvoice } from "./month-progress";
 import { MonthProgress } from "./MonthProgress";
+import { MonthlyRhythm } from "@/components/plan/MonthlyRhythm";
 import { RecentEntries } from "./RecentEntries";
 import { settlement } from "./settlement";
 import { useInvoices } from "./use-invoices";
@@ -83,6 +84,7 @@ function MonthBody({ data, month, invoices, onRetry, locale }: MonthBodyProps) {
       <>
         <MonthProgress month={month} entries={entries} invoices={invoices} locale={locale} />
         <EmptyState title={t.emptyTitle({ month: monthName })} description={t.emptyBody} />
+        <MonthlyRhythm month={month} isSettled={false} />
       </>
     );
   }
@@ -102,6 +104,7 @@ function MonthBody({ data, month, invoices, onRetry, locale }: MonthBodyProps) {
         <CategoryBreakdown balance={data.balance} locale={locale} />
         <RecentEntries entries={data.entries} members={view.members} locale={locale} />
       </div>
+      <MonthlyRhythm month={month} isSettled={status?.isAllSettled ?? false} />
     </>
   );
 }

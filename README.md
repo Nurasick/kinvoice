@@ -23,6 +23,8 @@ Built for Business Cup 2.0 (Nazarbayev University, Nov 14–15, 2026).
 5. Open Mike's link in a private window, as he would: no account, his amount is already selected. **Pay with Venmo** or PayPal, then tap **I've sent it**.
 6. Back as Sarah: **Mark as received**. The dashboard now says everyone is settled.
 
+**Pricing:** siblings are always free; the caregiver pays $5.99/month after a free month. Settings → **Your plan** has a test-mode checkout (no card is charged). The dashboard offers a monthly calendar reminder for the 1st.
+
 Switch **EN / RU / KZ** in the header at any point: the choice follows you to the sibling page, and the AI writes in that language. Money stays in USD.
 
 ## How it works
@@ -34,7 +36,7 @@ Switch **EN / RU / KZ** in the header at any point: the choice follows you to th
 - **Graceful fallback.** If the AI is slow or down, a prefilled manual form and a template message still work.
 - **Frozen invoices.** Publishing freezes the month's numbers, so later edits never change a link already sent.
 
-More: [architecture and API](docs/ARCHITECTURE.md) · [product brief](docs/kinvoice-brief.md) · [design system](DESIGN.md) · [who owns what](docs/ROLES.md)
+More: [business case: pricing, market, CAC, retention](docs/BUSINESS.md) · [architecture and API](docs/ARCHITECTURE.md) · [product brief](docs/kinvoice-brief.md) · [design system](DESIGN.md) · [who owns what](docs/ROLES.md)
 
 ## Quality and safety
 
